@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inauguration Ceremony Poster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A192F;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        /* Make the poster look like a 1:1 square canvas natively */
+        .poster-container {
+            width: 100%;
+            max-width: 1080px;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            background-color: #123962;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        .hero-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75%;
+            object-fit: cover;
+            object-position: top;
+            z-index: 1;
+        }
+        .hero-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(18,57,98,0) 40%, rgba(18,57,98,0.85) 80%, rgba(18,57,98,1) 100%);
+            z-index: 2;
+        }
+        .content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            padding: 4rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(18,57,98,0.3);
+            backdrop-filter: blur(8px);
+        }
+        .pill {
+            background: linear-gradient(90deg, #1C7F93, #0A5A6D);
+            color: white;
+            font-weight: 700;
+            letter-spacing: 0.2rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(28, 127, 147, 0.5);
+            margin-bottom: 2rem;
+        }
+        .title {
+            font-size: 5rem;
+            line-height: 1;
+            font-weight: 900;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+            margin-bottom: 2rem;
+            text-shadow: 0 10px 15px rgba(0,0,0,0.5);
+        }
+        .title-highlight {
+            background: linear-gradient(to right, #FDE68A, #F59E0B, #FDE68A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 2rem 3rem;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            margin-bottom: 1rem;
+        }
+        .card-label {
+            color: #FCD34D;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .card-title {
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .card-subtitle {
+            color: #DBEAFE;
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        /* Helper for user saving */
+        .instruction {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .poster-container { border-radius: 0; }
+            .content { padding: 2rem; }
+            .title { font-size: 3.5rem; }
+            .card-title { font-size: 2.25rem; }
+            .card { padding: 1.5rem 1rem; }
+            .instruction { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="instruction">Resize window and screenshot. Max width 1080x1080.</div>
+    <div class="poster-container">
+        <!-- Render Image in Background -->
+        <img src="/images/chief_guest.png" alt="Chief Guest" class="hero-img" />
+        <div class="hero-gradient"></div>
+
+        <!-- Overlapping Content -->
+        <div class="content">
+            <span class="pill">bwpjamiat.org</span>
+            <h1 class="title">
+                Inauguration<br/>
+                <span class="title-highlight">Ceremony</span>
+            </h1>
+
+            <div class="card">
+                <span class="card-label">Chief Guest</span>
+                <h2 class="card-title">Sahibzada Wasim Haider</h2>
+                <div class="card-subtitle">Central President, Islami Jamiat-e-Talaba Pakistan</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

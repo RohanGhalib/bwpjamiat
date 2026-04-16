@@ -12,7 +12,7 @@ async function CourseContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
   return (
-    <div className="min-h-screen py-16 bg-gray-50">
+    <div className="min-h-screen py-16 bg-transparent">
       <div className="container mx-auto px-4 max-w-6xl">
          <Link href="/lms" className="text-[#1C7F93] hover:underline mb-8 inline-block text-sm font-semibold">&larr; Back to LMS Dashboard</Link>
 
@@ -76,7 +76,7 @@ async function CourseContent({ params }: { params: Promise<{ id: string }> }) {
 
 function CourseLoading() {
   return (
-    <div className="min-h-screen py-16 bg-gray-50">
+    <div className="min-h-screen py-16 bg-transparent">
       <div className="container mx-auto px-4 max-w-6xl animate-pulse">
         <div className="h-4 w-40 bg-gray-200 rounded mb-8"></div>
         <div className="grid md:grid-cols-3 gap-8">

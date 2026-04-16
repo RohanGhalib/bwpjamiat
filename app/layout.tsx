@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,6 +23,10 @@ const notoNastaliq = Noto_Nastaliq_Urdu({
 export const metadata: Metadata = {
   title: "Islami Jamiat-e-Talaba Bahawalpur",
   description: "Official website for Islami Jamiat-e-Talaba Bahawalpur. Largest student organization in Pakistan.",
+  icons: {
+    icon: '/icon.png',
+    apple: '/icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -34,9 +39,17 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliq.variable} h-full antialiased`}
     >
-      <body className="flex min-h-screen flex-col font-sans bg-gray-50 text-gray-900">
+      <body className="flex min-h-screen flex-col font-sans bg-transparent text-gray-900 shadow-none relative">
+        {/* Global Watermark */}
+        <div className="fixed inset-0 -z-50 pointer-events-none bg-[#FAFCFF]">
+           <div className="absolute inset-0 bg-gradient-to-br from-[#1C7F93]/5 via-[#FAFCFF] to-[#123962]/5 mix-blend-multiply"></div>
+           <div className="absolute inset-0 opacity-[0.03] grayscale">
+              <Image src="/noor.png" alt="Theme Background" fill className="object-cover object-bottom" priority />
+           </div>
+        </div>
+
         <Header />
-        <main className="flex-1 flex flex-col">
+        <main className="flex-1 flex flex-col relative z-10">
           {children}
         </main>
         <Footer />

@@ -11,7 +11,7 @@ async function ArticleContent({ params }: { params: Promise<{ slug: string }> })
   const { slug } = await params;
 
   return (
-    <div className="min-h-screen py-16 bg-white">
+    <div className="min-h-screen py-16 bg-transparent">
       <div className="container mx-auto px-4 max-w-4xl">
         <header className="mb-10">
           <div className="flex gap-2 mb-6">
@@ -57,7 +57,7 @@ async function ArticleContent({ params }: { params: Promise<{ slug: string }> })
 
 function ArticleLoading() {
   return (
-    <div className="min-h-screen py-16 bg-white">
+    <div className="min-h-screen py-16 bg-transparent">
       <div className="container mx-auto px-4 max-w-4xl animate-pulse">
         <div className="h-6 w-24 bg-gray-200 rounded-full mb-6"></div>
         <div className="h-12 w-3/4 bg-gray-200 rounded-lg mb-6"></div>

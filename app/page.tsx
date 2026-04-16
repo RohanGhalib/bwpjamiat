@@ -1,26 +1,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, limit } from 'firebase/firestore';
+import HeroBubble from '@/components/HeroBubble';
 
-export const revalidate = 60; // ISR for homepage
 
-export default async function Home() {
-  const eventsRef = collection(db, 'events');
-  const q = query(eventsRef, limit(1));
-  let featuredEvent = null;
-  
-  try {
-     const querySnapshot = await getDocs(q);
-     if (!querySnapshot.empty) {
-        featuredEvent = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as any;
-     }
-  } catch (error) {
-     console.error("Error fetching featured event:", error);
-  }
 
+export default function Home() {
    return (
-      <div className="flex flex-col min-h-screen bg-[#FAFCFF] overflow-hidden selection:bg-[#1C7F93] selection:text-white font-sans">
+      <div className="flex flex-col min-h-screen bg-transparent  overflow-hidden selection:bg-[#1C7F93] selection:text-white font-sans">
 
          {/* Hero Banner - Thoughtful & Beautiful */}
          <section className="relative pt-44 pb-0 flex flex-col justify-start min-h-[90vh] z-0 overflow-hidden bg-gradient-to-b from-[#FAFCFF] via-white to-[#eef4f9]">
@@ -28,21 +17,15 @@ export default async function Home() {
             <div className="absolute top-20 left-10 w-[300px] h-[300px] bg-gradient-to-tr from-green-100/40 to-transparent blur-[80px] rounded-full -z-10 pointer-events-none"></div>
 
             {/* Noor Mahal Graphic - Blended as a majestic subtle vintage background */}
-            <div className="absolute bottom-0 inset-x-0 w-full h-[55vh] lg:h-[70vh] z-0 pointer-events-none opacity-[0.12] md:opacity-[0.08] mix-blend-luminosity grayscale">
+            <div className="absolute bottom-[-10vh] lg:bottom-[-15vh] inset-x-0 w-full h-[70vh] lg:h-[95vh] z-0 pointer-events-none opacity-[0.35] md:opacity-[0.25] mix-blend-luminosity grayscale transform scale-110 origin-bottom">
                <Image src="/noor.png" alt="Noor Mahal Bahawalpur" fill sizes="100vw" className="object-cover md:object-contain object-bottom" priority />
             </div>
-            <div className="absolute bottom-0 inset-x-0 h-[40vh] bg-gradient-to-t from-[#FAFCFF] via-white/80 to-transparent z-0 pointer-events-none"></div>
+            <div className="absolute bottom-0 inset-x-0 h-[50vh] bg-gradient-to-t from-[#FAFCFF] via-white/60 to-transparent z-0 pointer-events-none"></div>
             <div className="absolute bottom-0 inset-x-0 h-4 bg-gradient-to-r from-[#1C7F93]/20 via-[#123962]/20 to-[#1C7F93]/20 blur-md"></div>
 
             <div className="container mx-auto px-4 relative z-10 text-center flex flex-col items-center flex-1 pb-32">
 
-               <div className="inline-flex items-center space-x-3 bg-white/70 backdrop-blur-md px-5 py-2.5 rounded-full mb-8 shadow-sm border border-slate-200/50 transform hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-                  <span className="relative flex h-3 w-3">
-                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1C7F93] opacity-75"></span>
-                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#1C7F93]"></span>
-                  </span>
-                  <span className="text-[10px] font-black tracking-[0.2em] text-[#123962] uppercase">Since 1947 &bull; Bahawalpur Chapter</span>
-               </div>
+               <HeroBubble />
 
                <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-6 tracking-tight leading-[1.05] max-w-5xl mx-auto text-[#123962]">
                   Awakening A Generation <br className="hidden md:block" />
@@ -109,10 +92,10 @@ export default async function Home() {
                            1.
                         </span>
                         <div className="pt-2 sm:pt-4">
-                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Dawah</h4>
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">"Dawah" (Call to Allah)</h4>
                         </div>
                      </div>
-                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Inviting students to the way of Allah, fostering a deep connection with the Quran & Sunnah, and instilling responsibility.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">To convey the message of Islam to the students, to inspire them to acquire Islamic knowledge and to arouse in them the sense of responsibility to practice Islam in full.</p>
                   </div>
 
                   <div className="group lg:col-span-2 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
@@ -125,7 +108,7 @@ export default async function Home() {
                            <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Organization</h4>
                         </div>
                      </div>
-                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Uniting youth on a shared Islamic platform, empowering them to discover their identity and historical heritage.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">To organize the students who are ready to partake in the struggle for establishing Islamic way of life within the fold of this organization.</p>
                   </div>
 
                   <div className="group lg:col-span-2 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
@@ -138,7 +121,7 @@ export default async function Home() {
                            <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Training</h4>
                         </div>
                      </div>
-                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Equipping the future generation with advanced leadership skills, pristine morals, and unshakeable character.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">To impart Islamic knowledge and mold capable men of character, able to brave the challenges of Jahilyah and champion the superiority of Islam.</p>
                   </div>
 
                   <div className="group lg:col-span-2 md:col-start-1 lg:col-start-2 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
@@ -148,10 +131,10 @@ export default async function Home() {
                            4.
                         </span>
                         <div className="pt-2 sm:pt-4">
-                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Education</h4>
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors leading-snug">Education Movement</h4>
                         </div>
                      </div>
-                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Leading an educational movement advocating for youth rights and the integration of profound Islamic principles into academia.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">To transform the education system based on Islamic values, build ideal citizens, and resolve real student problems.</p>
                   </div>
 
                   <div className="group lg:col-span-2 md:col-start-2 lg:col-start-4 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
@@ -161,10 +144,10 @@ export default async function Home() {
                            5.
                         </span>
                         <div className="pt-2 sm:pt-4">
-                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Social Work</h4>
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors leading-snug">Islamic Social Order</h4>
                         </div>
                      </div>
-                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Dedication to public service, working actively towards a just welfare society free from exploitation.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">To strive tirelessly for an Islamic social order, freeing humanity from economic exploitation, political oppression, and cultural servitude.</p>
                   </div>
                </div>
             </div>
@@ -364,45 +347,74 @@ export default async function Home() {
                   ))}
 
                   {/* Event Card (Glassmorphism overlay style) */}
-                  {featuredEvent ? (
-                     <div className="group bg-gradient-to-bl from-[#123962] to-[#0c2848] rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.3)] relative flex flex-col justify-end p-10 min-h-[480px]">
-                        <div className="absolute inset-0 bg-black opacity-40 mix-blend-overlay group-hover:opacity-50 group-hover:scale-105 transition-all duration-1000" style={{ backgroundImage: `url('${featuredEvent.imageUrl || 'https://picsum.photos/seed/jamiatevent/600/800'}')`, backgroundSize: 'cover' }}></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#123962] via-[#123962]/60 to-transparent"></div>
-
-                        <div className="relative z-10 w-full">
-                           {(featuredEvent.isActive !== false) && (
-                              <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
-                                 <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
-                                 <span className="text-[10px] font-extrabold text-white uppercase tracking-widest">Upcoming Event</span>
-                              </div>
-                           )}
-                           <h4 className="text-3xl font-black text-white mb-6 leading-tight">{featuredEvent.title || "Annual Tarbiyati Convention"}</h4>
-                           <div className="px-6 py-5 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mb-8 space-y-3">
-                              <p className="flex items-center text-white text-sm font-bold">
-                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                 {featuredEvent.dateStr || "TBD"}
-                              </p>
-                              <p className="flex items-center text-white text-sm font-bold">
-                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                                 {featuredEvent.location || "TBD"}
-                              </p>
-                           </div>
-                           <Link href={`/events/${featuredEvent.id}`} className="inline-flex w-full justify-center px-6 py-4 bg-white text-[#123962] rounded-2xl font-extrabold text-sm hover:bg-[#1C7F93] hover:text-white transition-all duration-300 shadow-xl">
-                              Register Now
-                           </Link>
-                        </div>
+                  <Suspense fallback={
+                     <div className="group bg-gradient-to-bl from-slate-100 to-white rounded-[2.5rem] border border-slate-100 flex flex-col justify-center items-center p-10 min-h-[480px] animate-pulse">
+                        <div className="w-10 h-10 rounded-full bg-slate-200 mb-4"></div>
+                        <div className="h-6 w-48 bg-slate-200 rounded mb-2"></div>
+                        <div className="h-4 w-32 bg-slate-200 rounded"></div>
                      </div>
-                  ) : (
-                     <div className="group bg-gradient-to-bl from-slate-100 to-white rounded-[2.5rem] border border-slate-100 flex flex-col justify-center items-center p-10 min-h-[480px]">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-slate-300 mb-4"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
-                        <h4 className="text-xl font-bold text-slate-400 mb-2">No Upcoming Events</h4>
-                        <p className="text-slate-400/80 text-sm text-center">Check back soon for conventions.</p>
-                     </div>
-                  )}
+                  }>
+                     <FeaturedEvent />
+                  </Suspense>
                </div>
             </div>
          </section>
 
       </div>
    );
+}
+
+async function FeaturedEvent() {
+  const eventsRef = collection(db, 'events');
+  const q = query(eventsRef, limit(1));
+  let featuredEvent = null;
+  
+  try {
+     const querySnapshot = await getDocs(q);
+     if (!querySnapshot.empty) {
+        featuredEvent = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as any;
+     }
+  } catch (error) {
+     console.error("Error fetching featured event:", error);
+  }
+
+  if (!featuredEvent) {
+     return (
+        <div className="group bg-gradient-to-bl from-slate-100 to-white rounded-[2.5rem] border border-slate-100 flex flex-col justify-center items-center p-10 min-h-[480px]">
+           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-slate-300 mb-4"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+           <h4 className="text-xl font-bold text-slate-400 mb-2">No Upcoming Events</h4>
+           <p className="text-slate-400/80 text-sm text-center">Check back soon for conventions.</p>
+        </div>
+     );
+  }
+
+  return (
+     <div className="group bg-gradient-to-bl from-[#123962] to-[#0c2848] rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.3)] relative flex flex-col justify-end p-10 min-h-[480px]">
+        <div className="absolute inset-0 bg-black opacity-40 mix-blend-overlay group-hover:opacity-50 group-hover:scale-105 transition-all duration-1000" style={{ backgroundImage: `url('${featuredEvent.imageUrl || 'https://picsum.photos/seed/jamiatevent/600/800'}')`, backgroundSize: 'cover' }}></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#123962] via-[#123962]/60 to-transparent"></div>
+
+        <div className="relative z-10 w-full">
+           {(featuredEvent.isActive !== false) && (
+              <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
+                 <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
+                 <span className="text-[10px] font-extrabold text-white uppercase tracking-widest">Upcoming Event</span>
+              </div>
+           )}
+           <h4 className="text-3xl font-black text-white mb-6 leading-tight">{featuredEvent.title || "Annual Tarbiyati Convention"}</h4>
+           <div className="px-6 py-5 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mb-8 space-y-3">
+              <p className="flex items-center text-white text-sm font-bold">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                 {featuredEvent.dateStr || "TBD"}
+              </p>
+              <p className="flex items-center text-white text-sm font-bold">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                 {featuredEvent.location || "TBD"}
+              </p>
+           </div>
+           <Link href={`/events/${featuredEvent.id}`} className="inline-flex w-full justify-center px-6 py-4 bg-white text-[#123962] rounded-2xl font-extrabold text-sm hover:bg-[#1C7F93] hover:text-white transition-all duration-300 shadow-xl">
+              Register Now
+           </Link>
+        </div>
+     </div>
+  );
 }
