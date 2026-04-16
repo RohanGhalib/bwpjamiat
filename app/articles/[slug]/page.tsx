@@ -1,6 +1,15 @@
-export default async function SingleArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+import { Suspense } from 'react';
+
+// Pre-generate pages for all known article slugs
+export function generateStaticParams() {
+  return Array.from({ length: 6 }, (_, i) => ({
+    slug: String(i + 1),
+  }));
+}
+
+async function ArticleContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
+
   return (
     <div className="min-h-screen py-16 bg-white">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -14,7 +23,7 @@ export default async function SingleArticlePage({ params }: { params: Promise<{ 
                 <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
                 <div>
                    <p className="font-bold text-gray-900">Author Name</p>
-                   <p>Writer & Scholar</p>
+                   <p>Writer &amp; Scholar</p>
                 </div>
              </div>
              <div className="ml-auto flex items-center gap-4">
@@ -38,10 +47,36 @@ export default async function SingleArticlePage({ params }: { params: Promise<{ 
              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
            </p>
            <blockquote className="border-l-4 border-[#1C7F93] pl-6 italic text-gray-600 my-8">
-             "The pursuit of knowledge is an obligation upon every Muslim."
+             &quot;The pursuit of knowledge is an obligation upon every Muslim.&quot;
            </blockquote>
         </div>
       </div>
     </div>
+  );
+}
+
+function ArticleLoading() {
+  return (
+    <div className="min-h-screen py-16 bg-white">
+      <div className="container mx-auto px-4 max-w-4xl animate-pulse">
+        <div className="h-6 w-24 bg-gray-200 rounded-full mb-6"></div>
+        <div className="h-12 w-3/4 bg-gray-200 rounded-lg mb-6"></div>
+        <div className="h-4 w-1/2 bg-gray-100 rounded mb-10"></div>
+        <div className="h-64 w-full bg-gray-100 rounded-2xl mb-10"></div>
+        <div className="space-y-4">
+          <div className="h-4 w-full bg-gray-100 rounded"></div>
+          <div className="h-4 w-5/6 bg-gray-100 rounded"></div>
+          <div className="h-4 w-4/6 bg-gray-100 rounded"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SingleArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  return (
+    <Suspense fallback={<ArticleLoading />}>
+      <ArticleContent params={params} />
+    </Suspense>
   );
 }

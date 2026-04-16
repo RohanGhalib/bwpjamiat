@@ -6,9 +6,7 @@ const nextConfig: NextConfig = {
   experimental: {
     instantNavigationDevToolsToggle: true,
   },
-  turbopack: {
-    root: process.cwd(),
-  },
+
   images: {
     remotePatterns: [
       {
