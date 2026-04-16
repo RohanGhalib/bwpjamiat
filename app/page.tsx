@@ -253,7 +253,7 @@ export default function Home() {
                 <Link href={`/articles/${i}`} key={i} className="group flex flex-col bg-white rounded-[2.5rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-slate-50 hover:border-[#1C7F93]/20 transition-all duration-500 hover:shadow-[0_20px_40px_rgb(0,0,0,0.06)] hover:-translate-y-2">
                    <div className="h-64 bg-slate-100 relative overflow-hidden m-3 rounded-[2rem]">
                       <div className="absolute inset-0 bg-[#123962]/5 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                      <Image src={`https://picsum.photos/seed/${i*50}/600/400`} alt="Article Image" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                     <Image src={`https://picsum.photos/seed/${i*50}/600/400`} alt="Article Image" fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute top-5 left-5 z-20 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full shadow-sm">
                          <span className="text-[10px] font-black uppercase tracking-widest text-[#1C7F93]">Tarbiyah</span>
                       </div>

@@ -18,7 +18,7 @@ export default async function Footer() {
           <div className="lg:col-span-4 pr-6">
             <Link href="/" className="flex items-center space-x-3 mb-6">
               <div className="relative w-12 h-12">
-                 <Image src="/logo.png" alt="IJT Logo" fill className="object-contain" />
+                 <Image src="/logo.png" alt="IJT Logo" fill sizes="48px" className="object-contain" />
               </div>
               <h3 className="font-extrabold text-xl tracking-tight text-[#123962]">Jamiat BWP</h3>
             </Link>
