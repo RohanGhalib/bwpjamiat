@@ -1,8 +1,24 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, limit } from 'firebase/firestore';
 
+export const revalidate = 60; // ISR for homepage
 
-export default function Home() {
+export default async function Home() {
+  const eventsRef = collection(db, 'events');
+  const q = query(eventsRef, limit(1));
+  let featuredEvent = null;
+  
+  try {
+     const querySnapshot = await getDocs(q);
+     if (!querySnapshot.empty) {
+        featuredEvent = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as any;
+     }
+  } catch (error) {
+     console.error("Error fetching featured event:", error);
+  }
+
    return (
       <div className="flex flex-col min-h-screen bg-[#FAFCFF] overflow-hidden selection:bg-[#1C7F93] selection:text-white font-sans">
 
@@ -348,31 +364,41 @@ export default function Home() {
                   ))}
 
                   {/* Event Card (Glassmorphism overlay style) */}
-                  <div className="group bg-gradient-to-bl from-[#123962] to-[#0c2848] rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.3)] relative flex flex-col justify-end p-10 min-h-[480px]">
-                     <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/jamiatever/600/800')] opacity-40 mix-blend-overlay group-hover:opacity-50 group-hover:scale-105 transition-all duration-1000"></div>
-                     <div className="absolute inset-0 bg-gradient-to-t from-[#123962] via-[#123962]/60 to-transparent"></div>
+                  {featuredEvent ? (
+                     <div className="group bg-gradient-to-bl from-[#123962] to-[#0c2848] rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.3)] relative flex flex-col justify-end p-10 min-h-[480px]">
+                        <div className="absolute inset-0 bg-black opacity-40 mix-blend-overlay group-hover:opacity-50 group-hover:scale-105 transition-all duration-1000" style={{ backgroundImage: `url('${featuredEvent.imageUrl || 'https://picsum.photos/seed/jamiatevent/600/800'}')`, backgroundSize: 'cover' }}></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#123962] via-[#123962]/60 to-transparent"></div>
 
-                     <div className="relative z-10 w-full">
-                        <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
-                           <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
-                           <span className="text-[10px] font-extrabold text-white uppercase tracking-widest">Upcoming Event</span>
+                        <div className="relative z-10 w-full">
+                           {(featuredEvent.isActive !== false) && (
+                              <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
+                                 <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
+                                 <span className="text-[10px] font-extrabold text-white uppercase tracking-widest">Upcoming Event</span>
+                              </div>
+                           )}
+                           <h4 className="text-3xl font-black text-white mb-6 leading-tight">{featuredEvent.title || "Annual Tarbiyati Convention"}</h4>
+                           <div className="px-6 py-5 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mb-8 space-y-3">
+                              <p className="flex items-center text-white text-sm font-bold">
+                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                 {featuredEvent.dateStr || "TBD"}
+                              </p>
+                              <p className="flex items-center text-white text-sm font-bold">
+                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                 {featuredEvent.location || "TBD"}
+                              </p>
+                           </div>
+                           <Link href={`/events/${featuredEvent.id}`} className="inline-flex w-full justify-center px-6 py-4 bg-white text-[#123962] rounded-2xl font-extrabold text-sm hover:bg-[#1C7F93] hover:text-white transition-all duration-300 shadow-xl">
+                              Register Now
+                           </Link>
                         </div>
-                        <h4 className="text-3xl font-black text-white mb-6 leading-tight">Annual Tarbiyati Convention BWP</h4>
-                        <div className="px-6 py-5 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mb-8 space-y-3">
-                           <p className="flex items-center text-white text-sm font-bold">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                              Nov 15 &bull; 09:00 AM
-                           </p>
-                           <p className="flex items-center text-white text-sm font-bold">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                              IUB Main Auditorium
-                           </p>
-                        </div>
-                        <Link href="/events/1" className="inline-flex w-full justify-center px-6 py-4 bg-white text-[#123962] rounded-2xl font-extrabold text-sm hover:bg-[#1C7F93] hover:text-white transition-all duration-300 shadow-xl">
-                           Register Now
-                        </Link>
                      </div>
-                  </div>
+                  ) : (
+                     <div className="group bg-gradient-to-bl from-slate-100 to-white rounded-[2.5rem] border border-slate-100 flex flex-col justify-center items-center p-10 min-h-[480px]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-slate-300 mb-4"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                        <h4 className="text-xl font-bold text-slate-400 mb-2">No Upcoming Events</h4>
+                        <p className="text-slate-400/80 text-sm text-center">Check back soon for conventions.</p>
+                     </div>
+                  )}
                </div>
             </div>
          </section>
