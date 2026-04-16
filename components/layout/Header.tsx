@@ -16,7 +16,7 @@ export default function Header() {
                <Image src="/logo.png" alt="IJT Logo" fill sizes="44px" className="object-contain" priority />
             </div>
             <div>
-              <h1 className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#123962] to-[#1C7F93]">Islami Jamiat-e-Talaba</h1>
+              <h1 className="font-extrabold text-[15px] sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#123962] to-[#1C7F93]">Islami Jamiat-e-Talaba</h1>
               <p className="text-[10px] uppercase font-black tracking-[0.2em] text-[#1C7F93] opacity-80 mt-0.5">Bahawalpur</p>
             </div>
           </Link>

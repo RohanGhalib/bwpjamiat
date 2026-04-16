@@ -12,8 +12,8 @@ export default function Home() {
         <div className="absolute top-20 left-10 w-[300px] h-[300px] bg-gradient-to-tr from-green-100/40 to-transparent blur-[80px] rounded-full -z-10 pointer-events-none"></div>
         
         {/* Noor Mahal Graphic - Blended as a majestic subtle vintage background */}
-        <div className="absolute bottom-0 inset-x-0 w-full h-[55vh] lg:h-[70vh] z-0 pointer-events-none opacity-[0.08] mix-blend-luminosity grayscale">
-           <Image src="/noor.png" alt="Noor Mahal Bahawalpur" fill sizes="100vw" className="object-contain object-bottom" priority />
+        <div className="absolute bottom-0 inset-x-0 w-full h-[55vh] lg:h-[70vh] z-0 pointer-events-none opacity-[0.12] md:opacity-[0.08] mix-blend-luminosity grayscale">
+           <Image src="/noor.png" alt="Noor Mahal Bahawalpur" fill sizes="100vw" className="object-cover md:object-contain object-bottom" priority />
         </div>
         <div className="absolute bottom-0 inset-x-0 h-[40vh] bg-gradient-to-t from-[#FAFCFF] via-white/80 to-transparent z-0 pointer-events-none"></div>
         <div className="absolute bottom-0 inset-x-0 h-4 bg-gradient-to-r from-[#1C7F93]/20 via-[#123962]/20 to-[#1C7F93]/20 blur-md"></div>
@@ -135,10 +135,10 @@ export default function Home() {
       </section>
 
       {/* Rich Stats Section */}
-      <section className="py-0 relative overflow-hidden my-16 mx-4 lg:mx-8 rounded-[3rem]">
+      <section className="py-0 relative overflow-hidden mt-12 mb-16 mx-4 md:mx-8 rounded-3xl md:rounded-[3rem]">
 
         {/* === Deep layered background === */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1f3a] via-[#123962] to-[#0d2d4e] rounded-[3rem]"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1f3a] via-[#123962] to-[#0d2d4e] rounded-3xl md:rounded-[3rem]"></div>
 
         {/* Glowing orbs */}
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#1C7F93] opacity-20 blur-[120px] rounded-full pointer-events-none"></div>
@@ -159,7 +159,7 @@ export default function Home() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1C7F93]/60 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1C7F93]/40 to-transparent"></div>
 
-        <div className="relative z-10 px-8 lg:px-16 pt-16 pb-20">
+        <div className="relative z-10 px-6 sm:px-8 lg:px-16 pt-16 pb-20">
 
           {/* Section header */}
           <div className="text-center mb-16">
@@ -174,7 +174,7 @@ export default function Home() {
           </div>
 
           {/* Stat Cards Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
 
             {/* Card 1 */}
             <div className="group relative flex flex-col items-center text-center p-8 rounded-2xl border border-white/5 bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.07] hover:border-[#1C7F93]/30 transition-all duration-500 overflow-hidden">
@@ -226,7 +226,7 @@ export default function Home() {
           {/* Bottom decorative quote strip */}
           <div className="mt-14 flex items-center gap-6">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent to-white/10"></div>
-            <p className="text-center text-white/25 text-[11px] font-bold uppercase tracking-[0.25em] shrink-0">إِنَّ اللَّهَ مَعَ الصَّابِرِينَ &bull; Verily, Allah is with the patient</p>
+            <p className="text-center text-white/25 text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.25em] shrink-0">إِنَّ اللَّهَ مَعَ الصَّابِرِينَ &bull; Verily, Allah is with the patient</p>
             <div className="flex-1 h-px bg-gradient-to-l from-transparent to-white/10"></div>
           </div>
 
