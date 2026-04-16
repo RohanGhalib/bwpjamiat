@@ -1,6 +1,14 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default async function SingleEventPage({ params }: { params: Promise<{ id: string }> }) {
+// Pre-generate pages for all known event IDs
+export function generateStaticParams() {
+  return Array.from({ length: 6 }, (_, i) => ({
+    id: String(i + 1),
+  }));
+}
+
+async function EventContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
   return (
@@ -52,5 +60,33 @@ export default async function SingleEventPage({ params }: { params: Promise<{ id
         </div>
       </div>
     </div>
+  );
+}
+
+function EventLoading() {
+  return (
+    <div className="min-h-screen py-16 bg-gray-50">
+      <div className="container mx-auto px-4 max-w-5xl animate-pulse">
+        <div className="h-4 w-24 bg-gray-200 rounded mb-8"></div>
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm flex flex-col md:flex-row min-h-[400px]">
+          <div className="md:w-1/2 bg-gray-200"></div>
+          <div className="p-8 md:w-1/2 flex flex-col justify-center space-y-6">
+            <div className="h-6 w-32 bg-gray-200 rounded-full"></div>
+            <div className="h-10 w-full bg-gray-200 rounded"></div>
+            <div className="h-20 w-full bg-gray-100 rounded"></div>
+            <div className="h-20 w-full bg-gray-100 rounded"></div>
+            <div className="h-12 w-full bg-gray-200 rounded-lg mt-auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SingleEventPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense fallback={<EventLoading />}>
+      <EventContent params={params} />
+    </Suspense>
   );
 }

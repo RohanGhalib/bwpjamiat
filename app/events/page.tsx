@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-export const unstable_instant = { prefetch: 'static' };
 
 export default function EventsList() {
   return (

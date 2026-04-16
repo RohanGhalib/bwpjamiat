@@ -1,6 +1,14 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default async function SingleCoursePage({ params }: { params: Promise<{ id: string }> }) {
+// Pre-generate pages for all known course IDs
+export function generateStaticParams() {
+  return Array.from({ length: 6 }, (_, i) => ({
+    id: String(i + 1),
+  }));
+}
+
+async function CourseContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
   return (
@@ -63,5 +71,33 @@ export default async function SingleCoursePage({ params }: { params: Promise<{ i
          </div>
       </div>
     </div>
+  );
+}
+
+function CourseLoading() {
+  return (
+    <div className="min-h-screen py-16 bg-gray-50">
+      <div className="container mx-auto px-4 max-w-6xl animate-pulse">
+        <div className="h-4 w-40 bg-gray-200 rounded mb-8"></div>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="md:col-span-2 space-y-6">
+            <div className="bg-[#123962]/50 rounded-xl p-8 h-48"></div>
+            <div className="bg-gray-200 rounded-xl h-64"></div>
+            <div className="bg-white rounded-xl border border-gray-100 p-6 md:p-8 h-32"></div>
+          </div>
+          <div>
+            <div className="bg-white rounded-xl border border-gray-100 h-96"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SingleCoursePage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense fallback={<CourseLoading />}>
+      <CourseContent params={params} />
+    </Suspense>
   );
 }
