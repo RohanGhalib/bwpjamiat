@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default function Footer() {
+async function getCachedYear() {
+  'use cache';
+  return new Date().getFullYear();
+}
+
+export default async function Footer() {
+  const year = await getCachedYear();
   return (
     <footer className="bg-white text-slate-600 border-t border-slate-100 mt-auto relative overflow-hidden font-sans">
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-[#1C7F93]/5 to-transparent rounded-bl-full -z-10"></div>
@@ -59,7 +65,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-slate-100/80 mt-20 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 font-bold uppercase tracking-wider">
-          <p>&copy; {new Date().getFullYear()} Islami Jamiat-e-Talaba Pakistan.</p>
+          <p>&copy; {year} Islami Jamiat-e-Talaba Pakistan.</p>
           <div className="mt-4 md:mt-0 space-x-8">
             <Link href="/privacy" className="hover:text-[#123962] transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-[#123962] transition-colors">Terms</Link>
