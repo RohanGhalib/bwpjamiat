@@ -85,50 +85,70 @@ export default function Home() {
                   <h3 className="text-4xl md:text-5xl font-extrabold text-[#123962] tracking-tight">The 5 Points Towards Revolution</h3>
                </div>
 
-               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                  <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-50 hover:border-[#1C7F93]/20 hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] transition-all duration-500 group relative overflow-hidden transform hover:-translate-y-2">
-                     <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#1C7F93]/5 to-transparent rounded-bl-full -z-10 group-hover:scale-150 group-hover:bg-[#1C7F93]/10 transition-all duration-700"></div>
-                     <div className="w-16 h-16 bg-[#FAFCFF] shadow-sm rounded-2xl flex items-center justify-center mb-8 text-[#1C7F93] ring-1 ring-slate-100 group-hover:ring-[#1C7F93] transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.315 48.315 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-10">
+                  <div className="group lg:col-span-2 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#1C7F93]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                     <div className="flex items-start gap-4 mb-6 relative z-10">
+                        <span className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#1C7F93] to-[#1C7F93]/30 leading-none -mt-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                           1.
+                        </span>
+                        <div className="pt-2 sm:pt-4">
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Dawah</h4>
+                        </div>
                      </div>
-                     <h4 className="text-2xl font-extrabold text-[#123962] mb-4">Dawah</h4>
-                     <p className="text-slate-500/90 leading-relaxed font-medium">Inviting students to the way of Allah, fostering a deep connection with the Quran & Sunnah, and instilling responsibility.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Inviting students to the way of Allah, fostering a deep connection with the Quran & Sunnah, and instilling responsibility.</p>
                   </div>
 
-                  <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-50 hover:border-[#1C7F93]/20 hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] transition-all duration-500 group relative overflow-hidden transform hover:-translate-y-2">
-                     <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#1C7F93]/5 to-transparent rounded-bl-full -z-10 group-hover:scale-150 group-hover:bg-[#1C7F93]/10 transition-all duration-700"></div>
-                     <div className="w-16 h-16 bg-[#FAFCFF] shadow-sm rounded-2xl flex items-center justify-center mb-8 text-[#1C7F93] ring-1 ring-slate-100 group-hover:ring-[#1C7F93] transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
+                  <div className="group lg:col-span-2 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#1C7F93]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                     <div className="flex items-start gap-4 mb-6 relative z-10">
+                        <span className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#1C7F93] to-[#1C7F93]/30 leading-none -mt-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                           2.
+                        </span>
+                        <div className="pt-2 sm:pt-4">
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Organization</h4>
+                        </div>
                      </div>
-                     <h4 className="text-2xl font-extrabold text-[#123962] mb-4">Organization</h4>
-                     <p className="text-slate-500/90 leading-relaxed font-medium">Uniting youth on a shared Islamic platform, empowering them to discover their identity and historical heritage.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Uniting youth on a shared Islamic platform, empowering them to discover their identity and historical heritage.</p>
                   </div>
 
-                  <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-50 hover:border-[#1C7F93]/20 hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] transition-all duration-500 group relative overflow-hidden transform hover:-translate-y-2">
-                     <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#1C7F93]/5 to-transparent rounded-bl-full -z-10 group-hover:scale-150 group-hover:bg-[#1C7F93]/10 transition-all duration-700"></div>
-                     <div className="w-16 h-16 bg-[#FAFCFF] shadow-sm rounded-2xl flex items-center justify-center mb-8 text-[#1C7F93] ring-1 ring-slate-100 group-hover:ring-[#1C7F93] transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" /></svg>
+                  <div className="group lg:col-span-2 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#1C7F93]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                     <div className="flex items-start gap-4 mb-6 relative z-10">
+                        <span className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#1C7F93] to-[#1C7F93]/30 leading-none -mt-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                           3.
+                        </span>
+                        <div className="pt-2 sm:pt-4">
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Training</h4>
+                        </div>
                      </div>
-                     <h4 className="text-2xl font-extrabold text-[#123962] mb-4">Training</h4>
-                     <p className="text-slate-500/90 leading-relaxed font-medium">Equipping the future generation with advanced leadership skills, pristine morals, and unshakeable character.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Equipping the future generation with advanced leadership skills, pristine morals, and unshakeable character.</p>
                   </div>
 
-                  <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-50 hover:border-[#1C7F93]/20 hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] transition-all duration-500 group relative overflow-hidden transform hover:-translate-y-2 lg:col-start-1 lg:translate-x-1/2">
-                     <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#1C7F93]/5 to-transparent rounded-bl-full -z-10 group-hover:scale-150 group-hover:bg-[#1C7F93]/10 transition-all duration-700"></div>
-                     <div className="w-16 h-16 bg-[#FAFCFF] shadow-sm rounded-2xl flex items-center justify-center mb-8 text-[#1C7F93] ring-1 ring-slate-100 group-hover:ring-[#1C7F93] transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                  <div className="group lg:col-span-2 md:col-start-1 lg:col-start-2 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#1C7F93]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                     <div className="flex items-start gap-4 mb-6 relative z-10">
+                        <span className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#1C7F93] to-[#1C7F93]/30 leading-none -mt-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                           4.
+                        </span>
+                        <div className="pt-2 sm:pt-4">
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Education</h4>
+                        </div>
                      </div>
-                     <h4 className="text-2xl font-extrabold text-[#123962] mb-4">Education</h4>
-                     <p className="text-slate-500/90 leading-relaxed font-medium">Leading an educational movement advocating for youth rights and the integration of profound Islamic principles into academia.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Leading an educational movement advocating for youth rights and the integration of profound Islamic principles into academia.</p>
                   </div>
 
-                  <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-50 hover:border-[#1C7F93]/20 hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] transition-all duration-500 group relative overflow-hidden transform hover:-translate-y-2 lg:col-start-2 lg:translate-x-1/2">
-                     <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#1C7F93]/5 to-transparent rounded-bl-full -z-10 group-hover:scale-150 group-hover:bg-[#1C7F93]/10 transition-all duration-700"></div>
-                     <div className="w-16 h-16 bg-[#FAFCFF] shadow-sm rounded-2xl flex items-center justify-center mb-8 text-[#1C7F93] ring-1 ring-slate-100 group-hover:ring-[#1C7F93] transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                  <div className="group lg:col-span-2 md:col-start-2 lg:col-start-4 relative bg-white/70 backdrop-blur-md rounded-[2rem] p-8 lg:p-10 border border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(28,127,147,0.08)] hover:border-[#1C7F93]/20 transition-all duration-500 overflow-hidden transform hover:-translate-y-2 flex flex-col">
+                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#1C7F93]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                     <div className="flex items-start gap-4 mb-6 relative z-10">
+                        <span className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#1C7F93] to-[#1C7F93]/30 leading-none -mt-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                           5.
+                        </span>
+                        <div className="pt-2 sm:pt-4">
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">Social Work</h4>
+                        </div>
                      </div>
-                     <h4 className="text-2xl font-extrabold text-[#123962] mb-4">Social Work</h4>
-                     <p className="text-slate-500/90 leading-relaxed font-medium">Dedication to public service, working actively towards a just welfare society free from exploitation.</p>
+                     <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">Dedication to public service, working actively towards a just welfare society free from exploitation.</p>
                   </div>
                </div>
             </div>
