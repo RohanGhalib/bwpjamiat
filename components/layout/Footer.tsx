@@ -64,11 +64,27 @@ export default async function Footer() {
           
         </div>
         
-        <div className="border-t border-slate-100/80 mt-20 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 font-bold uppercase tracking-wider">
-          <p>&copy; {year} Islami Jamiat-e-Talaba Pakistan.</p>
-          <div className="mt-4 md:mt-0 space-x-8">
-            <Link href="/privacy" className="hover:text-[#123962] transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-[#123962] transition-colors">Terms</Link>
+        <div className="border-t border-slate-100/80 mt-20 pt-8 flex flex-col items-center text-xs text-slate-400 font-bold tracking-wider">
+          <div className="w-full flex flex-col md:flex-row justify-between items-center uppercase">
+             <p>&copy; {year} Islami Jamiat-e-Talaba Pakistan &bull; Bahawalpur Chapter</p>
+             <div className="mt-4 md:mt-0 space-x-8">
+               <Link href="/privacy" className="hover:text-[#123962] transition-colors">Privacy</Link>
+               <Link href="/terms" className="hover:text-[#123962] transition-colors">Terms</Link>
+             </div>
+          </div>
+          
+          <div className="mt-12 flex flex-col items-center justify-center pt-8 border-t border-slate-50 w-full mb-2 group">
+             <p className="text-[9px] uppercase tracking-[0.3em] text-slate-300 mb-4 text-center font-black">Powered By</p>
+             <a href="#" className="relative transition-all duration-500 hover:scale-105" aria-label="IJT Tech Zone">
+                <div className="absolute inset-0 bg-slate-50 opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500 rounded-full"></div>
+                <Image 
+                   src="/logotechzone.webp" 
+                   alt="IJT Tech Zone Logo" 
+                   width={120} 
+                   height={50} 
+                   className="object-contain relative z-10 grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 drop-shadow-sm" 
+                />
+             </a>
           </div>
         </div>
       </div>
