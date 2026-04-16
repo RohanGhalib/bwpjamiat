@@ -1,39 +1,45 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Header() {
   return (
-    <header className="bg-[#123962] text-white sticky top-0 z-50 shadow-md">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#123962] font-bold border-2 border-[#1C7F93]">
-            <span className="text-xs leading-none">IJT</span>
-            <span className="text-[10px] leading-none">BWP</span>
-          </div>
-          <div>
-            <h1 className="font-bold text-lg md:text-xl leading-tight">Islami Jamiat-e-Talaba</h1>
-            <p className="text-xs text-blue-200">Bahawalpur</p>
-          </div>
-        </Link>
-        <nav className="hidden lg:flex space-x-6 text-sm font-medium">
-          <Link href="/" className="hover:text-blue-300 transition-colors">Home</Link>
-          <Link href="/taranas" className="hover:text-blue-300 transition-colors">Taranas</Link>
-          <Link href="/literature" className="hover:text-blue-300 transition-colors">Literature</Link>
-          <Link href="/articles" className="hover:text-blue-300 transition-colors">Articles</Link>
-          <Link href="/events" className="hover:text-blue-300 transition-colors">Events</Link>
-          <Link href="/ahbab-link" className="hover:text-blue-300 transition-colors">Ahbab Link</Link>
-          <Link href="/lms" className="hover:text-blue-300 transition-colors">LMS</Link>
-        </nav>
-        <div className="flex items-center space-x-4">
-          <Link href="/contact" className="hidden sm:inline-flex items-center justify-center px-5 py-2 bg-[#1C7F93] text-white rounded-md hover:bg-blue-600 transition-all font-semibold shadow-sm text-sm">
-            Join Us
+    <div className="fixed top-0 inset-x-0 z-50 p-4 font-sans">
+      <header className="max-w-6xl mx-auto rounded-2xl bg-white/70 backdrop-blur-lg border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-[#123962] transition-all">
+        <div className="px-6 py-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative w-11 h-11 overflow-hidden transform group-hover:scale-105 transition-transform duration-300">
+               <Image src="/logo.png" alt="IJT Logo" fill className="object-contain" priority />
+            </div>
+            <div>
+              <h1 className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#123962] to-[#1C7F93]">Islami Jamiat-e-Talaba</h1>
+              <p className="text-[10px] uppercase font-black tracking-[0.2em] text-[#1C7F93] opacity-80 mt-0.5">Bahawalpur</p>
+            </div>
           </Link>
-          <button className="lg:hidden text-white p-2 hover:bg-blue-800 rounded-md transition-colors" aria-label="Toggle menu">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
+          
+          <nav className="hidden lg:flex items-center space-x-8 text-sm font-semibold">
+            <Link href="/" className="relative text-[#123962] hover:text-[#1C7F93] transition-colors after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#1C7F93] hover:after:w-full after:transition-all after:duration-300">Home</Link>
+            <Link href="/taranas" className="relative text-slate-500 hover:text-[#123962] transition-colors after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#1C7F93] hover:after:w-full after:transition-all after:duration-300">Taranas</Link>
+            <Link href="/literature" className="relative text-slate-500 hover:text-[#123962] transition-colors after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#1C7F93] hover:after:w-full after:transition-all after:duration-300">Literature</Link>
+            <Link href="/articles" className="relative text-slate-500 hover:text-[#123962] transition-colors after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#1C7F93] hover:after:w-full after:transition-all after:duration-300">Articles</Link>
+            <Link href="/events" className="relative text-slate-500 hover:text-[#123962] transition-colors after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#1C7F93] hover:after:w-full after:transition-all after:duration-300">Events</Link>
+            <Link href="/lms" className="relative text-slate-500 hover:text-[#123962] transition-colors after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#1C7F93] hover:after:w-full after:transition-all after:duration-300">LMS</Link>
+          </nav>
+
+          <div className="flex items-center space-x-4">
+            <Link href="/ahbab-link" className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-extrabold text-[#123962] hover:text-[#1C7F93] transition-colors">
+              Ahbab Login
+            </Link>
+            <Link href="/contact" className="hidden sm:inline-flex items-center justify-center px-6 py-2.5 bg-gradient-to-r from-[#1C7F93] to-[#2669A9] text-white rounded-full shadow-[0_4px_14px_0_rgba(28,127,147,0.39)] hover:shadow-[0_6px_20px_rgba(28,127,147,0.23)] hover:bg-[rgba(28,127,147,0.9)] transition-all duration-300 font-bold text-sm transform hover:-translate-y-0.5">
+              Join IJT
+            </Link>
+            <button className="lg:hidden text-[#123962] p-2 hover:bg-slate-100 rounded-full transition-colors" aria-label="Toggle menu">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 }
