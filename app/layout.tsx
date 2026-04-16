@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -14,6 +14,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const notoNastaliq = Noto_Nastaliq_Urdu({
+  weight: ['400', '700'],
+  variable: "--font-nastaliq",
+  subsets: ["arabic"], // Urdu uses arabic character set in google fonts
+});
 export const metadata: Metadata = {
   title: "Islami Jamiat-e-Talaba Bahawalpur",
   description: "Official website for Islami Jamiat-e-Talaba Bahawalpur. Largest student organization in Pakistan.",
@@ -27,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliq.variable} h-full antialiased`}
     >
       <body className="flex min-h-screen flex-col font-sans bg-gray-50 text-gray-900">
         <Header />

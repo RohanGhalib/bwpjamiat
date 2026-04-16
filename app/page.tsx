@@ -134,6 +134,64 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Modern Jamiat Manifesto Section with Urdu Nastaliq */}
+      <section className="py-24 md:py-32 relative overflow-hidden bg-white">
+         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-[#1C7F93]/10 to-transparent rounded-bl-full pointer-events-none blur-3xl"></div>
+         <div className="container mx-auto px-4 max-w-7xl relative z-10">
+            <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+               
+               <div className="space-y-8">
+                  <div className="inline-flex items-center space-x-2 bg-blue-50/50 backdrop-blur-sm px-4 py-2 rounded-full border border-blue-100">
+                     <span className="w-2 h-2 rounded-full bg-[#1C7F93] animate-pulse"></span>
+                     <span className="text-[10px] font-black tracking-[0.2em] text-[#123962] uppercase">The Movement</span>
+                  </div>
+                  
+                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#123962] tracking-tight leading-[1.05]">
+                     Forging the <br />
+                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1C7F93] to-[#2669A9]">Leaders of Tomorrow</span>
+                  </h3>
+                  
+                  <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-lg">
+                     We believe that the university is not just a marketplace for degrees, but a battlefield of ideas. Jamiat stands as a shield for the Muslim student, arming them with the absolute conviction of their faith and the intellectual rigor to lead the world.
+                  </p>
+
+                  <div className="pt-8 border-t border-slate-100">
+                     <div className="flex items-start space-x-5">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#123962] to-[#1C7F93] flex items-center justify-center shrink-0 shadow-lg shadow-[#1C7F93]/20 transform rotate-3">
+                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7 text-white -rotate-3"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                        </div>
+                        <div>
+                           <h4 className="font-extrabold text-[#123962] text-xl mb-1.5">Our Ultimate Goal</h4>
+                           <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-md">Establishment of the Islamic system of life by practically molding the youth into active, enlightened agents of societal change.</p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="relative h-full min-h-[400px] lg:min-h-[500px]">
+                  {/* Decorative Frame */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#123962] to-[#0a1f3a] rounded-[3rem] shadow-2xl transform rotate-3 scale-[1.02] transition-transform hover:rotate-6 duration-700"></div>
+                  
+                  {/* Glass Card with Urdu */}
+                  <div className="absolute inset-0 bg-white/5 backdrop-blur-md rounded-[3rem] border border-white/20 p-8 md:p-14 flex flex-col justify-center items-center text-center overflow-hidden">
+                     {/* Subtle organic shapes behind text */}
+                     <div className="absolute top-0 right-0 w-64 h-64 bg-[#1C7F93]/30 blur-[80px] rounded-full"></div>
+                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#2669A9]/20 blur-[80px] rounded-full"></div>
+                     
+                     <svg className="w-12 h-12 text-white/20 mb-6 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"></path></svg>
+                     
+                     <h2 style={{ fontFamily: 'var(--font-nastaliq)' }} className="text-3xl md:text-4xl lg:text-5xl text-white leading-[2.2] tracking-normal drop-shadow-md font-bold px-2">
+                        نظامِ تعلیم اور نظامِ زندگی کو اسلام کے سانچے میں ڈھالنا
+                     </h2>
+                     <div className="mt-8 h-1 w-16 bg-gradient-to-r from-transparent via-[#1C7F93] to-transparent"></div>
+                     <p className="text-white/60 mt-6 text-[10px] font-black tracking-[0.2em] uppercase">Core Manifesto</p>
+                  </div>
+               </div>
+
+            </div>
+         </div>
+      </section>
+
       {/* Rich Stats Section */}
       <section className="py-0 relative overflow-hidden mt-12 mb-16 mx-4 md:mx-8 rounded-3xl md:rounded-[3rem]">
 
