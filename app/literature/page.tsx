@@ -1,31 +1,39 @@
-import React from 'react';
+import Link from 'next/link';
 
-export default function LiteraturePage() {
+export default function Literature() {
+  const dummyBooks = Array.from({length: 6}, (_, i) => ({
+    id: i+1, title: `Islamic Jurisprudence Vol ${i+1}`,
+    author: "Syed Abul A'la Maududi", category: "Philosophy"
+  }));
+
   return (
-    <div className="min-h-screen py-16 bg-gray-50">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold text-[#123962] mb-4">Literature Library</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">Explore our extensive collection of Islamic books, magazines, and educational PDFs.</p>
-        </header>
+    <div className="min-h-screen bg-[#FAFCFF] pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
+      <div className="absolute top-20 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-[#123962]/5 to-transparent blur-[120px] rounded-full -z-10 pointer-events-none"></div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((book) => (
-            <div key={book} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
-              <div className="h-64 bg-gray-200 relative">
-                 <img src={`https://picsum.photos/seed/book${book}/300/400`} alt="Book Cover" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-gray-900 mb-1 line-clamp-1">Islamic Book Title {book}</h3>
-                <p className="text-xs text-gray-500 mb-4">Author Name • 2024</p>
-                <div className="flex gap-2">
-                  <button className="flex-1 py-2 bg-[#123962] text-white text-xs font-bold rounded-md hover:bg-opacity-90 transition-colors">Read Online</button>
-                  <button className="px-3 py-2 bg-gray-100 text-[#123962] rounded-md hover:bg-gray-200 transition-colors" title="Download PDF">
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                  </button>
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
+        <div className="text-center mb-16 max-w-2xl mx-auto">
+          <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">The Library</h2>
+          <h1 className="text-5xl font-black text-[#123962] mb-6 tracking-tight">Literature Archive</h1>
+          <p className="text-slate-500 font-medium leading-relaxed">Deepen your intellectual horizons with critical literature, philosophical treatises, and core curriculum books.</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {dummyBooks.map(book => (
+             <div key={book.id} className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-slate-50 hover:border-[#1C7F93]/20 hover:shadow-[0_20px_40px_rgba(28,127,147,0.08)] transition-all duration-500 group relative transform hover:-translate-y-2">
+                <div className="h-64 bg-gradient-to-br from-[#123962] to-[#1C7F93] rounded-[1.5rem] mb-8 relative overflow-hidden shadow-inner flex items-center justify-center p-6">
+                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                   <h3 className="text-white font-serif font-bold text-center text-xl leading-relaxed relative z-10 group-hover:scale-105 transition-transform duration-500">{book.title}</h3>
+                   <div className="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
-              </div>
-            </div>
+                <div className="inline-flex items-center space-x-2 bg-slate-50 px-3 py-1 rounded-full mb-4 border border-slate-100">
+                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{book.category}</span>
+                </div>
+                <h4 className="font-extrabold text-[#123962] text-xl mb-2 group-hover:text-[#1C7F93] transition-colors">{book.title}</h4>
+                <p className="text-slate-500 text-sm font-medium mb-6">By {book.author}</p>
+                <button className="w-full py-3.5 bg-[#FAFCFF] text-[#123962] rounded-xl font-bold text-sm hover:bg-[#1C7F93] border border-slate-100 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                  Download PDF
+                </button>
+             </div>
           ))}
         </div>
       </div>

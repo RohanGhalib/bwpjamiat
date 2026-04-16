@@ -8,7 +8,7 @@ export default function Header() {
         <div className="px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative w-11 h-11 overflow-hidden transform group-hover:scale-105 transition-transform duration-300">
-               <Image src="/logo.png" alt="IJT Logo" fill className="object-contain" priority />
+               <Image src="/logo.png" alt="IJT Logo" fill sizes="44px" className="object-contain" priority />
             </div>
             <div>
               <h1 className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#123962] to-[#1C7F93]">Islami Jamiat-e-Talaba</h1>
