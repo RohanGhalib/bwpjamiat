@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Nastaliq_Urdu, Amiri } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import HideOnLaunch from "@/components/layout/HideOnLaunch";
 import Image from "next/image";
 
 const geistSans = Geist({
@@ -20,6 +19,12 @@ const notoNastaliq = Noto_Nastaliq_Urdu({
   weight: ['400', '700'],
   variable: "--font-nastaliq",
   subsets: ["arabic"], // Urdu uses arabic character set in google fonts
+});
+
+const amiri = Amiri({
+  weight: ['400', '700'],
+  variable: "--font-amiri",
+  subsets: ["arabic"],
 });
 export const metadata: Metadata = {
   title: "Islami Jamiat-e-Talaba Bahawalpur",
@@ -38,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliq.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliq.variable} ${amiri.variable} h-full antialiased`}
     >
       <body className="flex min-h-screen flex-col font-sans bg-transparent text-gray-900 shadow-none relative">
         {/* Global Watermark */}
@@ -49,15 +54,11 @@ export default function RootLayout({
            </div>
         </div>
 
-        <HideOnLaunch>
-          <Header />
-        </HideOnLaunch>
+        <Header />
         <main className="flex-1 flex flex-col relative z-10">
           {children}
         </main>
-        <HideOnLaunch>
-          <Footer />
-        </HideOnLaunch>
+        <Footer />
       </body>
     </html>
   );

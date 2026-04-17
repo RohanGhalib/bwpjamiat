@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 export default function LaunchPage() {
   const router = useRouter();
   const [phase, setPhase] = useState<'intro' | 'countdown' | 'reveal'>('intro');
-  const [timeLeft, setTimeLeft] = useState(6);
+  const [timeLeft, setTimeLeft] = useState(9);
   const [timerActive, setTimerActive] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -58,7 +58,7 @@ export default function LaunchPage() {
   if (!mounted) return null;
 
   return (
-    <div className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out ${phase === 'reveal' ? 'bg-transparent filter blur-sm scale-110 pointer-events-none' : 'bg-[#061224] text-white'}`}>
+    <div className={`launch-page-active fixed inset-0 z-[99999] flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out ${phase === 'reveal' ? 'bg-transparent filter blur-sm scale-110 pointer-events-none' : 'bg-[#061224] text-white'}`}>
       
       {/* Dark Curtain / Veil Effect (Splits open during reveal) */}
       <div className={`absolute inset-y-0 left-0 w-1/2 bg-[#061224] z-[90] transition-transform duration-[1500ms] ease-[cubic-bezier(0.85,0,0.15,1)] ${phase === 'reveal' ? '-translate-x-full' : 'translate-x-0'}`}></div>
@@ -150,7 +150,7 @@ export default function LaunchPage() {
                   <div 
                      key={timeLeft} 
                      className="relative z-10 text-[70px] md:text-[110px] text-white leading-[1.4] pb-4 drop-shadow-[0_0_50px_rgba(28,127,147,0.8)] animate-[pulse_1s_ease-in-out_infinite] whitespace-nowrap"
-                     style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Nafees Nastaleeq', 'Urdu Typesetting', serif" }}
+                     style={{ fontFamily: "var(--font-amiri), serif" }}
                      dir="rtl"
                   >
                      {renderArabicPhrase()}
