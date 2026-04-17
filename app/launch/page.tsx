@@ -60,7 +60,7 @@ export default function LaunchPage() {
 
   return (
     <div className={`launch-page-active fixed inset-0 z-[99999] flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ease-in-out ${phase === 'reveal' ? 'bg-transparent filter blur-sm scale-110 pointer-events-none' : 'bg-[#061224] text-white'}`}>
-      
+
       {/* Dark Curtain / Veil Effect (Splits open during reveal) */}
       <div className={`absolute inset-y-0 left-0 w-1/2 bg-[#061224] z-[90] transition-transform duration-[1500ms] ease-[cubic-bezier(0.85,0,0.15,1)] ${phase === 'reveal' ? '-translate-x-full' : 'translate-x-0'}`}></div>
       <div className={`absolute inset-y-0 right-0 w-1/2 bg-[#061224] z-[90] transition-transform duration-[1500ms] ease-[cubic-bezier(0.85,0,0.15,1)] ${phase === 'reveal' ? 'translate-x-full' : 'translate-x-0'}`}></div>
@@ -135,7 +135,7 @@ export default function LaunchPage() {
                <span className="relative z-10 text-sm md:text-base font-black text-[#4fb8cc] uppercase tracking-[0.3em] mb-12 text-center">
                   Proud Initiative Of
                </span>
-               <div className="relative w-80 h-32 md:w-[450px] md:h-[180px] z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+               <div className="relative w-[640px] h-[256px] md:w-[900px] md:h-[360px] max-w-full z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center">
                   <Image src="/logotechzone.webp" alt="IJT Tech Zone" fill className="object-contain" priority />
                </div>
             </div>
