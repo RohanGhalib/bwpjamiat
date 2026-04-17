@@ -9,7 +9,7 @@ import HeroBubble from '@/components/HeroBubble';
 
 export default function Home() {
    return (
-      <div className="flex flex-col min-h-screen bg-transparent  overflow-hidden selection:bg-[#1C7F93] selection:text-white font-sans">
+      <div className="flex flex-col min-h-screen bg-transparent overflow-hidden selection:bg-[#1C7F93] selection:text-white font-sans animate-page-reveal">
 
          {/* Hero Banner - Thoughtful & Beautiful */}
          <section className="relative pt-44 pb-0 flex flex-col justify-start min-h-[90vh] z-0 overflow-hidden bg-gradient-to-b from-[#FAFCFF] via-white to-[#eef4f9]">

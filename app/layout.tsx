@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import HideOnLaunch from "@/components/layout/HideOnLaunch";
 import Image from "next/image";
 
 const geistSans = Geist({
@@ -48,11 +49,15 @@ export default function RootLayout({
            </div>
         </div>
 
-        <Header />
+        <HideOnLaunch>
+          <Header />
+        </HideOnLaunch>
         <main className="flex-1 flex flex-col relative z-10">
           {children}
         </main>
-        <Footer />
+        <HideOnLaunch>
+          <Footer />
+        </HideOnLaunch>
       </body>
     </html>
   );
