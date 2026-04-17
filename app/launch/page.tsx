@@ -42,7 +42,8 @@ export default function LaunchPage() {
   const handleReveal = () => {
     setPhase('reveal');
     setTimeout(() => {
-      router.push('/#revealed');
+      window.scrollTo(0, 0);
+      router.push('/');
     }, 800); // Route shortly after veil begins fully opening
   };
 

@@ -44,8 +44,4 @@ body {
   opacity: 0;
 }
 
-/* Hide navigation/footer natively entirely using CSS when launch page is open */
-body:has(.launch-page-active) header,
-body:has(.launch-page-active) footer {
-  display: none !important;
-}
+
