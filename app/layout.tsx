@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   title: "Islami Jamiat-e-Talaba Bahawalpur",
   description: "Official website for Islami Jamiat-e-Talaba Bahawalpur. Largest student organization in Pakistan.",
   icons: {
-    icon: '/icon.png',
-    apple: '/icon.png',
+    icon: '/logo.png',
+    apple: '/logo.png',
   },
 };
 
