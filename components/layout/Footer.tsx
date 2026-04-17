@@ -78,8 +78,8 @@ export default async function Footer() {
                 <Image 
                    src="/logotechzone.webp" 
                    alt="IJT Tech Zone Logo" 
-                   width={240} 
-                   height={100} 
+                   width={120} 
+                   height={50} 
                    className="object-contain relative z-10 grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 drop-shadow-sm" 
                 />
              </a>
