@@ -1,8 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Islami Jamiat-e-Talaba Bahawalpur (bwpjamiat)
 
-## Getting Started
+Official website for **Islami Jamiat-e-Talaba Bahawalpur**, the largest student organization in Pakistan. This platform serves as a central hub for students, featuring event updates, a Learning Management System (LMS), articles, literature, and organizational information.
 
-First, run the development server:
+## 🚀 Tech Stack
+
+This project is built with modern web technologies:
+
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Library:** React 19
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
+- **Backend/Database:** [Firebase](https://firebase.google.com/)
+- **Language:** TypeScript
+- **Fonts:** Geist, Geist Mono, Noto Nastaliq Urdu, Amiri (via `next/font`)
+
+## ✨ Key Features
+
+- **Events:** Stay updated on the latest conferences, workshops, and gatherings.
+- **LMS (Learning Management System):** Educational resources and courses.
+- **Articles & Literature:** Access to thought-provoking articles, publications, and organizational literature.
+- **Taranas:** A dedicated section for Islamic anthems and taranas.
+- **Ahbab Link:** Portal for alumni and well-wishers to stay connected.
+- **Admin Panel:** A comprehensive dashboard to manage content seamlessly.
+- **Multilingual Typography:** Optimized support for English, Urdu (Nastaliq), and Arabic typography.
+
+## 📂 Project Structure
+
+- `/app` - Next.js App Router containing pages, layouts, and API routes.
+  - `/app/admin` - Admin dashboard.
+  - `/app/articles` - Articles section.
+  - `/app/events` - Events section.
+  - `/app/lms` - Learning Management System.
+  - `/app/literature` - Literature and publications.
+  - `/app/taranas` - Taranas section.
+  - `/app/contact` - Contact information.
+- `/components` - Reusable UI components.
+- `/lib` - Core logic, Firebase configuration (`firebase.ts`), and utilities.
+- `/public` - Static assets, images, and fonts.
+
+## 🛠️ Getting Started
+
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Make sure your Firebase environment variables are correctly configured. (Usually found in a `.env.local` file).
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -16,21 +61,6 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📜 License
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All rights reserved to Islami Jamiat-e-Talaba Bahawalpur.
