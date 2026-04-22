@@ -7,9 +7,12 @@ interface JamiatEvent {
   id: string;
   title: string;
   dateStr: string;
+  eventDate?: string; // ISO date string for sorting (YYYY-MM-DD)
   location: string;
   imageUrl?: string;
   isActive?: boolean;
+  gradientFrom?: string;
+  gradientTo?: string;
 }
 
 export default function EventsList() {
@@ -41,6 +44,7 @@ export default function EventsList() {
 async function EventsFetcher() {
   const eventsRef = collection(db, 'events');
   const q = query(eventsRef);
+  // eslint-disable-next-line prefer-const
   let events: JamiatEvent[] = [];
   
   try {
@@ -51,6 +55,27 @@ async function EventsFetcher() {
   } catch (error) {
      console.error("Error fetching events:", error);
   }
+
+  // Sort: upcoming events first (soonest first), undated events in the middle, past events at bottom
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const nowMs = now.getTime();
+  events.sort((a, b) => {
+    const aMs = a.eventDate ? new Date(a.eventDate).getTime() : null;
+    const bMs = b.eventDate ? new Date(b.eventDate).getTime() : null;
+    const aFuture = aMs !== null && aMs >= nowMs;
+    const bFuture = bMs !== null && bMs >= nowMs;
+    const aPast  = aMs !== null && aMs < nowMs;
+    const bPast  = bMs !== null && bMs < nowMs;
+
+    if (aFuture && bFuture) return aMs! - bMs!;  // both upcoming: soonest first
+    if (aPast  && bPast)  return bMs! - aMs!;    // both past: most recent past first
+    if (aFuture) return -1;                       // upcoming before undated/past
+    if (bFuture) return 1;
+    if (aPast)  return 1;                         // past after undated
+    if (bPast)  return -1;
+    return 0;                                     // both undated: preserve order
+  });
 
   if (events.length === 0) {
      return (
@@ -66,35 +91,54 @@ async function EventsFetcher() {
 
   return (
      <>
-        {events.map(e => (
-           <div key={e.id} className="group bg-gradient-to-bl from-[#123962] to-[#0c2848] rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.2)] relative flex flex-col justify-end p-8 sm:p-10 min-h-[400px]">
-              <div className="absolute inset-0 bg-black opacity-40 mix-blend-overlay group-hover:opacity-50 group-hover:scale-105 transition-all duration-1000" style={{ backgroundImage: `url('${e.imageUrl || 'https://picsum.photos/seed/jamiatevent/600/800'}')`, backgroundSize: 'cover' }}></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#123962] via-[#123962]/60 to-transparent"></div>
-              
-              <div className="relative z-10 w-full">
-                 {(e.isActive !== false) && (
-                    <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
-                       <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
-                       <span className="text-[10px] font-extrabold text-white uppercase tracking-[0.2em]">Open Event</span>
-                    </div>
+        {events.map(e => {
+           const gradientFrom = e.gradientFrom || '#123962';
+           const gradientTo = e.gradientTo || '#0c2848';
+           const isPast = e.eventDate ? new Date(e.eventDate).getTime() < nowMs : false;
+           return (
+              <div
+                 key={e.id}
+                 className="group rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.2)] relative flex flex-col justify-end p-8 sm:p-10 min-h-[400px]"
+                 style={{ background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})` }}
+              >
+                 {e.imageUrl && (
+                    <div
+                       className="absolute inset-0 opacity-40 mix-blend-overlay group-hover:opacity-50 group-hover:scale-105 transition-all duration-1000"
+                       style={{ backgroundImage: `url('${e.imageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                    />
                  )}
-                 <h4 className="text-3xl font-black text-white mb-6 leading-tight">{e.title || "Annual Tarbiyati Convention"}</h4>
-                 <div className="px-6 py-5 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mb-8 space-y-3">
-                    <p className="flex items-center text-white text-sm font-bold">
-                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                       {e.dateStr || "TBD"}
-                    </p>
-                    <p className="flex items-center text-white text-sm font-bold">
-                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-[#1C7F93]"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                       {e.location || "TBD"}
-                    </p>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                 
+                 <div className="relative z-10 w-full">
+                    {isPast ? (
+                       <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
+                          <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+                          <span className="text-[10px] font-extrabold text-white/80 uppercase tracking-[0.2em]">Past Event</span>
+                       </div>
+                    ) : (e.isActive !== false) && (
+                       <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
+                          <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
+                          <span className="text-[10px] font-extrabold text-white uppercase tracking-[0.2em]">Open Event</span>
+                       </div>
+                    )}
+                    <h4 className="text-3xl font-black text-white mb-6 leading-tight">{e.title || "Annual Tarbiyati Convention"}</h4>
+                    <div className="px-6 py-5 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mb-8 space-y-3">
+                       <p className="flex items-center text-white text-sm font-bold">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-white/70"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                          {e.dateStr || "TBD"}
+                       </p>
+                       <p className="flex items-center text-white text-sm font-bold">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 mr-3 text-white/70"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                          {e.location || "TBD"}
+                       </p>
+                    </div>
+                    <Link href={`/events/${e.id}`} className="inline-flex w-full justify-center px-6 py-4 bg-white text-[#123962] rounded-2xl font-extrabold text-sm hover:bg-white/90 hover:shadow-xl transition-all duration-300 shadow-xl">
+                       View Details
+                    </Link>
                  </div>
-                 <Link href={`/events/${e.id}`} className="inline-flex w-full justify-center px-6 py-4 bg-white text-[#123962] rounded-2xl font-extrabold text-sm hover:bg-[#1C7F93] hover:text-white transition-all duration-300 shadow-xl">
-                    View Details
-                 </Link>
               </div>
-           </div>
-        ))}
+           );
+        })}
      </>
   );
 }

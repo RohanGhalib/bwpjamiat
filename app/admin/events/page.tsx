@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import EventForm from '@/components/admin/EventForm';
 
 export default function AdminEventsPage() {
@@ -28,7 +28,8 @@ export default function AdminEventsPage() {
 async function EventsManagerLoader() {
    const eventsRef = collection(db, 'events');
    const q = query(eventsRef); // Can add orderBy later if dates are standardized
-   let events: any[] = [];
+   // eslint-disable-next-line prefer-const
+   let events: { id: string; [key: string]: unknown }[] = [];
    
    try {
       const querySnapshot = await getDocs(q);
