@@ -23,7 +23,7 @@ export default function EventsList() {
     <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <div className="text-center mb-16 max-w-2xl mx-auto">
-          <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Conventions & Seminars</h2>
+          <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Conventions &amp; Seminars</h2>
           <h1 className="text-5xl font-black text-[#123962] mb-6 tracking-tight">Upcoming Events</h1>
           <p className="text-slate-500 font-medium leading-relaxed">Join hands with thousands of students across Bahawalpur in our tarbiyati seminars and student conventions.</p>
         </div>
