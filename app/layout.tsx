@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Noto_Nastaliq_Urdu, Amiri } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FooterWrapper from "@/components/layout/FooterWrapper";
 import Image from "next/image";
 
 const geistSans = Geist({
@@ -35,6 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Toaster } from 'react-hot-toast';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -58,7 +61,10 @@ export default function RootLayout({
         <main className="flex-1 flex flex-col">
           {children}
         </main>
-        <Footer />
+        <FooterWrapper>
+          <Footer />
+        </FooterWrapper>
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

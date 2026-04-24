@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, limit, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { FastAverageColor } from 'fast-average-color';
 import Link from 'next/link';
+import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
 
 export default function HeroBubble() {
-  const [event, setEvent] = useState<any | null>(null);
+  const [event, setEvent] = useState<EventRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [bgColor, setBgColor] = useState('rgba(255, 255, 255, 0.7)');
   const [textColor, setTextColor] = useState('#123962');
@@ -15,12 +16,13 @@ export default function HeroBubble() {
 
   useEffect(() => {
     const eventsRef = collection(db, 'events');
-    const q = query(eventsRef, limit(1)); // Fetching the most recent active event
     
-    setLoading(true);
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const latestEvent = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as any;
+    const unsubscribe = onSnapshot(eventsRef, (snapshot) => {
+      const latestEvent = sortEventsBySchedule(
+        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as EventRecord))
+      )[0] ?? null;
+
+      if (latestEvent) {
         setEvent(latestEvent);
         
         if (latestEvent.imageUrl) {

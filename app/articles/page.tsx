@@ -1,4 +1,18 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Articles & Dispatches | IJT Bahawalpur',
+  description: 'Read articles, reflections, and dispatches from student leaders and scholars of Islami Jamiat-e-Talaba Bahawalpur.',
+  openGraph: {
+    title: 'Articles & Dispatches | IJT Bahawalpur',
+    description: 'Official blog and articles from IJT Bahawalpur student leadership.',
+    url: 'https://bwpjamiat.vercel.app/articles',
+    siteName: 'IJT Bahawalpur',
+    locale: 'en_PK',
+    type: 'website',
+  },
+};
 
 export default function ArticlesList() {
   const dummyArticles = Array.from({length: 6}, (_, i) => ({

@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   experimental: {
     instantNavigationDevToolsToggle: true,
   },
+  serverExternalPackages: ['@aws-sdk/s3-request-presigner', '@aws-sdk/client-s3', 'fluent-ffmpeg', 'ffmpeg-static'],
 
   images: {
     remotePatterns: [

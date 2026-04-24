@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { type EventRecord } from '@/lib/event-utils';
 
 export default function SingleEventPage({ params }: { params: Promise<{ id: string }> }) {
   const [eventId, setEventId] = useState<string | null>(null);
-  const [eventData, setEventData] = useState<any | null>(null);
+  const [eventData, setEventData] = useState<EventRecord | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,8 +21,7 @@ export default function SingleEventPage({ params }: { params: Promise<{ id: stri
     if (!eventId) return;
 
     const eventRef = doc(db, 'events', eventId);
-    
-    setLoading(true);
+
     const unsubscribe = onSnapshot(eventRef, (document) => {
       if (document.exists()) {
         setEventData({ id: document.id, ...document.data() });

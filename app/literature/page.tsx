@@ -1,4 +1,18 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Literature Archive | IJT Bahawalpur',
+  description: 'Explore the Islamic literature archive of IJT Bahawalpur — books, treatises, and scholarly works by Syed Abul Ala Maududi and other scholars.',
+  openGraph: {
+    title: 'Literature Archive | IJT Bahawalpur',
+    description: 'Curated Islamic literature and scholarly books from the IJT Bahawalpur library.',
+    url: 'https://bwpjamiat.vercel.app/literature',
+    siteName: 'IJT Bahawalpur',
+    locale: 'en_PK',
+    type: 'website',
+  },
+};
 
 export default function Literature() {
   const dummyBooks = [

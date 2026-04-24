@@ -2,8 +2,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Suspense } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, limit } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import HeroBubble from '@/components/HeroBubble';
+import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
 
 
 
@@ -63,7 +64,7 @@ export default function Home() {
                   <div className="w-full md:w-2/3 text-center md:text-left">
                      <div className="w-12 h-1 bg-gradient-to-r from-[#1C7F93] to-transparent rounded-full mb-8 mx-auto md:mx-0"></div>
                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#123962] leading-relaxed md:leading-[1.4] tracking-tight font-serif mb-8 text-slate-700">
-                        "A student's true duty is not merely to acquire knowledge for worldly gain, but to prepare themselves as a torchbearer of an intellectual and moral revolution in society."
+                        &ldquo;A student&apos;s true duty is not merely to acquire knowledge for worldly gain, but to prepare themselves as a torchbearer of an intellectual and moral revolution in society.&rdquo;
                      </h2>
                      <h3 className="font-extrabold text-[#123962] tracking-widest uppercase text-sm mb-1">Syed Abul A'la Maududi</h3>
                      <p className="text-[#1C7F93] font-bold text-xs uppercase tracking-[0.2em]">Ideological Founder</p>
@@ -92,7 +93,7 @@ export default function Home() {
                            1.
                         </span>
                         <div className="pt-2 sm:pt-4">
-                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">"Dawah" (Call to Allah)</h4>
+                           <h4 className="text-2xl font-extrabold text-[#123962] group-hover:text-[#1C7F93] transition-colors">&ldquo;Dawah&rdquo; (Call to Allah)</h4>
                         </div>
                      </div>
                      <p className="text-slate-500 font-medium text-sm leading-relaxed relative z-10 mt-auto">To convey the message of Islam to the students, to inspire them to acquire Islamic knowledge and to arouse in them the sense of responsibility to practice Islam in full.</p>
@@ -366,13 +367,16 @@ export default function Home() {
 
 async function FeaturedEvent() {
   const eventsRef = collection(db, 'events');
-  const q = query(eventsRef, limit(1));
-  let featuredEvent = null;
+  const q = query(eventsRef);
+  let featuredEvent: EventRecord | null = null;
   
   try {
      const querySnapshot = await getDocs(q);
-     if (!querySnapshot.empty) {
-        featuredEvent = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() } as any;
+     const events = querySnapshot.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() } as EventRecord));
+     const sortedEvents = sortEventsBySchedule(events);
+
+     if (sortedEvents.length > 0) {
+        featuredEvent = sortedEvents[0];
      }
   } catch (error) {
      console.error("Error fetching featured event:", error);
