@@ -2,12 +2,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, query } from 'firebase/firestore';
 import HeroBubble from '@/components/HeroBubble';
 import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
 import { buildMetadata } from '@/lib/seo';
 import { absoluteUrl, siteConfig } from '@/lib/site';
+import { getAllEvents } from '@/lib/db';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Islami Jamiat-e-Talaba Bahawalpur',
@@ -397,13 +396,10 @@ export default function Home() {
 }
 
 async function FeaturedEvent() {
-  const eventsRef = collection(db, 'events');
-  const q = query(eventsRef);
   let featuredEvent: EventRecord | null = null;
   
   try {
-     const querySnapshot = await getDocs(q);
-     const events = querySnapshot.docs.map((snapshot) => ({ id: snapshot.id, ...snapshot.data() } as EventRecord));
+     const events = await getAllEvents();
      const sortedEvents = sortEventsBySchedule(events);
 
      if (sortedEvents.length > 0) {

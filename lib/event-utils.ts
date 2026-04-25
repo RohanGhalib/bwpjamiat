@@ -10,6 +10,33 @@ export interface EventRecord {
   duration?: string;
   registrationLink?: string;
   description?: string;
+  eventTheme?: EventThemeConfig;
+}
+
+export interface EventThemeMeshPoint {
+  x: number;
+  y: number;
+  radius: number;
+}
+
+export interface EventThemeMesh {
+  highlight: EventThemeMeshPoint;
+  glow: EventThemeMeshPoint;
+  angle: number;
+}
+
+export interface EventThemeConfig {
+  version: number;
+  gradient: string;
+  accent: string;
+  accentHover: string;
+  accentSoft: string;
+  heading: string;
+  textOnAccent: string;
+  isDark: boolean;
+  mesh: EventThemeMesh;
+  generatedAt: string;
+  source: 'image' | 'fallback';
 }
 
 function parseDateCandidate(value?: string) {
@@ -32,7 +59,18 @@ export function getEventState(event: Pick<EventRecord, 'startsAt' | 'dateStr'>) 
     return 'unknown';
   }
 
-  return startTime >= Date.now() ? 'upcoming' : 'past';
+  const now = new Date();
+  const startDate = new Date(startTime);
+
+  if (
+    startDate.getFullYear() === now.getFullYear()
+    && startDate.getMonth() === now.getMonth()
+    && startDate.getDate() === now.getDate()
+  ) {
+    return 'ongoing';
+  }
+
+  return startTime > Date.now() ? 'upcoming' : 'past';
 }
 
 export function sortEventsBySchedule(events: EventRecord[]) {
@@ -48,7 +86,16 @@ export function sortEventsBySchedule(events: EventRecord[]) {
       continue;
     }
 
-    if (startTime >= Date.now()) {
+    const startDate = new Date(startTime);
+    const now = new Date();
+    const isSameDay =
+      startDate.getFullYear() === now.getFullYear()
+      && startDate.getMonth() === now.getMonth()
+      && startDate.getDate() === now.getDate();
+
+    if (isSameDay) {
+      upcoming.push(event);
+    } else if (startTime > Date.now()) {
       upcoming.push(event);
     } else {
       past.push(event);

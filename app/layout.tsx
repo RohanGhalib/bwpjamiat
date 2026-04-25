@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Nastaliq_Urdu, Amiri } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import FooterWrapper from "@/components/layout/FooterWrapper";
 import Image from "next/image";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
@@ -61,8 +58,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { Toaster } from 'react-hot-toast';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -82,14 +77,7 @@ export default function RootLayout({
            </div>
         </div>
 
-        <Header />
-        <main className="flex-1 flex flex-col">
-          {children}
-        </main>
-        <FooterWrapper>
-          <Footer />
-        </FooterWrapper>
-        <Toaster position="bottom-right" />
+        {children}
       </body>
     </html>
   );

@@ -1,8 +1,7 @@
 "use client";
-import { Analytics } from "@vercel/analytics/next"
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, Suspense } from 'react';
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 const navLinks = [
@@ -17,10 +16,6 @@ const navLinks = [
 function HeaderContent() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -127,9 +122,5 @@ function HeaderContent() {
 }
 
 export default function Header() {
-  return (
-    <Suspense fallback={<div className="fixed top-0 inset-x-0 z-50 p-4 font-sans max-w-6xl mx-auto h-[76px]"></div>}>
-      <HeaderContent />
-    </Suspense>
-  );
+  return <HeaderContent />;
 }

@@ -1,43 +1,38 @@
 "use client";
 
+import { useMemo, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { getEventState, type EventRecord } from '@/lib/event-utils';
-
-function hashString(value: string) {
-  let hash = 0;
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
-  }
-
-  return hash;
-}
-
-function fallbackGradient(seed: string) {
-  const hash = hashString(seed || 'event');
-  const hue = hash % 360;
-  const secondaryHue = (hue + 28 + (hash % 11)) % 360;
-  const accentHue = (hue + 168) % 360;
-
-  return `linear-gradient(135deg, hsl(${hue}, 84%, 34%) 0%, hsl(${secondaryHue}, 90%, 50%) 55%, hsl(${accentHue}, 72%, 24%) 100%)`;
-}
+import { useEventTheme } from '@/lib/event-theme';
 
 export default function EventTile({ event }: { event: EventRecord }) {
   const state = getEventState(event);
+  const seed = event.id || event.title || 'event';
+  const theme = useEventTheme({ imageUrl: event.imageUrl, seed, storedTheme: event.eventTheme });
+  const styleVars = useMemo(
+    () =>
+      ({
+        backgroundImage: theme.gradient,
+        '--event-accent': theme.accent,
+        '--event-accent-hover': theme.accentHover,
+        '--event-text-on-accent': theme.textOnAccent,
+      }) as CSSProperties,
+    [theme.accent, theme.accentHover, theme.gradient, theme.textOnAccent],
+  );
 
   return (
     <div
       className="group rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.2)] relative flex flex-col justify-end p-8 sm:p-10 min-h-[400px] border border-white/10 bg-[#081A2E]"
-      style={!event.imageUrl ? { backgroundImage: fallbackGradient(event.id || event.title || 'event') } : undefined}
+      style={styleVars}
     >
       {event.imageUrl && (
-        <div 
-          className="absolute inset-0 bg-cover bg-center blur-[40px] scale-150 saturate-150 opacity-100"
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-30 saturate-[1.65] mix-blend-soft-light pointer-events-none"
           style={{ backgroundImage: `url(${event.imageUrl})` }}
         />
       )}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_50%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.1),transparent_50%)] mix-blend-overlay pointer-events-none"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#040C17]/90 via-[#040C17]/40 to-black/10 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.08),transparent_48%)] mix-blend-soft-light pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/24 to-black/5 pointer-events-none"></div>
       <div className="relative z-10 w-full">
         {state !== 'past' && (
           <div className="inline-flex items-center space-x-2 bg-white/18 backdrop-blur-md px-4 py-1.5 rounded-full mb-6 border border-white/10">
@@ -62,7 +57,7 @@ export default function EventTile({ event }: { event: EventRecord }) {
             {event.location || 'TBD'}
           </p>
         </div>
-        <Link href={`/events/${event.id}`} className="inline-flex w-full justify-center px-6 py-4 bg-white text-[#123962] rounded-2xl font-extrabold text-sm hover:bg-[#1C7F93] hover:text-white transition-all duration-300 shadow-xl">
+        <Link href={`/events/${event.id}`} className="inline-flex w-full justify-center px-6 py-4 bg-[var(--event-accent)] text-[var(--event-text-on-accent)] rounded-2xl font-extrabold text-sm hover:bg-white hover:text-[var(--event-accent)] transition-all duration-300 shadow-xl hover:-translate-y-1">
           View Details
         </Link>
       </div>

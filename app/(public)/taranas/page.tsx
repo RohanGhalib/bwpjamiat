@@ -35,16 +35,16 @@ export default function Taranas() {
       <div className="absolute top-0 right-0 w-[800px] h-[500px] bg-gradient-to-bl from-[#1C7F93]/10 to-transparent blur-[120px] rounded-bl-full -z-10 pointer-events-none"></div>
 
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
-        <div className="text-center mb-16 max-w-2xl mx-auto">
-          <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Official Audio</h2>
-          <h1 className="text-5xl font-black text-[#123962] mb-6 tracking-tight">Taranas Gallery</h1>
-          <p className="text-slate-500 font-medium leading-relaxed mb-8">
-            The rhythmic heartbeat of our revolution. Listen to the anthems that have inspired millions across generations.
+        <div className="text-center mb-10 sm:mb-16 max-w-2xl mx-auto">
+          <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-3 sm:mb-4">Official Audio</h2>
+          <h1 className="text-4xl sm:text-5xl font-black text-[#123962] mb-4 sm:mb-6 tracking-tight">Taranas Gallery</h1>
+          <p className="text-sm sm:text-base text-slate-500 font-medium leading-relaxed mb-6 sm:mb-8">
+            Browse, filter, and play the collection with a layout that stays fast and readable on mobile.
           </p>
 
           <Link
             href="/taranas/request"
-            className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#123962] border border-slate-200 rounded-full font-bold shadow-[0_4px_14px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_20px_rgba(28,127,147,0.12)] hover:border-[#1C7F93]/30 hover:text-[#1C7F93] transition-all gap-2 group"
+            className="inline-flex items-center justify-center px-5 sm:px-6 py-3 bg-white text-[#123962] border border-slate-200 rounded-full font-bold shadow-[0_4px_14px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_20px_rgba(28,127,147,0.12)] hover:border-[#1C7F93]/30 hover:text-[#1C7F93] transition-all gap-2 group"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-slate-400 group-hover:text-[#1C7F93] transition-colors">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />

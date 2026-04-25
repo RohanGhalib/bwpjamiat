@@ -18,6 +18,32 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
+  const pendingAutoplayRef = useRef(false);
+
+  const syncPlayQuery = (taranaId: string | null) => {
+    if (typeof window === 'undefined') return;
+
+    const url = new URL(window.location.href);
+    if (taranaId) {
+      url.searchParams.set('play', taranaId);
+    } else {
+      url.searchParams.delete('play');
+    }
+
+    window.history.pushState(null, '', url.toString());
+  };
+
+  const playTarana = (tarana: Tarana, autoplay = true) => {
+    if (!tarana.audioUrl) {
+      window.alert('Audio is not available for this tarana yet.');
+      return;
+    }
+
+    pendingAutoplayRef.current = autoplay;
+    setActiveTarana(tarana);
+    setIsFullScreen(true);
+    syncPlayQuery(tarana.id);
+  };
 
   // Setup URL Sync
   useEffect(() => {
@@ -29,6 +55,7 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
         if (match) {
           setActiveTarana(match);
           setIsFullScreen(true);
+          pendingAutoplayRef.current = false;
         }
       } else {
         setIsFullScreen(false);
@@ -41,26 +68,9 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
     return () => window.removeEventListener('popstate', handlePopState);
   }, [initialTaranas]);
 
-  const openFullScreenFor = (tarana: Tarana) => {
-    setIsFullScreen(true);
-    if (typeof window !== 'undefined') {
-        const url = new URL(window.location.href);
-        if (url.searchParams.get('play') !== tarana.id) {
-           url.searchParams.set('play', tarana.id);
-           window.history.pushState(null, '', url.toString());
-        }
-    }
-  };
-
   const closeFullScreen = () => {
     setIsFullScreen(false);
-    if (typeof window !== 'undefined') {
-        const url = new URL(window.location.href);
-        if (url.searchParams.has('play')) {
-           url.searchParams.delete('play');
-           window.history.pushState(null, '', url.toString());
-        }
-    }
+    syncPlayQuery(null);
   };
 
   // Derived Data
@@ -83,32 +93,27 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
     });
   }, [initialTaranas, searchQuery, selectedTag]);
 
+  const upNextTaranas = useMemo(() => {
+    if (!activeTarana) return [];
+    return filteredTaranas.filter(t => t.id !== activeTarana.id);
+  }, [activeTarana, filteredTaranas]);
+
   // Playback Handlers
   const handlePlayPause = (tarana: Tarana) => {
     if (!tarana.audioUrl) {
-      alert("Audio file not available for this tarana yet.");
+      window.alert("Audio file not available for this tarana yet.");
       return;
     }
 
     if (activeTarana?.id === tarana.id) {
       if (isPlaying) {
         audioRef.current?.pause();
-        setIsPlaying(false);
       } else {
+        pendingAutoplayRef.current = true;
         audioRef.current?.play().catch(e => console.log("Playback error:", e));
-        setIsPlaying(true);
       }
     } else {
-      setActiveTarana(tarana);
-      setIsPlaying(true);
-      setIsFullScreen(true);
-      if (typeof window !== 'undefined') {
-          const url = new URL(window.location.href);
-          if (url.searchParams.get('play') !== tarana.id) {
-             url.searchParams.set('play', tarana.id);
-             window.history.pushState(null, '', url.toString()); 
-          }
-      }
+      playTarana(tarana, true);
     }
   };
 
@@ -116,10 +121,9 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
     if (!activeTarana) return;
     const currentIndex = filteredTaranas.findIndex(t => t.id === activeTarana.id);
     if (currentIndex >= 0 && currentIndex < filteredTaranas.length - 1) {
-      handlePlayPause(filteredTaranas[currentIndex + 1]);
+      playTarana(filteredTaranas[currentIndex + 1], true);
     } else if (filteredTaranas.length > 0) {
-       // Loop to first
-       handlePlayPause(filteredTaranas[0]);
+      playTarana(filteredTaranas[0], true);
     }
   };
 
@@ -132,10 +136,9 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
     }
     const currentIndex = filteredTaranas.findIndex(t => t.id === activeTarana.id);
     if (currentIndex > 0) {
-      handlePlayPause(filteredTaranas[currentIndex - 1]);
+      playTarana(filteredTaranas[currentIndex - 1], true);
     } else if (filteredTaranas.length > 0) {
-       // Loop to last
-       handlePlayPause(filteredTaranas[filteredTaranas.length - 1]);
+      playTarana(filteredTaranas[filteredTaranas.length - 1], true);
     }
   };
 
@@ -233,32 +236,29 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
       });
   };
 
-  const handleAddToSpotify = (tarana: Tarana) => {
-    // TuneMyMusic search URL that allows users to add tracks to Spotify
-    const searchQuery = `${tarana.title} ${tarana.artist || 'IJT'}`;
-    const tuneMyMusicUrl = `https://www.tunemymusic.com/search?q=${encodeURIComponent(searchQuery)}&from=spotify`;
-    window.open(tuneMyMusicUrl, '_blank');
-  };
-
   // Audio source assignment and auto-play
   useEffect(() => {
     if (activeTarana && audioRef.current) {
-       // Only change src if it's different to prevent resetting playback
-       if (audioRef.current.src !== activeTarana.audioUrl && !audioRef.current.src.endsWith(activeTarana.audioUrl)) {
-          audioRef.current.src = activeTarana.audioUrl;
-          if (isPlaying) {
-             audioRef.current.play().catch(e => console.log("Auto-play prevented:", e));
-          }
-       }
+      const audio = audioRef.current;
+
+      if (audio.src !== activeTarana.audioUrl && !audio.src.endsWith(activeTarana.audioUrl)) {
+        audio.src = activeTarana.audioUrl;
+        audio.load();
+      }
+
+      if (pendingAutoplayRef.current && activeTarana.audioUrl) {
+        pendingAutoplayRef.current = false;
+        audio.play().catch(e => console.log("Auto-play prevented:", e));
+      }
     }
-  }, [activeTarana]); // isPlaying is intentionally omitted to avoid resetting src on pause
+  }, [activeTarana]);
 
   // Setup Event Listeners & Media Session
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
       const handleEnded = () => {
-        handleNext(); // Auto-play next track
+        handleNext();
       };
       
       const handlePlayEvent = () => setIsPlaying(true);
@@ -276,7 +276,7 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
         audio.removeEventListener('pause', handlePauseEvent);
       };
     }
-  }, [filteredTaranas, activeTarana]); // Re-bind when filtered list or active track changes for handleNext
+  }, [filteredTaranas, activeTarana]);
 
   // Background playback (MediaSession API)
   useEffect(() => {
@@ -311,21 +311,18 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
       <audio ref={audioRef} className="hidden" preload="metadata" playsInline />
       
       {isFullScreen && activeTarana ? (
-          <div className="bg-gradient-to-br from-[#0f213f] via-[#1C7F93] to-[#2669A9] rounded-[2rem] sm:rounded-[2.5rem] p-3 sm:p-8 lg:p-8 shadow-[0_20px_60px_rgba(2,6,23,0.45)] border border-[#74b8d8]/20 mb-8 max-w-7xl mx-auto overflow-hidden">
-             <div className="flex justify-between items-center mb-4 sm:mb-8">
-             <button onClick={closeFullScreen} className="flex items-center gap-2 text-white/85 hover:text-white font-bold text-xs sm:text-sm bg-white/10 hover:bg-white/15 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-all">
+           <div className="bg-gradient-to-br from-[#0f213f] via-[#1C7F93] to-[#2669A9] rounded-[1.75rem] sm:rounded-[2.5rem] p-3 sm:p-8 lg:p-8 shadow-[0_20px_60px_rgba(2,6,23,0.45)] border border-[#74b8d8]/20 mb-8 max-w-7xl mx-auto overflow-hidden">
+             <div className="flex justify-between items-start gap-3 mb-4 sm:mb-8">
+             <button onClick={closeFullScreen} className="flex items-center gap-2 text-white/85 hover:text-white font-bold text-xs sm:text-sm bg-white/10 hover:bg-white/15 backdrop-blur px-3 sm:px-4 py-2 rounded-full transition-all min-h-10">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
                   <span className="hidden sm:inline">Back to Collection</span>
                   <span className="sm:hidden">Back</span>
                  </button>
                  <div className="flex gap-2">
-                  <button onClick={() => handleShare(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur" title="Share">
+                <button onClick={() => handleShare(activeTarana)} className="p-2.5 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur min-h-10 min-w-10" title="Share" aria-label="Share tarana">
                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
                     </button>
-                  <button onClick={() => handleAddToSpotify(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur" title="Add to Spotify">
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.122-.899-.539-.12-.417.122-.776.54-.899 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.84.6-1.26.3-3.24-1.992-8.159-2.592-12.021-1.409-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15.079 10.561 18.72 12.84c.361.21.599.659.301 1.1z"/></svg>
-                    </button>
-                  <button onClick={() => handleDownload(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur" title="Download">
+                <button onClick={() => handleDownload(activeTarana)} className="p-2.5 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur min-h-10 min-w-10" title="Download" aria-label="Download tarana">
                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                     </button>
                  </div>
@@ -397,11 +394,11 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                   </div>
 
                   {/* Up Next List */}
-                  {filteredTaranas.filter(t => t.id !== activeTarana.id).length > 0 && (
+                  {upNextTaranas.length > 0 && (
                     <div className="lg:col-span-5 xl:col-span-4 border-t border-white/20 pt-6 sm:pt-10 lg:pt-6 lg:border-t-0 lg:border-l lg:pl-6 xl:pl-8 min-w-0 overflow-hidden">
                       <h3 className="text-sm font-black text-cyan-100/90 uppercase tracking-widest mb-4">Up Next</h3>
                       <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
-                        {filteredTaranas.filter(t => t.id !== activeTarana.id).map(t => (
+                        {upNextTaranas.map(t => (
                           <div 
                             key={t.id} 
                             onClick={() => {
@@ -429,10 +426,10 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                  </div>
         </div>
       ) : (
-        <div className="bg-white rounded-[2.5rem] p-4 sm:p-8 lg:p-12 shadow-[0_20px_60px_rgba(18,57,98,0.03)] border border-slate-50 mb-8">
+        <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-8 lg:p-12 shadow-[0_20px_60px_rgba(18,57,98,0.03)] border border-slate-50 mb-8">
         
         {/* Search and Filters */}
-        <div className="mb-8 space-y-5">
+        <div className="mb-8 space-y-4 sm:space-y-5">
           <div className="relative group">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 absolute left-4 top-3.5 text-slate-400 group-focus-within:text-[#1C7F93] transition-colors">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -442,10 +439,10 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
               placeholder="Search taranas by title or artist..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-700 shadow-sm focus:bg-white focus:ring-2 focus:ring-[#1C7F93]/30 focus:border-[#1C7F93] outline-none transition-all placeholder:text-slate-400 font-medium"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-12 text-slate-700 shadow-sm focus:bg-white focus:ring-2 focus:ring-[#1C7F93]/30 focus:border-[#1C7F93] outline-none transition-all placeholder:text-slate-400 font-medium"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600">
+              <button onClick={() => setSearchQuery("")} className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100" aria-label="Clear search">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
               </button>
             )}
@@ -453,7 +450,7 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
           
           {uniqueTags.length > 0 && (
             <div className="flex overflow-x-auto pb-2 gap-2 hide-scrollbar items-center">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2 shrink-0">Filters:</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2 shrink-0">Filter:</span>
               <button 
                 onClick={() => setSelectedTag(null)} 
                 className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition-all ${!selectedTag ? 'bg-[#123962] text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
@@ -542,9 +539,9 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:h-24 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             
             {/* Track Info */}
-          <div 
+           <div 
              className="flex items-center gap-3 sm:gap-4 w-full sm:w-1/3 min-w-0 cursor-pointer group"
-             onClick={() => activeTarana && openFullScreenFor(activeTarana)}
+             onClick={() => activeTarana && playTarana(activeTarana, false)}
           >
             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl shrink-0 shadow-md overflow-hidden border border-slate-200 group-hover:shadow-lg transition-all group-hover:scale-105">
               {activeTarana?.coverUrl ? (
@@ -577,13 +574,14 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
             {/* Main Controls */}
             <div className="flex flex-col items-center justify-center w-full sm:w-1/3 shrink-0">
                <div className="flex items-center gap-4 sm:gap-6">
-                  <button onClick={handlePrev} className="text-slate-400 hover:text-[#123962] transition-colors p-1" title="Previous">
+                  <button onClick={handlePrev} className="text-slate-400 hover:text-[#123962] transition-colors p-1" title="Previous" aria-label="Previous tarana">
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7"><path d="M9.195 18.44c1.25.713 2.805-.19 2.805-1.629v-8.56c0-1.44-1.555-2.342-2.805-1.628L3.622 9.778c-1.25.714-1.25 2.52 0 3.234L9.195 18.44z" /><path d="M19.5 18.44c1.25.713 2.805-.19 2.805-1.629v-8.56c0-1.44-1.555-2.342-2.805-1.628L13.928 9.778c-1.25.714-1.25 2.52 0 3.234L19.5 18.44z" /></svg>
                   </button>
                   
                   <button 
-                     onClick={() => activeTarana && handlePlayPause(activeTarana)} 
-                     className="w-12 h-12 sm:w-14 sm:h-14 bg-[#1C7F93] hover:bg-[#156373] text-white rounded-full flex items-center justify-center shadow-[0_4px_14px_rgba(28,127,147,0.4)] hover:shadow-[0_6px_20px_rgba(28,127,147,0.5)] hover:-translate-y-0.5 transition-all"
+                    onClick={() => activeTarana && handlePlayPause(activeTarana)} 
+                    className="w-12 h-12 sm:w-14 sm:h-14 bg-[#1C7F93] hover:bg-[#156373] text-white rounded-full flex items-center justify-center shadow-[0_4px_14px_rgba(28,127,147,0.4)] hover:shadow-[0_6px_20px_rgba(28,127,147,0.5)] hover:-translate-y-0.5 transition-all"
+                    aria-label={isPlaying ? 'Pause' : 'Play'}
                   >
                      {isPlaying ? (
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-8 sm:h-8"><path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clipRule="evenodd" /></svg>
@@ -592,7 +590,7 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                      )}
                   </button>
                   
-                  <button onClick={handleNext} className="text-slate-400 hover:text-[#123962] transition-colors p-1" title="Next">
+                  <button onClick={handleNext} className="text-slate-400 hover:text-[#123962] transition-colors p-1" title="Next" aria-label="Next tarana">
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7"><path d="M14.805 5.56c-1.25-.713-2.805.19-2.805 1.629v8.56c0 1.44 1.555 2.342 2.805 1.628L20.378 14.222c1.25-.714 1.25-2.52 0-3.234L14.805 5.56z" /><path d="M4.5 5.56c-1.25-.713-2.805.19-2.805 1.629v8.56c0 1.44 1.555 2.342 2.805 1.628L10.072 14.222c1.25-.714 1.25-2.52 0-3.234L4.5 5.56z" /></svg>
                   </button>
                </div>
@@ -620,24 +618,19 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 sm:w-6 sm:h-6"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" /><path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z" /></svg>
                   )}
                </button>
-               <button 
-                  onClick={() => activeTarana && handleShare(activeTarana)} 
-                  className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-slate-100 rounded-full transition-all"
-                  title="Share"
-               >
+              <button 
+              onClick={() => activeTarana && handleShare(activeTarana)} 
+              className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-slate-100 rounded-full transition-all"
+              title="Share"
+              aria-label="Share tarana"
+            >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
-               </button>
-               <button 
-                  onClick={() => activeTarana && handleAddToSpotify(activeTarana)} 
-                  className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-slate-100 rounded-full transition-all"
-                  title="Add to Spotify"
-               >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.122-.899-.539-.12-.417.122-.776.54-.899 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.84.6-1.26.3-3.24-1.992-8.159-2.592-12.021-1.409-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15.079 10.561 18.72 12.84c.361.21.599.659.301 1.1z"/></svg>
                </button>
                <button 
                   onClick={() => activeTarana && handleDownload(activeTarana)} 
                   className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-slate-100 rounded-full transition-all"
                   title="Download"
+              aria-label="Download tarana"
                >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                </button>

@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { fromDateTimeLocalValue, toDateTimeLocalValue, type EventRecord } from '@/lib/event-utils';
 import { uploadFileDirectToR2 } from '@/lib/upload-client';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { generateEventThemeFromImage } from '@/lib/event-theme';
 
 const emptyForm = {
   title: '',
@@ -102,11 +103,15 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
         throw new Error('Please upload a poster image or provide a fallback poster URL.');
       }
 
+      const themeSeed = eventToEdit?.id || imageStoragePath || formData.title || imageUrl;
+      const eventTheme = await generateEventThemeFromImage(imageUrl, themeSeed);
+
       const payload = {
         ...formData,
         startsAt: normalizedStartsAt,
         imageUrl,
         imageStoragePath,
+        eventTheme,
         updatedAt: new Date().toISOString()
       };
 
@@ -125,8 +130,13 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
         }
       } else {
         toast.loading('Creating event...', { id: 'save-event' });
-        await addDoc(collection(db, 'events'), {
+        const eventsCollection = collection(db, 'events');
+        const newEventRef = doc(eventsCollection);
+        const createdEventTheme = await generateEventThemeFromImage(imageUrl, newEventRef.id, eventTheme);
+
+        await setDoc(newEventRef, {
           ...payload,
+          eventTheme: createdEventTheme,
           createdAt: new Date().toISOString()
         });
         toast.success('Event created successfully!', { id: 'save-event' });
