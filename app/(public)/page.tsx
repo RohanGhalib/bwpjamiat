@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import HeroBubble from '@/components/HeroBubble';
 import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
 import { buildMetadata } from '@/lib/seo';
@@ -396,15 +397,15 @@ export default function Home() {
 }
 
 async function FeaturedEvent() {
+  await connection();
+
   let featuredEvent: EventRecord | null = null;
   
   try {
      const events = await getAllEvents();
      const sortedEvents = sortEventsBySchedule(events);
 
-     if (sortedEvents.length > 0) {
-        featuredEvent = sortedEvents[0];
-     }
+     featuredEvent = sortedEvents[0] ?? null;
   } catch (error) {
      console.error("Error fetching featured event:", error);
   }

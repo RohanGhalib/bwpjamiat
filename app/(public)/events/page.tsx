@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query } from 'firebase/firestore';
 import EventTile from '@/components/events/EventTile';
@@ -40,6 +41,8 @@ export default function EventsList() {
 }
 
 async function EventsFetcher() {
+   await connection();
+
   const eventsRef = collection(db, 'events');
   const q = query(eventsRef);
   let events: EventRecord[] = [];
@@ -53,7 +56,7 @@ async function EventsFetcher() {
      console.error("Error fetching events:", error);
   }
 
-  events = sortEventsBySchedule(events);
+   events = sortEventsBySchedule(events);
 
   if (events.length === 0) {
      return (

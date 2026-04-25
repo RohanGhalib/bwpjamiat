@@ -1,18 +1,36 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
-import { FastAverageColor } from 'fast-average-color';
 import Link from 'next/link';
-import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
+import { getEventState, sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
+import { useEventTheme } from '@/lib/event-theme';
 
 export default function HeroBubble() {
   const [event, setEvent] = useState<EventRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [bgColor, setBgColor] = useState('rgba(255, 255, 255, 0.7)');
-  const [textColor, setTextColor] = useState('#123962');
-  const [isDark, setIsDark] = useState(false);
+  const eventState = event ? getEventState(event) : 'unknown';
+  const theme = useEventTheme({
+    imageUrl: event?.imageUrl,
+    seed: event?.id || event?.title || 'event',
+    storedTheme: event?.eventTheme,
+  });
+  const label = useMemo(() => {
+    if (!event) {
+      return 'Since 1947 • Bahawalpur Chapter';
+    }
+
+    if (eventState === 'past') {
+      return `Just finished: ${event.title || 'Untitled Event'}`;
+    }
+
+    if (eventState === 'ongoing') {
+      return `Event Ongoing: ${event.title || 'Untitled Event'}`;
+    }
+
+    return `Upcoming Event: ${event.title || 'Untitled Event'}`;
+  }, [event, eventState]);
 
   useEffect(() => {
     const eventsRef = collection(db, 'events');
@@ -24,22 +42,6 @@ export default function HeroBubble() {
 
       if (latestEvent) {
         setEvent(latestEvent);
-        
-        if (latestEvent.imageUrl) {
-          const fac = new FastAverageColor();
-          fac.getColorAsync(latestEvent.imageUrl, { crossOrigin: 'anonymous' })
-            .then(color => {
-              setBgColor(`rgba(${color.value[0]}, ${color.value[1]}, ${color.value[2]}, 0.85)`);
-              setIsDark(color.isDark);
-              setTextColor(color.isDark ? '#FFFFFF' : '#123962');
-            })
-            .catch(e => {
-              console.log("Error extracting color", e);
-              // Fallback
-              setBgColor('rgba(255, 255, 255, 0.7)');
-              setTextColor('#123962');
-            });
-        }
       } else {
         setEvent(null);
       }
@@ -64,16 +66,16 @@ export default function HeroBubble() {
            <div 
              className="inline-flex items-center space-x-3 backdrop-blur-md px-5 py-2.5 rounded-full mb-8 shadow-md border hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group"
              style={{ 
-                backgroundColor: bgColor, 
-                borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'
+             backgroundColor: theme.accent,
+             borderColor: 'rgba(255,255,255,0.14)'
              }}
            >
               <span className="relative flex h-3 w-3">
-                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: textColor }}></span>
-                 <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: textColor }}></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: theme.textOnAccent }}></span>
+              <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: theme.textOnAccent }}></span>
               </span>
-              <span className="text-[10px] font-black tracking-[0.2em] uppercase transition-colors" style={{ color: textColor }}>
-                 Upcoming Event: {event.title}
+            <span className="text-[10px] font-black tracking-[0.2em] uppercase transition-colors" style={{ color: theme.textOnAccent }}>
+              {label}
               </span>
            </div>
         </Link>
