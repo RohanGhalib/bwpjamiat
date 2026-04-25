@@ -5,6 +5,7 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Tarana } from '@/lib/types';
+import { uploadFileDirectToR2 } from '@/lib/upload-client';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
@@ -109,25 +110,23 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
           throw new Error('Please upload an audio or video file.');
         } else {
           const isVideo = selectedAudioFile.type.startsWith('video');
-          const uploadData = new FormData();
-          uploadData.append('file', selectedAudioFile);
-          
-          if (!isVideo) {
-            uploadData.append('folder', 'taranas');
-          }
-          
-          const endpoint = isVideo ? '/api/taranas/extract' : '/api/upload';
-          
-          const response = await axios.post(endpoint, uploadData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            onUploadProgress: (progressEvent) => {
-              if (progressEvent.total) {
-                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                setUploadProgress(percentCompleted);
-              }
+          const directUpload = await uploadFileDirectToR2({
+            file: selectedAudioFile,
+            folder: isVideo ? 'taranas/raw' : 'taranas',
+            onProgress: (percentCompleted) => {
+              setUploadProgress(percentCompleted);
             }
           });
-          finalAudioUrl = response.data.fileUrl;
+
+          if (isVideo) {
+            const response = await axios.post('/api/taranas/extract', {
+              sourceKey: directUpload.storagePath,
+              cleanupSource: true,
+            });
+            finalAudioUrl = response.data.fileUrl;
+          } else {
+            finalAudioUrl = directUpload.fileUrl;
+          }
         }
       }
 
@@ -136,21 +135,15 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
       }
 
       if (selectedCoverFile) {
-        const coverData = new FormData();
-        coverData.append('file', selectedCoverFile);
-        coverData.append('folder', 'taranas/covers');
-
-        const coverResponse = await axios.post('/api/upload', coverData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-              setCoverUploadProgress(percentCompleted);
-            }
+        const coverResponse = await uploadFileDirectToR2({
+          file: selectedCoverFile,
+          folder: 'taranas/covers',
+          onProgress: (percentCompleted) => {
+            setCoverUploadProgress(percentCompleted);
           }
         });
 
-        finalCoverUrl = coverResponse.data.fileUrl;
+        finalCoverUrl = coverResponse.fileUrl;
       }
 
       const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean);

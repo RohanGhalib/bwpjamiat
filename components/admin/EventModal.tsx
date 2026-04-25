@@ -5,6 +5,7 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { fromDateTimeLocalValue, toDateTimeLocalValue, type EventRecord } from '@/lib/event-utils';
+import { uploadFileDirectToR2 } from '@/lib/upload-client';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
@@ -86,21 +87,15 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
       let imageStoragePath = formData.imageStoragePath;
 
       if (selectedPosterFile) {
-        const uploadData = new FormData();
-        uploadData.append('file', selectedPosterFile);
-
-        const response = await axios.post('/api/upload', uploadData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-              setUploadProgress(percentCompleted);
-            }
+        const response = await uploadFileDirectToR2({
+          file: selectedPosterFile,
+          onProgress: (percentCompleted) => {
+            setUploadProgress(percentCompleted);
           }
         });
 
-        imageUrl = response.data.fileUrl;
-        imageStoragePath = response.data.imageStoragePath;
+        imageUrl = response.fileUrl;
+        imageStoragePath = response.storagePath;
       }
 
       if (!imageUrl) {

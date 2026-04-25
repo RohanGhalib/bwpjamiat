@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { r2Client } from "@/lib/r2";
+import { getR2Config, getR2PublicUrl, r2Client } from "@/lib/r2";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: Request) {
@@ -17,7 +16,7 @@ export async function POST(request: Request) {
     const fileExtension = file.name.split(".").pop();
     const targetFolder = folder || "events";
     const uniqueFilename = `${targetFolder}/${uuidv4()}.${fileExtension}`;
-    const bucketName = process.env.NEXT_PUBLIC_R2_BUCKET_NAME;
+    const { bucketName } = getR2Config();
 
     if (!bucketName) {
       return NextResponse.json({ error: "Bucket name not configured" }, { status: 500 });
@@ -34,13 +33,9 @@ export async function POST(request: Request) {
     });
 
     await r2Client.send(command);
-    
-    // Construct the public URL where the file will be accessible after upload
-    const publicUrlBase = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, "");
-    const fileUrl = publicUrlBase ? `${publicUrlBase}/${uniqueFilename}` : "";
 
     return NextResponse.json({
-      fileUrl: fileUrl,
+      fileUrl: getR2PublicUrl(uniqueFilename),
       imageStoragePath: uniqueFilename
     });
 

@@ -203,6 +203,13 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
     document.body.removeChild(a);
   };
 
+  const handleAddToSpotify = (tarana: Tarana) => {
+    // TuneMyMusic search URL that allows users to add tracks to Spotify
+    const searchQuery = `${tarana.title} ${tarana.artist || 'IJT'}`;
+    const tuneMyMusicUrl = `https://www.tunemymusic.com/search?q=${encodeURIComponent(searchQuery)}&from=spotify`;
+    window.open(tuneMyMusicUrl, '_blank');
+  };
+
   // Audio source assignment and auto-play
   useEffect(() => {
     if (activeTarana && audioRef.current) {
@@ -282,10 +289,13 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                   <span className="sm:hidden">Back</span>
                  </button>
                  <div className="flex gap-2">
-                  <button onClick={() => handleShare(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur">
+                  <button onClick={() => handleShare(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur" title="Share">
                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
                     </button>
-                  <button onClick={() => handleDownload(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur">
+                  <button onClick={() => handleAddToSpotify(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur" title="Add to Spotify">
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.122-.899-.539-.12-.417.122-.776.54-.899 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.84.6-1.26.3-3.24-1.992-8.159-2.592-12.021-1.409-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15.079 10.561 18.72 12.84c.361.21.599.659.301 1.1z"/></svg>
+                    </button>
+                  <button onClick={() => handleDownload(activeTarana)} className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/15 text-white/85 hover:text-white rounded-full transition-all backdrop-blur" title="Download">
                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                     </button>
                  </div>
@@ -586,6 +596,13 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                   title="Share"
                >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
+               </button>
+               <button 
+                  onClick={() => activeTarana && handleAddToSpotify(activeTarana)} 
+                  className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-slate-100 rounded-full transition-all"
+                  title="Add to Spotify"
+               >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.122-.899-.539-.12-.417.122-.776.54-.899 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.84.6-1.26.3-3.24-1.992-8.159-2.592-12.021-1.409-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15.079 10.561 18.72 12.84c.361.21.599.659.301 1.1z"/></svg>
                </button>
                <button 
                   onClick={() => activeTarana && handleDownload(activeTarana)} 

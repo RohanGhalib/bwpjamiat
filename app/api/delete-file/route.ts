@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { r2Client } from "@/lib/r2";
+import { getR2Config, r2Client } from "@/lib/r2";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export async function POST(request: Request) {
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing file key" }, { status: 400 });
     }
 
-    const bucketName = process.env.NEXT_PUBLIC_R2_BUCKET_NAME;
+    const { bucketName } = getR2Config();
 
     if (!bucketName) {
       return NextResponse.json({ error: "Bucket name not configured" }, { status: 500 });
