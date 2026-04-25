@@ -194,7 +194,7 @@ function buildTheme(primary: HslColor, secondary: HslColor, deepSource: HslColor
     textOnAccent: getTextOnAccent(accent),
     isDark,
     mesh,
-    generatedAt: new Date().toISOString(),
+    generatedAt: `theme:${source}:${seed}`,
     source,
   };
 }
