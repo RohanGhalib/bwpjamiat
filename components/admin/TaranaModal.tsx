@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ const emptyForm = {
   duration: '',
   tags: '',
   audioUrl: '',
+  coverUrl: '',
 };
 
 interface TaranaModalProps {
@@ -26,9 +27,16 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [coverUploadProgress, setCoverUploadProgress] = useState<number | null>(null);
   const [formData, setFormData] = useState(emptyForm);
   
   const [selectedAudioFile, setSelectedAudioFile] = useState<File | null>(null);
+  const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
+
+  const coverPreviewUrl = useMemo(() => {
+    if (!selectedCoverFile) return '';
+    return URL.createObjectURL(selectedCoverFile);
+  }, [selectedCoverFile]);
 
   useEffect(() => {
     if (isOpen) {
@@ -39,14 +47,25 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
           duration: taranaToEdit.duration || '',
           tags: taranaToEdit.tags?.join(', ') || '',
           audioUrl: taranaToEdit.audioUrl || '',
+          coverUrl: taranaToEdit.coverUrl || '',
         });
       } else {
         setFormData(emptyForm);
       }
       setSelectedAudioFile(null);
+      setSelectedCoverFile(null);
       setUploadProgress(null);
+      setCoverUploadProgress(null);
     }
   }, [isOpen, taranaToEdit]);
+
+  useEffect(() => {
+    return () => {
+      if (coverPreviewUrl) {
+        URL.revokeObjectURL(coverPreviewUrl);
+      }
+    };
+  }, [coverPreviewUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -79,9 +98,11 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
     e.preventDefault();
     setLoading(true);
     setUploadProgress(null);
+    setCoverUploadProgress(null);
 
     try {
       let finalAudioUrl = formData.audioUrl;
+      let finalCoverUrl = formData.coverUrl;
 
       if (!taranaToEdit || selectedAudioFile) {
         if (!selectedAudioFile) {
@@ -114,6 +135,24 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
         throw new Error('No audio URL found. Please provide an audio file.');
       }
 
+      if (selectedCoverFile) {
+        const coverData = new FormData();
+        coverData.append('file', selectedCoverFile);
+        coverData.append('folder', 'taranas/covers');
+
+        const coverResponse = await axios.post('/api/upload', coverData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setCoverUploadProgress(percentCompleted);
+            }
+          }
+        });
+
+        finalCoverUrl = coverResponse.data.fileUrl;
+      }
+
       const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(Boolean);
 
       const payload = {
@@ -122,6 +161,7 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
         duration: formData.duration,
         tags: tagsArray,
         audioUrl: finalAudioUrl,
+        coverUrl: finalCoverUrl || '',
         updatedAt: new Date().toISOString()
       };
 
@@ -241,6 +281,42 @@ export default function TaranaModal({ isOpen, onClose, taranaToEdit }: TaranaMod
                 <strong>Current Audio:</strong> {taranaToEdit.audioUrl.substring(0, 50)}...
               </p>
             )}
+          </div>
+
+          <div className="pt-4 border-t border-slate-100">
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Cover Image (Optional)</label>
+
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setSelectedCoverFile(e.target.files?.[0] || null)}
+                className="w-full bg-[#FAFCFF] border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1C7F93] focus:ring-1 focus:ring-[#1C7F93] transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#1C7F93]/10 file:text-[#1C7F93] hover:file:bg-[#1C7F93]/20"
+              />
+
+              {coverUploadProgress !== null && (
+                <div className="mt-3">
+                  <div className="flex justify-between text-xs font-bold text-[#1C7F93] mb-1">
+                    <span>Uploading cover...</span>
+                    <span>{coverUploadProgress}%</span>
+                  </div>
+                  <div className="w-full bg-slate-100 rounded-full h-2">
+                    <div className="bg-[#1C7F93] h-2 rounded-full transition-all duration-300" style={{ width: `${coverUploadProgress}%` }}></div>
+                  </div>
+                </div>
+              )}
+
+              {(selectedCoverFile || formData.coverUrl) && (
+                <div className="mt-4">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cover Preview</p>
+                  <img
+                    src={coverPreviewUrl || formData.coverUrl}
+                    alt="Tarana cover preview"
+                    className="w-24 h-24 rounded-xl object-cover border border-slate-200"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex gap-3 pt-4 border-t border-slate-100">

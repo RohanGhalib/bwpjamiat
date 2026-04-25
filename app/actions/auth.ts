@@ -1,8 +1,11 @@
 "use server";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+const ADMIN_PASSWORD = "ubaidnazim";
 
 export async function submitAdminLogin(password: string) {
-  if (password === "ubaidnazim") {
+  if (password === ADMIN_PASSWORD) {
     const cookieStore = await cookies();
     cookieStore.set("admin_auth", "authenticated", { 
        path: "/", 
@@ -13,4 +16,10 @@ export async function submitAdminLogin(password: string) {
     return true;
   }
   return false;
+}
+
+export async function submitAdminLogout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("admin_auth");
+  redirect("/admin");
 }

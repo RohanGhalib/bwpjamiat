@@ -32,6 +32,7 @@ export interface Tarana {
   artist: string;
   duration: string;
   audioUrl: string;
+  coverUrl?: string;
   tags: string[];
 }
 

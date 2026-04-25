@@ -1,13 +1,28 @@
+"use client";
+
 import Link from 'next/link';
+import { submitAdminLogout } from '@/app/actions/auth';
 
 export default function AdminDashboard() {
+  const handleLogout = async () => {
+    await submitAdminLogout();
+  };
+
   return (
     <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0">
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
-        <div className="mb-16">
-          <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Command Center</h2>
-          <h1 className="text-5xl font-black text-[#123962] mb-6 tracking-tight">Admin Portal</h1>
-          <p className="text-slate-500 font-medium">Manage the BWP Jamiat application content natively.</p>
+        <div className="mb-16 flex items-start justify-between">
+          <div>
+            <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Command Center</h2>
+            <h1 className="text-5xl font-black text-[#123962] mb-6 tracking-tight">Admin Portal</h1>
+            <p className="text-slate-500 font-medium">Manage the BWP Jamiat application content natively.</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold text-sm transition-colors"
+          >
+            Logout
+          </button>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
