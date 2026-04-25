@@ -195,14 +195,42 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
 
   const handleDownload = (tarana: Tarana) => {
     if (!tarana.audioUrl) return;
-    const a = document.createElement('a');
-    a.href = tarana.audioUrl;
-    // adding download attribute works best if same-origin, otherwise opens in new tab
-    a.download = `${tarana.title}.mp3`;
-    a.target = "_blank";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+
+    const sanitizeFileName = (value: string) =>
+      value.replace(/[<>:"/\\|?*\x00-\x1F]/g, '').trim() || 'tarana';
+
+    const extensionFromUrl = (() => {
+      try {
+        const pathname = new URL(tarana.audioUrl).pathname;
+        const fileName = pathname.split('/').pop();
+        const extension = fileName?.split('.').pop();
+        return extension ? `.${extension}` : '.mp3';
+      } catch {
+        return '.mp3';
+      }
+    })();
+
+    fetch(tarana.audioUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to download audio.');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `${sanitizeFileName(tarana.title)}${extensionFromUrl}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      })
+      .catch((error) => {
+        console.error('Download failed:', error);
+        alert('Could not download this tarana right now. Please try again.');
+      });
   };
 
   const handleAddToSpotify = (tarana: Tarana) => {
