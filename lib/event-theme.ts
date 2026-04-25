@@ -18,7 +18,7 @@ type RgbBucket = {
 
 const themeCache = new Map<string, EventThemeConfig>();
 
-const THEME_VERSION = 2;
+const THEME_VERSION = 3; // Bumped version to invalidate old cached neon colors
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -36,11 +36,9 @@ function randomFromSeed(seed: string, step: number) {
 
 function hashString(value: string) {
   let hash = 0;
-
   for (let index = 0; index < value.length; index += 1) {
     hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
   }
-
   return hash;
 }
 
@@ -54,28 +52,33 @@ function rgbToHsl(r: number, g: number, b: number): HslColor {
   let h = 0;
 
   if (delta !== 0) {
-    if (max === rn) {
-      h = ((gn - bn) / delta) % 6;
-    } else if (max === gn) {
-      h = (bn - rn) / delta + 2;
-    } else {
-      h = (rn - gn) / delta + 4;
-    }
+    if (max === rn) h = ((gn - bn) / delta) % 6;
+    else if (max === gn) h = (bn - rn) / delta + 2;
+    else h = (rn - gn) / delta + 4;
   }
 
   h = Math.round(h * 60);
-  if (h < 0) {
-    h += 360;
-  }
+  if (h < 0) h += 360;
 
   const l = (max + min) / 2;
   const s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
 
-  return {
-    h,
-    s: s * 100,
-    l: l * 100,
-  };
+  return { h, s: s * 100, l: l * 100 };
+}
+
+function hslToRgb(h: number, s: number, l: number) {
+  s /= 100;
+  l /= 100;
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return { r: 255 * f(0), g: 255 * f(8), b: 255 * f(4) };
+}
+
+function getPerceivedBrightness(h: number, s: number, l: number) {
+  const { r, g, b } = hslToRgb(h, s, l);
+  // W3C relative luminance approximation - accounts for how the human eye sees green vs blue
+  return (r * 299 + g * 587 + b * 114) / 1000;
 }
 
 function hslToCss(color: HslColor) {
@@ -83,39 +86,43 @@ function hslToCss(color: HslColor) {
 }
 
 function makeVivid(color: HslColor, mode: 'base' | 'deep' | 'accent') {
+  // RELATIVE scaling: Preserves the aesthetic mood of the original poster
   if (mode === 'deep') {
     return {
       h: color.h,
-      s: clamp(Math.max(color.s + 8, 50), 38, 88),
-      l: clamp(color.l - 24, 14, 36),
+      s: clamp(color.s * 1.1, 15, 80), 
+      l: clamp(color.l * 0.7, 12, 32), // Darken for background depth
     };
   }
 
   if (mode === 'accent') {
     return {
       h: color.h,
-      s: clamp(Math.max(color.s + 18, 64), 56, 96),
-      l: clamp(color.l, 32, 54),
+      // Only force high saturation if it was already somewhat saturated
+      s: clamp(color.s > 40 ? color.s * 1.2 : color.s + 15, 35, 90),
+      l: clamp(color.l, 35, 65),
     };
   }
 
   return {
     h: color.h,
-    s: clamp(Math.max(color.s + 16, 58), 48, 92),
-    l: clamp(color.l + 3, 30, 66),
+    s: clamp(color.s * 1.15, 20, 85), // Allow low saturation (muted teals, classy greys)
+    l: clamp(color.l, 25, 75),
   };
 }
 
 function getBaseColorScore(bucket: RgbBucket, total: number) {
   const hsl = rgbToHsl(bucket.r, bucket.g, bucket.b);
   const frequency = bucket.count / Math.max(total, 1);
-  const frequencyScore = frequency * 220;
-  const saturationScore = clamp(hsl.s, 0, 100) * 0.25;
-  const midLightnessScore = (70 - Math.abs(hsl.l - 52)) * 0.25;
-  const warmDistance = Math.min(hueDistance(hsl.h, 38), hueDistance(hsl.h, 350));
-  const warmBoost = clamp((75 - warmDistance) / 75, 0, 1) * 4;
+  
+  // Dominant color should usually win
+  const frequencyScore = frequency * 400; 
+  // Slight preference for colors with *some* life, but not demanding neon
+  const saturationScore = hsl.s * 0.4; 
+  // Prefer mid-tones so text and elements can contrast against it
+  const midLightnessScore = (50 - Math.abs(hsl.l - 50)) * 0.6; 
 
-  return frequencyScore + saturationScore + midLightnessScore + warmBoost;
+  return frequencyScore + saturationScore + midLightnessScore;
 }
 
 function getAccentScore(bucket: RgbBucket, total: number) {
@@ -123,14 +130,17 @@ function getAccentScore(bucket: RgbBucket, total: number) {
   const frequency = bucket.count / Math.max(total, 1);
 
   if (frequency < 0.01) {
-    return -Infinity;
+    return -Infinity; // Ignore stray 1-pixel anomalies
   }
 
-  return hsl.s * 0.9 + (56 - Math.abs(hsl.l - 46)) * 0.45 + frequency * 80;
+  // Accents should be colorful, distinct, and moderately bright
+  return hsl.s * 1.2 + (50 - Math.abs(hsl.l - 50)) * 0.5 + frequency * 50;
 }
 
 function getTextOnAccent(accent: HslColor) {
-  return accent.l > 56 ? '#10243f' : '#ffffff';
+  // Uses perceived brightness rather than raw HSL Lightness
+  const brightness = getPerceivedBrightness(accent.h, accent.s, accent.l);
+  return brightness > 140 ? '#10243f' : '#ffffff';
 }
 
 function buildMesh(seed: string) {
@@ -168,28 +178,31 @@ function buildTheme(primary: HslColor, secondary: HslColor, deepSource: HslColor
   const deep = makeVivid(deepSource, 'deep');
   const { mesh, gradient } = createGradient(primaryVivid, secondaryVivid, deep, seed);
 
+  // Pick the most saturated color to serve as the base for the accent
   const accentSource = secondaryVivid.s > primaryVivid.s ? secondaryVivid : primaryVivid;
   const accent = makeVivid(accentSource, 'accent');
+  
   const accentHover = {
     h: accent.h,
-    s: clamp(accent.s + 2, 56, 98),
-    l: clamp(accent.l - 7, 26, 48),
+    s: clamp(accent.s + 5, 30, 98),
+    l: clamp(accent.l - 8, 20, 55),
   };
+  
   const heading = {
     h: deep.h,
-    s: clamp(deep.s + 10, 44, 92),
-    l: clamp(deep.l - 6, 10, 30),
+    s: clamp(deep.s + 10, 20, 92),
+    l: clamp(deep.l - 6, 10, 25),
   };
 
-  const averageLightness = (primaryVivid.l + secondaryVivid.l + deep.l) / 3;
-  const isDark = averageLightness < 42;
+  const brightness = getPerceivedBrightness(primaryVivid.h, primaryVivid.s, primaryVivid.l);
+  const isDark = brightness < 110;
 
   return {
     version: THEME_VERSION,
     gradient,
     accent: hslToCss(accent),
     accentHover: hslToCss(accentHover),
-    accentSoft: hslToCss({ ...accent, l: clamp(accent.l + 34, 74, 92), s: clamp(accent.s - 14, 34, 82) }),
+    accentSoft: hslToCss({ ...accent, l: clamp(accent.l + 34, 74, 95), s: clamp(accent.s - 14, 20, 82) }),
     heading: hslToCss(heading),
     textOnAccent: getTextOnAccent(accent),
     isDark,
@@ -205,9 +218,9 @@ export function buildFallbackTheme(seed: string): EventThemeConfig {
   const secondaryHue = (hue + 32 + (hash % 17)) % 360;
   const deepHue = (hue + 165) % 360;
 
-  const primary: HslColor = { h: hue, s: 72, l: 42 };
-  const secondary: HslColor = { h: secondaryHue, s: 78, l: 48 };
-  const deep: HslColor = { h: deepHue, s: 58, l: 28 };
+  const primary: HslColor = { h: hue, s: 60, l: 45 };
+  const secondary: HslColor = { h: secondaryHue, s: 65, l: 50 };
+  const deep: HslColor = { h: deepHue, s: 40, l: 25 };
 
   return buildTheme(primary, secondary, deep, seed, 'fallback');
 }
@@ -253,14 +266,10 @@ export async function generateEventThemeFromImage(imageUrl: string, seed: string
       const b = data[i + 2] ?? 0;
       const a = data[i + 3] ?? 0;
 
-      if (a < 140) {
-        continue;
-      }
+      if (a < 140) continue;
 
       const hsl = rgbToHsl(r, g, b);
-      if (hsl.s < 10 || hsl.l < 7 || hsl.l > 95) {
-        continue;
-      }
+      if (hsl.s < 5 || hsl.l < 10 || hsl.l > 95) continue; // Lowered saturation cutoff slightly
 
       totalSamples += 1;
 
@@ -311,6 +320,7 @@ export async function generateEventThemeFromImage(imageUrl: string, seed: string
       ?? ranked.find((entry) => hueDistance(entry.hsl.h, primary.h) >= 15)?.hsl
       ?? ranked[1]?.hsl
       ?? primary;
+      
     const deep = ranked.find((entry) => entry.frequency >= 0.02 && entry.hsl.l < 36)?.hsl
       ?? ranked.find((entry) => entry.hsl.l < 34)?.hsl
       ?? ranked[ranked.length - 1]?.hsl
