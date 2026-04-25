@@ -67,6 +67,22 @@ export async function getTaranas(): Promise<Tarana[]> {
   }
 }
 
+export async function getTaranaById(id: string): Promise<Tarana | null> {
+  try {
+    const docRef = doc(db, 'taranas', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() } as Tarana;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching tarana:", error);
+    return null;
+  }
+}
+
 export async function addTarana(data: Omit<Tarana, 'id'>): Promise<string | null> {
   try {
     const docRef = await addDoc(collection(db, 'taranas'), data);

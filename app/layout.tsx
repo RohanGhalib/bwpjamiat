@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import FooterWrapper from "@/components/layout/FooterWrapper";
 import Image from "next/image";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +30,30 @@ const amiri = Amiri({
 });
 export const metadata: Metadata = {
   title: "Islami Jamiat-e-Talaba Bahawalpur",
-  description: "Official website for Islami Jamiat-e-Talaba Bahawalpur. Largest student organization in Pakistan.",
+  description: siteConfig.defaultDescription,
+  metadataBase: new URL(siteConfig.url),
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
+  },
+  openGraph: {
+    title: "Islami Jamiat-e-Talaba Bahawalpur",
+    description: siteConfig.defaultDescription,
+    siteName: siteConfig.name,
+    locale: "en_PK",
+    type: "website",
+    url: siteConfig.url,
+    images: [
+      {
+        url: absoluteUrl(siteConfig.defaultOgImage),
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Islami Jamiat-e-Talaba Bahawalpur",
+    description: siteConfig.defaultDescription,
+    images: [absoluteUrl(siteConfig.defaultOgImage)],
   },
 };
 

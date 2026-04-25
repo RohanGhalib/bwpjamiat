@@ -175,19 +175,21 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
   };
 
   const handleShare = async (tarana: Tarana) => {
+    const shareUrl = new URL(`/taranas/${tarana.id}`, window.location.origin).toString();
+
     if (navigator.share) {
       try {
         await navigator.share({
           title: tarana.title,
           text: `Listen to "${tarana.title}" by ${tarana.artist || 'IJT'} on IJT Bahawalpur Taranas Gallery!`,
-          url: window.location.href,
+          url: shareUrl,
         });
       } catch (err) {
         console.log('Share cancelled or failed', err);
       }
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Page link copied to clipboard!");
+      navigator.clipboard.writeText(shareUrl);
+      alert("Tarana link copied to clipboard!");
     }
   };
 
