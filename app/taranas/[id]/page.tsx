@@ -58,6 +58,7 @@ export async function generateMetadata({ params }: TaranaPageProps): Promise<Met
       description,
       images: [imageUrl],
     },
+    keywords: [tarana.title, tarana.artist, "IJT Bahawalpur tarana"].filter(Boolean) as string[],
   };
 }
 

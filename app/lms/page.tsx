@@ -1,18 +1,12 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'NISAB Learning Portal | IJT Bahawalpur',
   description: 'Access the official NISAB curriculum for Rafaqat and Rukniyat members of Islami Jamiat-e-Talaba Bahawalpur.',
-  openGraph: {
-    title: 'NISAB Learning Portal | IJT Bahawalpur',
-    description: 'Exclusive NISAB training system for IJT Bahawalpur members.',
-    url: 'https://bwpjamiat.vercel.app/lms',
-    siteName: 'IJT Bahawalpur',
-    locale: 'en_PK',
-    type: 'website',
-  },
-};
+  path: '/lms',
+  keywords: ['IJT NISAB', 'Islamic student curriculum', 'Bahawalpur learning portal'],
+});
 
 export default function LMS() {
   const nisabCourses = [

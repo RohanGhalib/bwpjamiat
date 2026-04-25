@@ -29,9 +29,13 @@ const amiri = Amiri({
   subsets: ["arabic"],
 });
 export const metadata: Metadata = {
-  title: "Islami Jamiat-e-Talaba Bahawalpur",
+  title: {
+    default: "Islami Jamiat-e-Talaba Bahawalpur",
+    template: "%s",
+  },
   description: siteConfig.defaultDescription,
   metadataBase: new URL(siteConfig.url),
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',

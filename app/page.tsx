@@ -1,16 +1,47 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query } from 'firebase/firestore';
 import HeroBubble from '@/components/HeroBubble';
 import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
+import { buildMetadata } from '@/lib/seo';
+import { absoluteUrl, siteConfig } from '@/lib/site';
 
-
+export const metadata: Metadata = buildMetadata({
+  title: 'Islami Jamiat-e-Talaba Bahawalpur',
+  description: 'Official website for Islami Jamiat-e-Talaba Bahawalpur featuring events, taranas, literature, articles, and ways to join the student movement in Bahawalpur.',
+  path: '/',
+  keywords: ['IJT Bahawalpur', 'Islami Jamiat-e-Talaba', 'student organization Bahawalpur', 'IJT Pakistan'],
+});
 
 export default function Home() {
+   const organizationJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Islami Jamiat-e-Talaba Bahawalpur',
+      url: siteConfig.url,
+      logo: absoluteUrl('/logo.png'),
+   };
+
+   const websiteJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'IJT Bahawalpur',
+      url: siteConfig.url,
+   };
+
    return (
       <div className="flex flex-col min-h-screen bg-transparent overflow-hidden selection:bg-[#1C7F93] selection:text-white font-sans animate-page-reveal">
+         <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+         />
+         <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+         />
 
          {/* Hero Banner - Thoughtful & Beautiful */}
          <section className="relative pt-44 pb-0 flex flex-col justify-start min-h-[90vh] z-0 overflow-hidden bg-gradient-to-b from-[#FAFCFF] via-white to-[#eef4f9]">
@@ -57,7 +88,7 @@ export default function Home() {
                <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
                   <div className="w-full md:w-1/3 flex justify-center md:justify-end shrink-0">
                      <div className="relative w-56 h-56 md:w-72 md:h-72 rounded-full overflow-hidden shadow-[0_20px_40px_rgba(18,57,98,0.1)] ring-8 ring-[#FAFCFF] transform md:-rotate-2 border border-slate-100 bg-[#FAFCFF]">
-                        <Image src="/maududi.png" alt="Syed Abul A'la Maududi" fill sizes="(max-width: 768px) 14rem, 18rem" className="object-cover object-top mix-blend-multiply grayscale opacity-90 transition-all hover:grayscale-0 hover:opacity-100 duration-500" priority />
+                        <Image src="/maududi.png" alt="Syed Abul A&apos;la Maududi" fill sizes="(max-width: 768px) 14rem, 18rem" className="object-cover object-top mix-blend-multiply grayscale opacity-90 transition-all hover:grayscale-0 hover:opacity-100 duration-500" priority />
                      </div>
                   </div>
 
@@ -66,7 +97,7 @@ export default function Home() {
                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#123962] leading-relaxed md:leading-[1.4] tracking-tight font-serif mb-8 text-slate-700">
                         &ldquo;A student&apos;s true duty is not merely to acquire knowledge for worldly gain, but to prepare themselves as a torchbearer of an intellectual and moral revolution in society.&rdquo;
                      </h2>
-                     <h3 className="font-extrabold text-[#123962] tracking-widest uppercase text-sm mb-1">Syed Abul A'la Maududi</h3>
+                     <h3 className="font-extrabold text-[#123962] tracking-widest uppercase text-sm mb-1">Syed Abul A&apos;la Maududi</h3>
                      <p className="text-[#1C7F93] font-bold text-xs uppercase tracking-[0.2em]">Ideological Founder</p>
                   </div>
                </div>

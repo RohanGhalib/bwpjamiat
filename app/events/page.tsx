@@ -4,19 +4,14 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import EventTile from '@/components/events/EventTile';
 import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
 import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Upcoming Events | IJT Bahawalpur',
   description: 'Join the upcoming conventions, seminars, and tarbiyati programs of Islami Jamiat-e-Talaba Bahawalpur across the city.',
-  openGraph: {
-    title: 'Upcoming Events | IJT Bahawalpur',
-    description: 'Student conventions and Islamic seminars in Bahawalpur by IJT.',
-    url: 'https://bwpjamiat.vercel.app/events',
-    siteName: 'IJT Bahawalpur',
-    locale: 'en_PK',
-    type: 'website',
-  },
-};
+  path: '/events',
+  keywords: ['IJT Bahawalpur events', 'student events Bahawalpur', 'Islamic seminars Bahawalpur'],
+});
 
 export default function EventsList() {
   return (

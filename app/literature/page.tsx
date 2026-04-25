@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Literature Archive | IJT Bahawalpur',
     description: 'Curated Islamic literature and scholarly books from the IJT Bahawalpur library.',
-    url: 'https://bwpjamiat.vercel.app/literature',
+    url: 'https://www.bwpjamiat.org/literature',
     siteName: 'IJT Bahawalpur',
     locale: 'en_PK',
     type: 'website',
