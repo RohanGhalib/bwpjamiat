@@ -24,7 +24,7 @@ async function TaranasFetcher() {
 
 export default function Taranas() {
   return (
-    <div className="min-h-screen bg-transparent pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
+    <div className="min-h-screen bg-transparent pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative overflow-hidden">
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes bounce-bar {
           0%, 100% { height: 3px; }
@@ -38,7 +38,12 @@ export default function Taranas() {
         <div className="text-center mb-16 max-w-2xl mx-auto">
           <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Official Audio</h2>
           <h1 className="text-5xl font-black text-[#123962] mb-6 tracking-tight">Taranas Gallery</h1>
-          <p className="text-slate-500 font-medium leading-relaxed">The rhythmic heartbeat of our revolution. Listen to the anthems that have inspired millions across generations.</p>
+          <p className="text-slate-500 font-medium leading-relaxed mb-8">The rhythmic heartbeat of our revolution. Listen to the anthems that have inspired millions across generations.</p>
+          
+          <a href="/taranas/request" className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#123962] border border-slate-200 rounded-full font-bold shadow-[0_4px_14px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_20px_rgba(28,127,147,0.12)] hover:border-[#1C7F93]/30 hover:text-[#1C7F93] transition-all gap-2 group">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-slate-400 group-hover:text-[#1C7F93] transition-colors"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+             Request a Tarana
+          </a>
         </div>
 
         <Suspense fallback={<div className="text-center py-20 animate-pulse text-slate-400">Loading Taranas...</div>}>

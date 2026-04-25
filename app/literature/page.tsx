@@ -229,7 +229,7 @@ export default function Literature() {
 ].map((book, index) => ({ id: index + 1, ...book }));
 
   return (
-    <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
+    <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative overflow-hidden">
       <div className="absolute top-20 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-[#123962]/5 to-transparent blur-[120px] rounded-full -z-10 pointer-events-none"></div>
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">

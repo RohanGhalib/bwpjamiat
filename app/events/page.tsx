@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function EventsList() {
   return (
-    <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
+    <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <div className="text-center mb-16 max-w-2xl mx-auto">
           <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Conventions &amp; Seminars</h2>

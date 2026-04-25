@@ -21,7 +21,7 @@ export default function ArticlesList() {
   }));
 
   return (
-    <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
+    <div className="min-h-screen bg-transparent  pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-[#1C7F93]/10 to-transparent blur-[120px] rounded-full -z-10 pointer-events-none"></div>
 
       <div className="container mx-auto px-4 max-w-5xl relative z-10">

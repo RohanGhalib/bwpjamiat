@@ -1,37 +1,89 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Tarana } from '@/lib/types';
 
 export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tarana[] }) {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeTarana, setActiveTarana] = useState<Tarana | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTimeRaw, setCurrentTimeRaw] = useState("00:00");
+  const [durationRaw, setDurationRaw] = useState("00:00");
   const [isMuted, setIsMuted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
+
+  // Derived Data
+  const uniqueTags = useMemo(() => {
+    const tags = new Set<string>();
+    initialTaranas.forEach(t => {
+      if (t.tags && Array.isArray(t.tags)) {
+        t.tags.forEach(tag => tags.add(tag));
+      }
+    });
+    return Array.from(tags);
+  }, [initialTaranas]);
+
+  const filteredTaranas = useMemo(() => {
+    return initialTaranas.filter(t => {
+      const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            (t.artist && t.artist.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesTag = selectedTag ? (t.tags && t.tags.includes(selectedTag)) : true;
+      return matchesSearch && matchesTag;
+    });
+  }, [initialTaranas, searchQuery, selectedTag]);
+
+  // Playback Handlers
   const handlePlayPause = (tarana: Tarana) => {
     if (!tarana.audioUrl) {
       alert("Audio file not available for this tarana yet.");
       return;
     }
 
-    if (activeId === tarana.id) {
+    if (activeTarana?.id === tarana.id) {
       if (isPlaying) {
         audioRef.current?.pause();
         setIsPlaying(false);
       } else {
-        audioRef.current?.play();
+        audioRef.current?.play().catch(e => console.log("Playback error:", e));
         setIsPlaying(true);
       }
     } else {
-      if (audioRef.current) {
-        audioRef.current.src = tarana.audioUrl;
-        audioRef.current.play();
-        setActiveId(tarana.id);
-        setIsPlaying(true);
-      }
+      setActiveTarana(tarana);
+      setIsPlaying(true);
+      // Playback will trigger in useEffect when src changes
+    }
+  };
+
+  const handleNext = () => {
+    if (!activeTarana) return;
+    const currentIndex = filteredTaranas.findIndex(t => t.id === activeTarana.id);
+    if (currentIndex >= 0 && currentIndex < filteredTaranas.length - 1) {
+      handlePlayPause(filteredTaranas[currentIndex + 1]);
+    } else if (filteredTaranas.length > 0) {
+       // Loop to first
+       handlePlayPause(filteredTaranas[0]);
+    }
+  };
+
+  const handlePrev = () => {
+    if (!activeTarana) return;
+    if (audioRef.current && audioRef.current.currentTime > 3) {
+      // If played for more than 3 seconds, just restart current track
+      audioRef.current.currentTime = 0;
+      return;
+    }
+    const currentIndex = filteredTaranas.findIndex(t => t.id === activeTarana.id);
+    if (currentIndex > 0) {
+      handlePlayPause(filteredTaranas[currentIndex - 1]);
+    } else if (filteredTaranas.length > 0) {
+       // Loop to last
+       handlePlayPause(filteredTaranas[filteredTaranas.length - 1]);
     }
   };
 
@@ -41,6 +93,10 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
       const duration = audioRef.current.duration;
       if (duration > 0) {
         setProgress((current / duration) * 100);
+        
+        const durMins = Math.floor(duration / 60);
+        const durSecs = Math.floor(duration % 60);
+        setDurationRaw(`${durMins.toString().padStart(2, '0')}:${durSecs.toString().padStart(2, '0')}`);
       }
       
       const mins = Math.floor(current / 60);
@@ -50,8 +106,8 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
   };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-     if (audioRef.current && audioRef.current.duration) {
-        const rect = e.currentTarget.getBoundingClientRect();
+     if (audioRef.current && audioRef.current.duration && progressBarRef.current) {
+        const rect = progressBarRef.current.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const width = rect.width;
         const newTime = (clickX / width) * audioRef.current.duration;
@@ -66,104 +122,336 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
     }
   };
 
+  const handleShare = async (tarana: Tarana) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: tarana.title,
+          text: `Listen to "${tarana.title}" by ${tarana.artist || 'IJT'} on IJT Bahawalpur Taranas Gallery!`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log('Share cancelled or failed', err);
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Page link copied to clipboard!");
+    }
+  };
+
+  const handleDownload = (tarana: Tarana) => {
+    if (!tarana.audioUrl) return;
+    const a = document.createElement('a');
+    a.href = tarana.audioUrl;
+    // adding download attribute works best if same-origin, otherwise opens in new tab
+    a.download = `${tarana.title}.mp3`;
+    a.target = "_blank";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  // Audio source assignment and auto-play
+  useEffect(() => {
+    if (activeTarana && audioRef.current) {
+       // Only change src if it's different to prevent resetting playback
+       if (audioRef.current.src !== activeTarana.audioUrl && !audioRef.current.src.endsWith(activeTarana.audioUrl)) {
+          audioRef.current.src = activeTarana.audioUrl;
+          if (isPlaying) {
+             audioRef.current.play().catch(e => console.log("Auto-play prevented:", e));
+          }
+       }
+    }
+  }, [activeTarana]); // isPlaying is intentionally omitted to avoid resetting src on pause
+
+  // Setup Event Listeners & Media Session
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
       const handleEnded = () => {
-        setIsPlaying(false);
-        setProgress(0);
-        setCurrentTimeRaw("00:00");
+        handleNext(); // Auto-play next track
       };
+      
+      const handlePlayEvent = () => setIsPlaying(true);
+      const handlePauseEvent = () => setIsPlaying(false);
       
       audio.addEventListener('ended', handleEnded);
       audio.addEventListener('timeupdate', handleTimeUpdate);
+      audio.addEventListener('play', handlePlayEvent);
+      audio.addEventListener('pause', handlePauseEvent);
+      
       return () => {
         audio.removeEventListener('ended', handleEnded);
         audio.removeEventListener('timeupdate', handleTimeUpdate);
+        audio.removeEventListener('play', handlePlayEvent);
+        audio.removeEventListener('pause', handlePauseEvent);
       };
     }
-  }, []);
+  }, [filteredTaranas, activeTarana]); // Re-bind when filtered list or active track changes for handleNext
+
+  // Background playback (MediaSession API)
+  useEffect(() => {
+    if ('mediaSession' in navigator && activeTarana) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: activeTarana.title,
+        artist: activeTarana.artist || 'IJT Bahawalpur',
+        album: 'IJT Taranas',
+        artwork: [
+          { src: '/logo.png', sizes: '96x96', type: 'image/png' },
+          { src: '/logo.png', sizes: '128x128', type: 'image/png' },
+          { src: '/logo.png', sizes: '256x256', type: 'image/png' },
+          { src: '/logo.png', sizes: '512x512', type: 'image/png' },
+        ]
+      });
+
+      navigator.mediaSession.setActionHandler('play', () => {
+        audioRef.current?.play();
+      });
+      navigator.mediaSession.setActionHandler('pause', () => {
+        audioRef.current?.pause();
+      });
+      navigator.mediaSession.setActionHandler('previoustrack', handlePrev);
+      navigator.mediaSession.setActionHandler('nexttrack', handleNext);
+    }
+  }, [activeTarana, filteredTaranas]);
 
   return (
-    <div className="bg-white rounded-[3rem] p-4 sm:p-8 lg:p-12 shadow-[0_20px_60px_rgba(18,57,98,0.03)] border border-slate-50">
-      <audio ref={audioRef} className="hidden" preload="none" />
-      <div className="space-y-4">
-         {initialTaranas.length === 0 ? (
-           <div className="text-center py-10 text-slate-500 font-medium">No taranas available yet.</div>
-         ) : initialTaranas.map(t => {
-           const isActive = activeId === t.id;
-           
-           return (
-           <div key={t.id} className={`group flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-3xl border transition-all duration-300 transform hover:-translate-y-1 ${isActive ? 'bg-white border-[#1C7F93]/20 shadow-[0_10px_30px_rgba(28,127,147,0.08)]' : 'bg-[#FAFCFF] border-transparent hover:bg-white hover:border-slate-100 shadow-sm hover:shadow-[0_10px_30px_rgba(28,127,147,0.06)]'}`}>
-              <div className="flex items-center space-x-4 mb-4 sm:mb-0 w-full sm:w-auto">
+    <div className="relative pb-32">
+      {/* Hidden Audio Element */}
+      {/* playsInline is important for iOS to play without forcing fullscreen */}
+      <audio ref={audioRef} className="hidden" preload="metadata" playsInline />
+      
+      <div className="bg-white rounded-[2.5rem] p-4 sm:p-8 lg:p-12 shadow-[0_20px_60px_rgba(18,57,98,0.03)] border border-slate-50 mb-8">
+        
+        {/* Search and Filters */}
+        <div className="mb-8 space-y-5">
+          <div className="relative group">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 absolute left-4 top-3.5 text-slate-400 group-focus-within:text-[#1C7F93] transition-colors">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+            <input 
+              type="text" 
+              placeholder="Search taranas by title or artist..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-700 shadow-sm focus:bg-white focus:ring-2 focus:ring-[#1C7F93]/30 focus:border-[#1C7F93] outline-none transition-all placeholder:text-slate-400 font-medium"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+              </button>
+            )}
+          </div>
+          
+          {uniqueTags.length > 0 && (
+            <div className="flex overflow-x-auto pb-2 gap-2 hide-scrollbar items-center">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2 shrink-0">Filters:</span>
+              <button 
+                onClick={() => setSelectedTag(null)} 
+                className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition-all ${!selectedTag ? 'bg-[#123962] text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+              >
+                All
+              </button>
+              {uniqueTags.map(tag => (
                 <button 
-                  onClick={() => handlePlayPause(t)}
-                  className={`w-14 h-14 sm:w-16 sm:h-16 shadow-sm rounded-full flex items-center justify-center transition-colors duration-300 shrink-0 border border-slate-50 ${isActive && isPlaying ? 'bg-[#1C7F93] text-white hover:bg-[#156373]' : 'bg-white text-[#1C7F93] hover:bg-[#1C7F93] hover:text-white'}`}>
-                   {isActive && isPlaying ? (
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7"><path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clipRule="evenodd" /></svg>
-                   ) : (
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7 ml-1"><path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" /></svg>
-                   )}
+                  key={tag}
+                  onClick={() => setSelectedTag(tag)} 
+                  className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition-all ${selectedTag === tag ? 'bg-[#1C7F93] text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                >
+                  {tag}
                 </button>
-                <div className="flex-1">
-                  <h4 className="font-extrabold text-[#123962] text-lg sm:text-xl mb-1 line-clamp-1">{t.title}</h4>
-                  <p className="text-[#1C7F93] text-[10px] sm:text-xs font-bold uppercase tracking-widest">{t.artist || 'Unknown Artist'}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between sm:w-auto w-full flex-1 sm:ml-8 mt-2 sm:mt-0">
-                 
-                 {isActive && (
-                   <button 
-                     onClick={toggleMute}
-                     className="text-slate-400 hover:text-[#1C7F93] transition-colors p-2 mr-2"
-                     title={isMuted ? "Unmute" : "Mute"}
-                   >
-                     {isMuted ? (
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM17.78 9.22a.75.75 0 1 0-1.06 1.06L18.44 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L20.56 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z" /></svg>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* List of Taranas */}
+        <div className="space-y-3">
+           {filteredTaranas.length === 0 ? (
+             <div className="text-center py-16 text-slate-500 font-medium bg-slate-50 rounded-3xl border border-slate-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 mx-auto text-slate-300 mb-4"><path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v16.308c0 .841-.673 1.543-1.513 1.583A1.803 1.803 0 015.688 21.5V10.25z" /></svg>
+                No taranas found matching your criteria.
+             </div>
+           ) : filteredTaranas.map(t => {
+             const isActive = activeTarana?.id === t.id;
+             
+             return (
+             <div 
+                key={t.id} 
+                onClick={() => handlePlayPause(t)}
+                className={`group flex items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer ${isActive ? 'bg-gradient-to-r from-white to-[#1C7F93]/5 border-[#1C7F93]/20 shadow-[0_8px_20px_rgba(28,127,147,0.08)]' : 'bg-white border-slate-100 hover:border-[#1C7F93]/30 hover:shadow-md'}`}
+             >
+                <div className="flex items-center space-x-4 w-full">
+                  <div 
+                    className={`w-12 h-12 sm:w-14 sm:h-14 shadow-sm rounded-full flex items-center justify-center transition-all duration-500 shrink-0 border relative overflow-hidden ${isActive && isPlaying ? 'bg-[#1C7F93] text-white border-[#1C7F93]' : 'bg-slate-50 text-[#1C7F93] border-slate-200 group-hover:bg-[#1C7F93] group-hover:text-white group-hover:border-[#1C7F93]'}`}>
+                     {isActive && isPlaying ? (
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 sm:w-6 sm:h-6 relative z-10"><path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clipRule="evenodd" /></svg>
                      ) : (
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" /><path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z" /></svg>
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 sm:w-6 sm:h-6 ml-1 relative z-10"><path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" /></svg>
                      )}
-                   </button>
-                 )}
-                 
-                 <div className="flex-1 flex flex-col mx-2 relative min-w-[120px]">
-                   {isActive && (
-                     <div className="flex justify-between text-[10px] text-slate-500 font-bold mb-1.5 px-1">
-                       <span>{currentTimeRaw}</span>
-                       <span>{t.duration || '00:00'}</span>
+                     
+                     {/* Pulse effect when playing */}
+                     {isActive && isPlaying && (
+                       <div className="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>
+                     )}
+                  </div>
+                  <div className="flex-1 pr-2 min-w-0">
+                    <h4 className={`font-extrabold text-base sm:text-lg mb-0.5 truncate transition-colors ${isActive ? 'text-[#1C7F93]' : 'text-[#123962]'}`}>{t.title}</h4>
+                    <p className="text-slate-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate">{t.artist || 'Unknown Artist'}</p>
+                  </div>
+                  
+                  {/* Right side info (Duration / Visualizer) */}
+                  <div className="flex items-center gap-4 shrink-0">
+                     {t.tags && t.tags.length > 0 && (
+                        <div className="hidden md:flex gap-1">
+                           {t.tags.slice(0, 2).map(tag => (
+                              <span key={tag} className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[9px] uppercase font-bold rounded-full">{tag}</span>
+                           ))}
+                        </div>
+                     )}
+                     
+                     <div className={`font-bold text-xs min-w-[60px] text-right transition-colors ${isActive ? 'text-[#1C7F93]' : 'text-slate-400'}`}>
+                       {isActive && isPlaying ? (
+                         <div className="flex space-x-[2px] items-end h-[14px] justify-end">
+                            <div className="w-[3px] bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 0.8s ease-in-out infinite alternate', animationDelay: '0.0s' }}></div>
+                            <div className="w-[3px] bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 1.2s ease-in-out infinite alternate', animationDelay: '0.2s' }}></div>
+                            <div className="w-[3px] bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 0.9s ease-in-out infinite alternate', animationDelay: '0.4s' }}></div>
+                            <div className="w-[3px] bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 1.1s ease-in-out infinite alternate', animationDelay: '0.1s' }}></div>
+                         </div>
+                       ) : (
+                         t.duration || 'AUDIO'
+                       )}
                      </div>
-                   )}
-                   <div 
-                     className={`w-full bg-slate-100 rounded-full overflow-hidden flex relative items-center justify-start ${isActive ? 'h-3 cursor-pointer' : 'h-1.5'}`}
-                     onClick={isActive ? handleSeek : undefined}
-                   >
-                     <div 
-                       className={`h-full rounded-full transition-all duration-300 relative z-10 ${isActive && isPlaying ? 'bg-[#1C7F93]/60' : isActive ? 'bg-[#1C7F93]/40' : 'bg-slate-300 w-1/3 group-hover:bg-[#1C7F93]/50'}`}
-                       style={isActive ? { width: `${progress}%`, transition: 'width 0.1s linear' } : {}}
-                     ></div>
-                   </div>
-                 </div>
-                 
-                 <div className={`ml-4 font-bold text-xs min-w-[80px] h-[34px] flex items-center justify-center rounded-full border shadow-sm shrink-0 transition-colors duration-300 ${isActive ? 'bg-white text-[#1C7F93] border-[#1C7F93]/20 shadow-[0_4px_10px_rgba(28,127,147,0.1)]' : 'bg-white text-slate-400 border-slate-100'}`}>
-                   {isActive && isPlaying ? (
-                     <div className="flex space-x-[2px] items-end h-[14px]">
-                        <div className="w-1 bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 0.8s ease-in-out infinite alternate', animationDelay: '0.0s' }}></div>
-                        <div className="w-1 bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 1.2s ease-in-out infinite alternate', animationDelay: '0.2s' }}></div>
-                        <div className="w-1 bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 0.9s ease-in-out infinite alternate', animationDelay: '0.4s' }}></div>
-                        <div className="w-1 bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 1.1s ease-in-out infinite alternate', animationDelay: '0.1s' }}></div>
-                        <div className="w-1 bg-[#1C7F93] rounded-full" style={{ animation: 'bounce-bar 1.3s ease-in-out infinite alternate', animationDelay: '0.3s' }}></div>
+                     
+                     {/* More options button (Desktop only for inline, mobile uses bottom player) */}
+                     <div className="hidden sm:flex items-center gap-2">
+                        <button 
+                           onClick={(e) => { e.stopPropagation(); handleShare(t); }} 
+                           className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-[#1C7F93]/10 rounded-full transition-all"
+                           title="Share"
+                        >
+                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
+                        </button>
+                        <button 
+                           onClick={(e) => { e.stopPropagation(); handleDownload(t); }} 
+                           className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-[#1C7F93]/10 rounded-full transition-all"
+                           title="Download"
+                        >
+                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                        </button>
                      </div>
-                   ) : isActive && !isPlaying ? (
-                     'PAUSED'
-                   ) : (
-                     t.duration || 'AUDIO'
-                   )}
-                 </div>
-              </div>
-           </div>
-           );
-         })}
+                  </div>
+                </div>
+             </div>
+             );
+           })}
+        </div>
+      </div>
+
+      {/* Persistent Bottom Player */}
+      <div 
+        className={`fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-2xl border-t border-slate-200/60 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${activeTarana ? 'translate-y-0' : 'translate-y-[120%]'}`}
+      >
+         {/* Scrub Bar (Absolute top) */}
+         <div 
+            ref={progressBarRef}
+            className="absolute top-0 left-0 right-0 h-1.5 bg-slate-200 cursor-pointer group"
+            onClick={handleSeek}
+         >
+            <div 
+               className="h-full bg-[#1C7F93] relative"
+               style={{ width: `${progress}%` }}
+            >
+               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-[#1C7F93] rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-1/2 shadow-sm"></div>
+            </div>
+         </div>
+
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between gap-4">
+            
+            {/* Track Info */}
+            <div className="flex items-center gap-3 sm:gap-4 w-1/3 min-w-[120px]">
+               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#123962] to-[#1C7F93] rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6 text-white/80"><path strokeLinecap="round" strokeLinejoin="round" d="M9 19.5V15m6 4.5v-4.5M9 15l-3-3m3 3l3-3m3 3l3-3m-3 3l-3-3" /></svg>
+               </div>
+               <div className="min-w-0 hidden sm:block">
+                  <h4 className="font-extrabold text-[#123962] text-sm sm:text-base truncate">{activeTarana?.title || 'Unknown Track'}</h4>
+                  <p className="text-[#1C7F93] text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">{activeTarana?.artist || 'Unknown Artist'}</p>
+               </div>
+               <div className="min-w-0 sm:hidden flex-1 marquee-container overflow-hidden">
+                  <div className="whitespace-nowrap font-extrabold text-[#123962] text-sm animate-marquee">
+                     {activeTarana?.title} • {activeTarana?.artist || 'IJT'}
+                  </div>
+                  <style dangerouslySetInnerHTML={{__html: `
+                    .animate-marquee {
+                       display: inline-block;
+                       animation: marquee 10s linear infinite;
+                    }
+                    @keyframes marquee {
+                       0% { transform: translateX(100%); }
+                       100% { transform: translateX(-100%); }
+                    }
+                  `}} />
+               </div>
+            </div>
+
+            {/* Main Controls */}
+            <div className="flex flex-col items-center justify-center w-1/3 shrink-0">
+               <div className="flex items-center gap-4 sm:gap-6">
+                  <button onClick={handlePrev} className="text-slate-400 hover:text-[#123962] transition-colors p-1" title="Previous">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7"><path d="M9.195 18.44c1.25.713 2.805-.19 2.805-1.629v-8.56c0-1.44-1.555-2.342-2.805-1.628L3.622 9.778c-1.25.714-1.25 2.52 0 3.234L9.195 18.44z" /><path d="M19.5 18.44c1.25.713 2.805-.19 2.805-1.629v-8.56c0-1.44-1.555-2.342-2.805-1.628L13.928 9.778c-1.25.714-1.25 2.52 0 3.234L19.5 18.44z" /></svg>
+                  </button>
+                  
+                  <button 
+                     onClick={() => activeTarana && handlePlayPause(activeTarana)} 
+                     className="w-12 h-12 sm:w-14 sm:h-14 bg-[#1C7F93] hover:bg-[#156373] text-white rounded-full flex items-center justify-center shadow-[0_4px_14px_rgba(28,127,147,0.4)] hover:shadow-[0_6px_20px_rgba(28,127,147,0.5)] hover:-translate-y-0.5 transition-all"
+                  >
+                     {isPlaying ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-8 sm:h-8"><path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clipRule="evenodd" /></svg>
+                     ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-8 sm:h-8 ml-1"><path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" /></svg>
+                     )}
+                  </button>
+                  
+                  <button onClick={handleNext} className="text-slate-400 hover:text-[#123962] transition-colors p-1" title="Next">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7"><path d="M14.805 5.56c-1.25-.713-2.805.19-2.805 1.629v8.56c0 1.44 1.555 2.342 2.805 1.628L20.378 14.222c1.25-.714 1.25-2.52 0-3.234L14.805 5.56z" /><path d="M4.5 5.56c-1.25-.713-2.805.19-2.805 1.629v8.56c0 1.44 1.555 2.342 2.805 1.628L10.072 14.222c1.25-.714 1.25-2.52 0-3.234L4.5 5.56z" /></svg>
+                  </button>
+               </div>
+               
+               <div className="hidden sm:flex items-center justify-between w-full mt-2 text-[10px] font-bold text-slate-400">
+                  <span>{currentTimeRaw}</span>
+                  <span>{durationRaw !== "00:00" ? durationRaw : (activeTarana?.duration || "00:00")}</span>
+               </div>
+            </div>
+
+            {/* Extra Controls */}
+            <div className="flex items-center justify-end gap-2 sm:gap-4 w-1/3">
+               <button 
+                  onClick={toggleMute}
+                  className="text-slate-400 hover:text-[#1C7F93] transition-colors p-2 hidden sm:block"
+                  title={isMuted ? "Unmute" : "Mute"}
+               >
+                  {isMuted ? (
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 sm:w-6 sm:h-6"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM17.78 9.22a.75.75 0 1 0-1.06 1.06L18.44 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L20.56 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z" /></svg>
+                  ) : (
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 sm:w-6 sm:h-6"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" /><path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z" /></svg>
+                  )}
+               </button>
+               <button 
+                  onClick={() => activeTarana && handleShare(activeTarana)} 
+                  className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-slate-100 rounded-full transition-all"
+                  title="Share"
+               >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
+               </button>
+               <button 
+                  onClick={() => activeTarana && handleDownload(activeTarana)} 
+                  className="p-2 text-slate-400 hover:text-[#1C7F93] hover:bg-slate-100 rounded-full transition-all"
+                  title="Download"
+               >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+               </button>
+            </div>
+         </div>
       </div>
     </div>
   );

@@ -29,8 +29,8 @@ function HeaderContent() {
 
   return (
     <div className="fixed top-0 inset-x-0 z-50 p-4 font-sans max-w-6xl mx-auto">
-      <header className={`rounded-2xl transition-all duration-300 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/50 ${isOpen ? 'bg-white/95 backdrop-blur-xl' : 'bg-white/70 backdrop-blur-lg'}`}>
-        <div className="px-6 py-3 flex items-center justify-between">
+      <header className={`rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/50 bg-white/90 backdrop-blur-md transition-colors duration-300 ${isOpen ? 'bg-white/95' : ''}`}>
+        <div className="px-6 py-3 flex items-center justify-between relative z-10">
           <Link href="/" className="flex items-center space-x-3 group" onClick={() => setIsOpen(false)}>
             <div className="relative w-11 h-11 overflow-hidden transform group-hover:scale-105 transition-transform duration-300">
                <Image src="/logo.png" alt="IJT Logo" fill sizes="44px" className="object-contain" priority />
@@ -72,8 +72,9 @@ function HeaderContent() {
               Join IJT
             </Link>
             <button 
-              className="lg:hidden text-[#123962] p-2 hover:bg-slate-100/80 rounded-full transition-colors focus:outline-none"
+              className="lg:hidden text-[#123962] p-2 hover:bg-slate-100/80 rounded-full transition-colors focus:outline-none cursor-pointer relative z-20"
               onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
               aria-label="Toggle menu"
             >
               {isOpen ? (
@@ -91,8 +92,8 @@ function HeaderContent() {
 
         {/* Mobile Dropdown */}
         <div 
-          className={`lg:hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-             isOpen ? 'max-h-[500px] opacity-100 border-t border-slate-200/50' : 'max-h-0 opacity-0'
+          className={`lg:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
+             isOpen ? 'max-h-[500px] opacity-100 border-t border-slate-200/50' : 'max-h-0 opacity-0 border-transparent'
           }`}
         >
           <nav className="flex flex-col space-y-1.5 px-6 py-5 text-sm font-semibold">

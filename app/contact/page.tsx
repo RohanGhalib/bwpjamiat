@@ -48,7 +48,7 @@ export default function JoinUs() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
+    <div className="min-h-screen bg-transparent pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute top-0 right-0 w-[800px] h-[500px] bg-gradient-to-bl from-[#1C7F93]/10 to-transparent blur-[120px] rounded-bl-full -z-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[400px] bg-gradient-to-tr from-[#123962]/5 to-transparent blur-[100px] rounded-tr-full -z-10 pointer-events-none"></div>
