@@ -16,10 +16,13 @@ export const metadata: Metadata = {
   },
 };
 
-// This is now a Server Component that fetches the taranas from Firebase!
-export default async function Taranas() {
+// We moved the data fetching into a child Server Component so it can be wrapped in Suspense!
+async function TaranasFetcher() {
   const taranas = await getTaranas();
+  return <TaranasGallery initialTaranas={taranas} />;
+}
 
+export default function Taranas() {
   return (
     <div className="min-h-screen bg-transparent pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative z-0 overflow-hidden">
       <style dangerouslySetInnerHTML={{__html: `
@@ -39,7 +42,7 @@ export default async function Taranas() {
         </div>
 
         <Suspense fallback={<div className="text-center py-20 animate-pulse text-slate-400">Loading Taranas...</div>}>
-          <TaranasGallery initialTaranas={taranas} />
+          <TaranasFetcher />
         </Suspense>
       </div>
     </div>

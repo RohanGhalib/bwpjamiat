@@ -2,7 +2,7 @@
 import { Analytics } from "@vercel/analytics/next"
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 
 const navLinks = [
@@ -14,7 +14,7 @@ const navLinks = [
   { href: '/lms', label: 'LMS' },
 ];
 
-export default function Header() {
+function HeaderContent() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -122,5 +122,13 @@ export default function Header() {
         </div>
       </header>
     </div>
+  );
+}
+
+export default function Header() {
+  return (
+    <Suspense fallback={<div className="fixed top-0 inset-x-0 z-50 p-4 font-sans max-w-6xl mx-auto h-[76px]"></div>}>
+      <HeaderContent />
+    </Suspense>
   );
 }
