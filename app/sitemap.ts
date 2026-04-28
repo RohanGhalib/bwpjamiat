@@ -26,14 +26,15 @@ function staticRoute(
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
-    staticRoute("/", 1, "weekly"),
-    staticRoute("/aghaz", 0.9, "weekly"),
-    staticRoute("/contact", 0.9, "monthly"),
-    staticRoute("/events", 0.9, "daily"),
-    staticRoute("/taranas", 0.9, "weekly"),
+    staticRoute("/", 1.0, "daily"),
+    staticRoute("/ember", 1.0, "daily"),
+    staticRoute("/aghaz", 0.9, "daily"),
+    staticRoute("/contact", 0.8, "monthly"),
+    staticRoute("/events", 1.0, "daily"),
+    staticRoute("/taranas", 0.9, "daily"),
     staticRoute("/taranas/request", 0.7, "monthly"),
-    staticRoute("/articles", 0.7, "weekly"),
-    staticRoute("/literature", 0.8, "weekly"),
+    staticRoute("/articles", 0.9, "daily"),
+    staticRoute("/literature", 0.8, "daily"),
     staticRoute("/lms", 0.6, "monthly"),
   ];
 
