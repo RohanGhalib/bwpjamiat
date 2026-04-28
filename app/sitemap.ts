@@ -27,6 +27,7 @@ function staticRoute(
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
     staticRoute("/", 1, "weekly"),
+    staticRoute("/aghaz", 0.9, "weekly"),
     staticRoute("/contact", 0.9, "monthly"),
     staticRoute("/events", 0.9, "daily"),
     staticRoute("/taranas", 0.9, "weekly"),

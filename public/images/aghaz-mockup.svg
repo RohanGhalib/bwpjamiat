@@ -1,0 +1,64 @@
+<svg width="1600" height="1024" viewBox="0 0 1600 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="800" y1="0" x2="800" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7edd7"/>
+      <stop offset="0.52" stop-color="#f8f3e4"/>
+      <stop offset="1" stop-color="#f5efe0"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 560) rotate(90) scale(220 220)">
+      <stop stop-color="#fff8d1"/>
+      <stop offset="1" stop-color="#fff8d1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="arch" x1="160" y1="32" x2="1440" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7b4f26"/>
+      <stop offset="0.5" stop-color="#c49a5f"/>
+      <stop offset="1" stop-color="#7b4f26"/>
+    </linearGradient>
+    <linearGradient id="stairs" x1="800" y1="820" x2="800" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#96754e"/>
+      <stop offset="1" stop-color="#edd8ab"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="16"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1024" fill="url(#sky)"/>
+  <circle cx="800" cy="560" r="280" fill="url(#sun)"/>
+
+  <path d="M220 980C320 860 470 840 560 890C650 940 740 960 820 900C900 840 1030 860 1120 910C1210 960 1330 960 1410 900V1024H220V980Z" fill="#d4c3a2" opacity="0.5" filter="url(#soft)"/>
+  <path d="M160 940C280 830 420 810 520 860C620 910 710 930 800 870C890 810 1030 830 1120 880C1210 930 1340 930 1470 860V1024H160V940Z" fill="#d8cab1" opacity="0.72"/>
+
+  <path d="M560 860L800 360L1040 860H980L800 470L620 860H560Z" fill="url(#stairs)" opacity="0.35"/>
+
+  <g opacity="0.65">
+    <path d="M600 860H1000" stroke="#e9d6ad" stroke-width="10"/>
+    <path d="M616 826H984" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M632 794H968" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M648 762H952" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M664 730H936" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M680 698H920" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M696 666H904" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M712 634H888" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M728 602H872" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M744 570H856" stroke="#e8d3a7" stroke-width="8"/>
+    <path d="M760 538H840" stroke="#e8d3a7" stroke-width="8"/>
+  </g>
+
+  <path d="M160 980V170C160 80 230 24 320 24H1280C1370 24 1440 80 1440 170V980" stroke="url(#arch)" stroke-width="34"/>
+  <path d="M240 980V195C240 134 289 84 350 84H1250C1311 84 1360 134 1360 195V980" stroke="#d7b37c" stroke-opacity="0.7" stroke-width="8"/>
+
+  <g opacity="0.96">
+    <text x="800" y="250" fill="#5f2215" font-family="Georgia, serif" font-size="138" font-weight="700" text-anchor="middle">AGHAZ</text>
+    <rect x="596" y="268" width="408" height="84" rx="8" fill="#5f2215"/>
+    <text x="800" y="327" fill="#fff7ea" font-family="Arial, sans-serif" font-size="62" font-style="italic" font-weight="700" text-anchor="middle">FOR MEDICOS</text>
+  </g>
+
+  <g>
+    <rect x="694" y="836" width="212" height="110" rx="26" fill="#14a0e7"/>
+    <rect x="706" y="848" width="188" height="86" rx="20" fill="#0f75b5"/>
+    <text x="800" y="903" fill="#e8f7ff" font-family="Arial, sans-serif" font-size="28" font-weight="700" text-anchor="middle">IJT</text>
+  </g>
+
+  <text x="800" y="988" fill="#f6f3ea" font-family="Arial, sans-serif" font-size="52" font-weight="700" text-anchor="middle">ISLAMI JAMIAT TALABA</text>
+</svg>
