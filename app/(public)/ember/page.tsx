@@ -386,7 +386,9 @@ export default function EmberPage() {
             { name: "Hanzlah Saleem", title: "Motivational Speaker", img: "/ember/mentors/hanzlah.png" },
             { name: "Ubaid Ur Rahman", title: "President IJT Bahawalpur", img: "/ember/mentors/ubaid.png" },
             { name: "Adnan Faisal", title: "Director DAS Bahawalpur", img: "/ember/mentors/adnan.jpg" },
-            { name: "Azam Gujjar", title: "Director SNGPL Bahawalpur", img: "/ember/mentors/azam.png" }
+            { name: "Azam Gujjar", title: "Director SNGPL Bahawalpur", img: "/ember/mentors/azam.png" },
+            { name: "Muhtshim Daud", title: "COO ThinkCode IT Solutions", img: "/ember/mentors/muhtshim.jpeg" }
+
           ].map((mentor, i) => (
             <div key={i} className="flex flex-col items-center group animate-fade-up" style={{ animationDelay: `${0.05 * i}s` }}>
               <div className="w-full max-w-[320px] aspect-square rounded-[40px] bg-white/5 border border-white/10 mb-6 overflow-hidden group-hover:border-[var(--c-accent)] transition-all duration-500 relative shadow-2xl">
