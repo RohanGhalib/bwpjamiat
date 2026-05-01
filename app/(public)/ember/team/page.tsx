@@ -35,8 +35,8 @@ export default function EmberTeamPage() {
 
       {/* ── Navigation ── */}
       <nav className="relative z-20 pt-8 px-8 max-w-7xl mx-auto">
-        <Link 
-          href="/ember" 
+        <Link
+          href="/ember"
           className={`${dreamPlanner.className} text-[var(--c-accent)] hover:text-white transition-colors text-xl tracking-widest flex items-center gap-2 group`}
         >
           <span className="group-hover:-translate-x-1 transition-transform">←</span> BACK TO HOME
@@ -68,9 +68,9 @@ export default function EmberTeamPage() {
         <h2 className={`${dreamPlanner.className} text-white text-[45px] sm:text-[60px] md:text-[80px] mb-12`}>
           WANT TO JOIN US?
         </h2>
-        <a 
-          href="https://instagram.com/emberbahawalpur" 
-          target="_blank" 
+        <a
+          href="https://instagram.com/emberbahawalpur"
+          target="_blank"
           rel="noopener noreferrer"
           className={`${dreamPlanner.className} bg-white text-[var(--c-navy-dark)] px-12 py-5 rounded-full text-2xl hover:bg-[var(--c-accent)] hover:text-white transition-all shadow-2xl hover:scale-105`}
         >
@@ -90,8 +90,8 @@ async function TeamListLoader() {
   // Hardcoded Leadership for consistent branding/styling
   const hardcodedLeadership = [
     { id: "president", name: "Rohan Ghalib", role: "President", img: "/rohan_profile.jpg", prominent: true },
-    { id: "vp1", name: "Saim Bin Yusaf", role: "Vice President", img: "/person.png" },
-    { id: "vp2", name: "Bisma Hanif", role: "Vice President", img: "/person.png" },
+    { id: "vp1", name: "Saim Bin Yusaf", role: "Vice President", img: "/ember/team/saim.png" },
+    { id: "vp2", name: "Bisma Hanif", role: "Vice President", img: "/ember/team/bisma.png" },
   ];
 
   // Filter out any leadership members that might have been added to the DB to avoid duplicates
@@ -104,7 +104,7 @@ async function TeamListLoader() {
 
   return (
     <div className="relative z-10 max-w-7xl mx-auto px-6 pb-32 space-y-40">
-      
+
       {/* Leadership Section */}
       <section className="flex flex-col items-center gap-24">
         {/* President - Most Prominent */}
@@ -129,7 +129,7 @@ async function TeamListLoader() {
           <div className="flex flex-col items-center gap-16">
             {/* Director (Assuming first in EC order) */}
             <TeamCard {...executiveCouncil[0]} size="lg" />
-            
+
             {executiveCouncil.length > 1 && (
               <div className="flex flex-wrap justify-center gap-12">
                 {executiveCouncil.slice(1).map((member, i) => (
@@ -165,10 +165,10 @@ async function TeamListLoader() {
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 w-full place-items-center md:place-items-start">
                     {boys.map((member, i) => (
-                      <TeamCard 
-                        key={member.id} 
-                        {...member} 
-                        delay={(deptIdx * 0.2) + (i * 0.05)} 
+                      <TeamCard
+                        key={member.id}
+                        {...member}
+                        delay={(deptIdx * 0.2) + (i * 0.05)}
                         size="sm"
                         polished={deptName === "Discipline"}
                       />
@@ -185,10 +185,10 @@ async function TeamListLoader() {
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 w-full place-items-center md:place-items-start">
                     {girls.map((member, i) => (
-                      <TeamCard 
-                        key={member.id} 
-                        {...member} 
-                        delay={(deptIdx * 0.2) + (i * 0.05)} 
+                      <TeamCard
+                        key={member.id}
+                        {...member}
+                        delay={(deptIdx * 0.2) + (i * 0.05)}
                         size="sm"
                         polished={deptName === "Discipline"}
                       />
