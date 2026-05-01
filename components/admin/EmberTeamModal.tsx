@@ -30,7 +30,9 @@ const emptyForm = {
   img: '',
   imageStoragePath: '',
   gender: 'boy' as 'boy' | 'girl',
-  order: 0
+  order: 0,
+  email: '',
+  phone: ''
 };
 
 interface EmberTeamModalProps {
@@ -57,7 +59,9 @@ export default function EmberTeamModal({ isOpen, onClose, memberToEdit }: EmberT
           img: memberToEdit.img || '',
           imageStoragePath: (memberToEdit as any).imageStoragePath || '',
           gender: memberToEdit.gender || 'boy',
-          order: memberToEdit.order || 0
+          order: memberToEdit.order || 0,
+          email: memberToEdit.email || '',
+          phone: memberToEdit.phone || ''
         });
       } else {
         setFormData(emptyForm);
@@ -228,6 +232,29 @@ export default function EmberTeamModal({ isOpen, onClose, memberToEdit }: EmberT
                   <span className="text-sm font-medium text-slate-700">Girl Team</span>
                 </label>
               </div>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                className="w-full bg-[#FAFCFF] border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1C7F93] focus:ring-1 focus:ring-[#1C7F93] transition-all"
+                placeholder="email@example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Phone Number</label>
+              <input
+                type="text"
+                value={formData.phone}
+                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full bg-[#FAFCFF] border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1C7F93] focus:ring-1 focus:ring-[#1C7F93] transition-all"
+                placeholder="03000000000"
+              />
             </div>
           </div>
 

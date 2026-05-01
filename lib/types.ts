@@ -70,4 +70,6 @@ export interface EmberMember {
   img: string;
   gender: 'boy' | 'girl';
   order: number;
+  email?: string;
+  phone?: string;
 }

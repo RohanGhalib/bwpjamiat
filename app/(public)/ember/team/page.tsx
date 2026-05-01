@@ -44,13 +44,25 @@ export default function EmberTeamPage() {
       </nav>
 
       {/* ── Hero Section ── */}
-      <header className="relative z-10 pt-16 pb-24 px-6 flex flex-col items-center text-center">
-        <div className="animate-page-reveal">
-          <h1 className={`${dreamPlanner.className} text-white leading-[0.8] tracking-tighter text-[60px] xs:text-[80px] sm:text-[100px] md:text-[140px] lg:text-[180px] [text-shadow:4px_4px_0_#000] sm:[text-shadow:8px_8px_0_#000]`}>
-            THE TEAM FOR 2026
-          </h1>
-          <p className={`${dreamPlanner.className} text-[var(--c-accent)] text-lg sm:text-2xl tracking-[0.3em] uppercase mt-4 [text-shadow:2px_2px_0_#000]`}>
-            Pioneering the Future of Innovation
+      <header className="relative z-10 pt-24 pb-24 px-6 flex flex-col items-center text-center">
+        <div className="relative z-10 flex flex-col items-center -rotate-[1deg] sm:-rotate-[2.5deg] animate-page-reveal w-full max-w-full">
+          {/* Innovista Logo */}
+          <div className="relative mb-[-15px] sm:mb-[-45px] md:mb-[-55px] lg:mb-[-65px] z-20">
+            <Image
+              src="/logoinnovista.png"
+              alt="Innovista"
+              width={450}
+              height={160}
+              priority
+              className="h-auto w-[180px] sm:w-[300px] md:w-[380px] lg:w-[440px] object-contain"
+            />
+          </div>
+
+          <h1 className={`${dreamPlanner.className} text-white text-center leading-[0.75] tracking-tighter text-[60px] xs:text-[80px] sm:text-[100px] md:text-[140px] lg:text-[180px] [text-shadow:4px_4px_0_#000] sm:[text-shadow:8px_8px_0_#000] w-full`}>
+            EMBER'26           </h1>
+
+          <p className={`${dreamPlanner.className} text-[var(--c-accent)] text-center leading-none tracking-[0.08em] text-[18px] sm:text-[24px] md:text-[32px] mt-4 [text-shadow:2px_2px_0_#000] uppercase`}>
+            Host Team
           </p>
         </div>
       </header>
@@ -95,12 +107,14 @@ async function TeamListLoader() {
   ];
 
   // Filter out any leadership members that might have been added to the DB to avoid duplicates
-  const members = allMembers.filter(m => m.department !== "Leadership");
+  // and exclude Participants from the team page
+  const members = allMembers.filter(m => m.department !== "Leadership" && m.department !== "Participant");
 
   // Grouping logic
   const executiveCouncil = members.filter(m => m.department === "Executive Council");
+  const managementTeam = members.filter(m => m.department === "Management");
   const otherDepts = Array.from(new Set(members.map(m => m.department)))
-    .filter(d => d !== "Leadership" && d !== "Executive Council");
+    .filter(d => d !== "Leadership" && d !== "Executive Council" && d !== "Management");
 
   return (
     <div className="relative z-10 max-w-7xl mx-auto px-6 pb-32 space-y-40">
@@ -137,6 +151,29 @@ async function TeamListLoader() {
                 ))}
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {/* Management Team (Prioritized Second) */}
+      {managementTeam.length > 0 && (
+        <section className="relative">
+          <div className="flex items-center gap-6 mb-16 px-0 md:px-0">
+            <h2 className={`${dreamPlanner.className} text-white text-[40px] sm:text-[60px] md:text-[80px] leading-none [text-shadow:4px_4px_0_var(--c-orange)] whitespace-nowrap`}>
+              MANAGEMENT
+            </h2>
+            <div className="h-[2px] w-full bg-gradient-to-r from-white/20 to-transparent" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 w-full place-items-center md:place-items-start">
+            {managementTeam.map((member, i) => (
+              <TeamCard
+                key={member.id}
+                {...member}
+                delay={0.1 * i}
+                size="sm"
+              />
+            ))}
           </div>
         </section>
       )}
