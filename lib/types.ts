@@ -61,3 +61,13 @@ export interface AlumniProfile {
   profession: string;
   avatarUrl?: string;
 }
+
+export interface EmberMember {
+  id: string;
+  name: string;
+  role: string;
+  department: string;
+  img: string;
+  gender: 'boy' | 'girl';
+  order: number;
+}

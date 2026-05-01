@@ -39,7 +39,20 @@ const dreamPlanner = localFont({
   display: "swap",
 });
 
-export default function EmberPage() {
+import { getEmberTeam } from "@/lib/db";
+import TeamCard from "@/components/ember/TeamCard";
+
+export default async function EmberPage() {
+  const allMembers = await getEmberTeam();
+
+  // Hardcoded Leadership for main page as well
+  const hardcodedLeadership = [
+    { id: "president", name: "Rohan Ghalib", role: "President", img: "/rohan_profile.jpg", prominent: true },
+    { id: "vp1", name: "Saim Bin Yusaf", role: "Vice President", img: "/person.png" },
+    { id: "vp2", name: "Bisma Hanif", role: "Vice President", img: "/person.png" },
+  ];
+
+  const members = allMembers.filter(m => m.department !== "Leadership");
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -298,60 +311,92 @@ export default function EmberPage() {
           OUR PROUD TEAM
         </h2>
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-24 w-full max-w-7xl">
-          {/* Boys Team Card */}
-          <div className="flex flex-col items-center group animate-fade-up" style={{ animationDelay: '0.4s' }}>
-            {/* Deluxe Wooden Frame */}
-            <div className="relative p-5 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-[1.03] group-hover:-rotate-1"
-              style={{
-                background: "linear-gradient(135deg, #5D3A1A 0%, #8B5E3C 25%, #4A2E15 50%, #C49A6C 75%, #5D3A1A 100%)",
-                border: "4px solid #3d2710"
-              }}>
-              <div className="absolute inset-0 border-[1px] border-white/10 pointer-events-none" />
-              <div className="relative bg-[#1a0f05] p-3 rounded-sm overflow-hidden">
-                <Image
-                  src="/boys.png"
-                  alt="Boys Team"
-                  width={500}
-                  height={350}
-                  className="w-full max-w-[320px] sm:max-w-[400px] md:max-w-[480px] h-auto object-cover rounded-xs sepia-[0.2] brightness-90 group-hover:brightness-105 transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="flex flex-col items-center gap-24 w-full max-w-7xl">
+          {/* Leadership Section */}
+          <div className="flex flex-col items-center gap-16 w-full">
+            <h3 className={`${dreamPlanner.className} text-[var(--c-accent)] text-2xl sm:text-4xl tracking-[0.2em] mb-4`}>LEADERSHIP</h3>
+            <div className="flex flex-col items-center gap-20 w-full">
+              <TeamCard {...hardcodedLeadership[0]} prominent={true} />
+              <div className="flex flex-wrap justify-center gap-12 sm:gap-24">
+                {hardcodedLeadership.slice(1).map((member, i) => (
+                  <TeamCard key={member.id} {...member} size="lg" delay={0.1 * i} />
+                ))}
               </div>
             </div>
-            <p className={`${dreamPlanner.className} mt-8 text-[var(--c-accent)] text-[24px] sm:text-[32px] tracking-[0.15em] [text-shadow:3px_3px_0_#000]`}>
-              THE BOYS
-            </p>
           </div>
 
-          {/* Girls Team Card */}
-          <div className="flex flex-col items-center group animate-fade-up" style={{ animationDelay: '0.5s' }}>
-            {/* Deluxe Wooden Frame */}
-            <div className="relative p-5 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-[1.03] group-hover:rotate-1"
-              style={{
-                background: "linear-gradient(135deg, #5D3A1A 0%, #8B5E3C 25%, #4A2E15 50%, #C49A6C 75%, #5D3A1A 100%)",
-                border: "4px solid #3d2710"
-              }}>
-              <div className="absolute inset-0 border-[1px] border-white/10 pointer-events-none" />
-              <div className="relative bg-[#1a0f05] p-3 rounded-sm overflow-hidden">
-                <Image
-                  src="/girls.png"
-                  alt="Girls Team"
-                  width={500}
-                  height={350}
-                  className="w-full max-w-[320px] sm:max-w-[400px] md:max-w-[480px] h-auto object-cover rounded-xs sepia-[0.2] brightness-90 group-hover:brightness-105 transition-all duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          {/* Key Organizers (From DB) */}
+          {members.length > 0 && (
+            <div className="flex flex-col items-center gap-12 w-full mt-20">
+              <h3 className={`${dreamPlanner.className} text-[var(--c-accent)] text-2xl sm:text-4xl tracking-[0.2em] mb-4`}>CORE ORGANIZERS</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full place-items-center">
+                {members.slice(0, 8).map((member, i) => (
+                  <TeamCard 
+                    key={member.id} 
+                    {...member} 
+                    size="sm" 
+                    delay={0.05 * i}
+                    polished={member.department === "Discipline"}
+                  />
+                ))}
               </div>
             </div>
-            <p className={`${dreamPlanner.className} mt-8 text-[var(--c-accent)] text-[24px] sm:text-[32px] tracking-[0.15em] [text-shadow:3px_3px_0_#000]`}>
-              THE GIRLS
-            </p>
+          )}
+
+          {/* Static Group Photos as complementary view */}
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-24 w-full mt-32">
+            {/* Boys Team Card */}
+            <div className="flex flex-col items-center group animate-fade-up" style={{ animationDelay: '0.4s' }}>
+              <div className="relative p-5 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-[1.03] group-hover:-rotate-1"
+                style={{
+                  background: "linear-gradient(135deg, #5D3A1A 0%, #8B5E3C 25%, #4A2E15 50%, #C49A6C 75%, #5D3A1A 100%)",
+                  border: "4px solid #3d2710"
+                }}>
+                <div className="absolute inset-0 border-[1px] border-white/10 pointer-events-none" />
+                <div className="relative bg-[#1a0f05] p-3 rounded-sm overflow-hidden">
+                  <Image
+                    src="/boys.png"
+                    alt="Boys Team"
+                    width={500}
+                    height={350}
+                    className="w-full max-w-[320px] sm:max-w-[400px] md:max-w-[480px] h-auto object-cover rounded-xs sepia-[0.2] brightness-90 group-hover:brightness-105 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+              </div>
+              <p className={`${dreamPlanner.className} mt-8 text-[var(--c-accent)] text-[24px] sm:text-[32px] tracking-[0.15em] [text-shadow:3px_3px_0_#000]`}>
+                THE BOYS
+              </p>
+            </div>
+
+            {/* Girls Team Card */}
+            <div className="flex flex-col items-center group animate-fade-up" style={{ animationDelay: '0.5s' }}>
+              <div className="relative p-5 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-[1.03] group-hover:rotate-1"
+                style={{
+                  background: "linear-gradient(135deg, #5D3A1A 0%, #8B5E3C 25%, #4A2E15 50%, #C49A6C 75%, #5D3A1A 100%)",
+                  border: "4px solid #3d2710"
+                }}>
+                <div className="absolute inset-0 border-[1px] border-white/10 pointer-events-none" />
+                <div className="relative bg-[#1a0f05] p-3 rounded-sm overflow-hidden">
+                  <Image
+                    src="/girls.png"
+                    alt="Girls Team"
+                    width={500}
+                    height={350}
+                    className="w-full max-w-[320px] sm:max-w-[400px] md:max-w-[480px] h-auto object-cover rounded-xs sepia-[0.2] brightness-90 group-hover:brightness-105 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+              </div>
+              <p className={`${dreamPlanner.className} mt-8 text-[var(--c-accent)] text-[24px] sm:text-[32px] tracking-[0.15em] [text-shadow:3px_3px_0_#000]`}>
+                THE GIRLS
+              </p>
+            </div>
           </div>
         </div>
 
         {/* See All Team Button */}
-        <div className="mt-20 animate-fade-up" style={{ animationDelay: '0.6s' }}>
+        <div className="mt-24 animate-fade-up" style={{ animationDelay: '0.6s' }}>
           <Link 
             href="/ember/team" 
             className={`${dreamPlanner.className} bg-[var(--c-orange)] hover:bg-[var(--c-accent)] text-white px-12 py-4 rounded-full text-2xl tracking-widest shadow-2xl transition-all hover:scale-105 flex items-center gap-3 group`}

@@ -1,7 +1,7 @@
-import { collection, getDocs, doc, getDoc, query, orderBy, limit, addDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, orderBy, limit, addDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { unstable_cache } from 'next/cache';
 import { db } from './firebase';
-import { Event, Article, Course, Tarana } from './types';
+import { Event, Article, Course, Tarana, EmberMember } from './types';
 import { type EventRecord } from './event-utils';
 
 /**
@@ -139,6 +139,56 @@ export async function deleteTarana(id: string): Promise<boolean> {
     return true;
   } catch (error) {
     console.error("Error deleting tarana:", error);
+    return false;
+  }
+}
+
+export async function getEmberTeam(): Promise<EmberMember[]> {
+  return getEmberTeamCached();
+}
+
+const getEmberTeamCached = unstable_cache(async (): Promise<EmberMember[]> => {
+  try {
+    const teamRef = collection(db, 'ember_team');
+    const q = query(teamRef, orderBy('order', 'asc'));
+    const snapshot = await getDocs(q);
+    
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as EmberMember[];
+  } catch (error) {
+    console.error("Error fetching ember team:", error);
+    return [];
+  }
+}, ['ember-team'], { revalidate: 300, tags: ['ember_team'] });
+
+export async function addEmberMember(data: Omit<EmberMember, 'id'>): Promise<string | null> {
+  try {
+    const docRef = await addDoc(collection(db, 'ember_team'), data);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding ember member:", error);
+    return null;
+  }
+}
+
+export async function updateEmberMember(id: string, data: Partial<EmberMember>): Promise<boolean> {
+  try {
+    await updateDoc(doc(db, 'ember_team', id), data);
+    return true;
+  } catch (error) {
+    console.error("Error updating ember member:", error);
+    return false;
+  }
+}
+
+export async function deleteEmberMember(id: string): Promise<boolean> {
+  try {
+    await deleteDoc(doc(db, 'ember_team', id));
+    return true;
+  } catch (error) {
+    console.error("Error deleting ember member:", error);
     return false;
   }
 }
