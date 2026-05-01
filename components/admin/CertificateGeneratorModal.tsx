@@ -10,6 +10,7 @@ interface CertificateRequest {
   id: string;
   name: string;
   department: string;
+  email?: string;
   certificateType?: 'Appreciation' | 'Participation';
 }
 
