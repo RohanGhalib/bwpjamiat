@@ -382,6 +382,7 @@ export default function EmberPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 w-full max-w-7xl px-4">
           {[
             { name: "Syed Zeeshan Akhtar", title: "Chairman Alkhidmat South Punjab", img: "/ember/mentors/zeeshan.jpg" },
+            { name: "Saadiya Shaikh ", title: "Deputy Manager BDCM", img: "/ember/mentors/saadiya.jpeg" },
             { name: "Muhammad Madni", title: "Principal KIPS College Bahawalpur", img: "/ember/mentors/madni.jpg" },
             { name: "Hanzlah Saleem", title: "Motivational Speaker", img: "/ember/mentors/hanzlah.png" },
             { name: "Ubaid Ur Rahman", title: "President IJT Bahawalpur", img: "/ember/mentors/ubaid.png" },
@@ -458,10 +459,10 @@ export default function EmberPage() {
               <p className="text-gray-400 text-lg mb-8 max-w-lg mx-auto md:mx-0">
                 Follow us on Instagram for exclusive behind-the-scenes content, event updates, and highlights from South Punjab's biggest teen community.
               </p>
-              
-              <a 
-                href="https://instagram.com/emberbahawalpur" 
-                target="_blank" 
+
+              <a
+                href="https://instagram.com/emberbahawalpur"
+                target="_blank"
                 rel="noopener noreferrer"
                 className={`${dreamPlanner.className} inline-flex items-center gap-3 bg-gradient-to-r from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white px-10 py-4 rounded-full text-xl hover:scale-105 transition-transform shadow-[0_10px_30px_rgba(238,42,123,0.3)]`}
               >
@@ -487,9 +488,9 @@ export default function EmberPage() {
           <p className="text-white/70 text-sm tracking-widest uppercase font-bold">
             © 2026 BWP Jamiat. All Rights Reserved.
           </p>
-          <a 
-            href="https://rohanghalib.com" 
-            target="_blank" 
+          <a
+            href="https://rohanghalib.com"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-[var(--c-accent)] text-xs tracking-[0.3em] uppercase hover:underline decoration-1 underline-offset-4"
           >
