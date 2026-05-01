@@ -48,9 +48,9 @@ const teamData = {
       ]
     },
     {
-      name: "MARKETING",
+      name: "MARKETING & BRANDING",
       groups: [
-        { title: "TEAM", members: [{ name: "Member 1", role: "Strategy", img: "/person.png" }, { name: "Member 2", role: "PR", img: "/person.png" }] },
+        { title: "TEAM", members: [{ name: "Hafsa Mehmood Ashraf", role: "Branding Manager", img: "/ember/team/hafsa.jpeg" }, { name: "Member 1", role: "Strategy", img: "/person.png" }, { name: "Member 2", role: "PR", img: "/person.png" }] },
       ]
     },
     {
@@ -68,7 +68,7 @@ const teamData = {
     {
       name: "SECURITY",
       groups: [
-        { title: "TEAM", members: [{ name: "Member 1", role: "Safety", img: "/person.png" }, { name: "Member 2", role: "Ground", img: "/person.png" }] },
+        { title: "TEAM", members: [{ name: "Sibgha Mansoor", role: "Director Security", img: "/ember/team/sibgha.jpeg" }, { name: "Member 1", role: "Safety", img: "/person.png" }, { name: "Member 2", role: "Ground", img: "/person.png" }] },
       ]
     },
   ]

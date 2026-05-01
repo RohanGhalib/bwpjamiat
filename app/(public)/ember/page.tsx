@@ -1,6 +1,7 @@
 import Image from "next/image";
 import localFont from "next/font/local";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Ember'26 | South Punjab's First Teen Hackathon",
@@ -347,6 +348,16 @@ export default function EmberPage() {
               THE GIRLS
             </p>
           </div>
+        </div>
+
+        {/* See All Team Button */}
+        <div className="mt-20 animate-fade-up" style={{ animationDelay: '0.6s' }}>
+          <Link 
+            href="/ember/team" 
+            className={`${dreamPlanner.className} bg-[var(--c-orange)] hover:bg-[var(--c-accent)] text-white px-12 py-4 rounded-full text-2xl tracking-widest shadow-2xl transition-all hover:scale-105 flex items-center gap-3 group`}
+          >
+            SEE ALL TEAM <span className="group-hover:translate-x-2 transition-transform">→</span>
+          </Link>
         </div>
       </section>
 
