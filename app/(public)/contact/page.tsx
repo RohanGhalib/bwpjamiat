@@ -138,6 +138,7 @@ export default function JoinUs() {
                          <option value="dawah">Dawah & Outreach</option>
                          <option value="media">Media & Content</option>
                          <option value="events">Event Management</option>
+                         <option value="technical">Technical Team</option>
                       </select>
                    </div>
 

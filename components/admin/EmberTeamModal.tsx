@@ -19,7 +19,8 @@ const departments = [
   "Marketing & Branding",
   "Outreach",
   "Security",
-  "Discipline"
+  "Discipline",
+  "Technical"
 ];
 
 const emptyForm = {
