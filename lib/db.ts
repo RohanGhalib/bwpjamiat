@@ -161,7 +161,7 @@ const getEmberTeamCached = unstable_cache(async (): Promise<EmberMember[]> => {
     console.error("Error fetching ember team:", error);
     return [];
   }
-}, ['ember-team'], { revalidate: 300, tags: ['ember_team'] });
+}, ['ember-team'], { revalidate: 3600, tags: ['ember_team'] });
 
 export async function addEmberMember(data: Omit<EmberMember, 'id'>): Promise<string | null> {
   try {
