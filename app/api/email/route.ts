@@ -76,12 +76,13 @@ export async function POST(request: Request) {
           content: base64Content,
         });
       }
-    } else if (type === 'certificate_generated') {
-      subject = "Certificate Generated!";
+    } else if (type === 'certificate_generated' || type === 'certificate_regenerated') {
+      const isRe = type === 'certificate_regenerated';
+      subject = isRe ? "Certificate RE-GENERATED!" : "Certificate Generated!";
       html = `
         <div style="font-family: sans-serif; color: #123962; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; padding: 20px;">
           <h2 style="color: #1C7F93;">Hello ${data.name},</h2>
-          <p>Your Ember'26 certificate has been successfully generated!</p>
+          <p>Your Ember'26 certificate has been successfully ${isRe ? 're-generated' : 'generated'}!</p>
           <p>Thank you for your incredible contribution to Ember'26. We truly appreciate your talent, dedication, and the energy you brought to the event.</p>
           
           <div style="background-color: #f0f9ff; padding: 20px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #1C7F93;">

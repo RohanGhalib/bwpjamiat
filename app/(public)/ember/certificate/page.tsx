@@ -19,6 +19,7 @@ interface TeamMember {
   department: string;
   role?: string;
   gender?: 'boy' | 'girl';
+  phoneHint?: string; // New field for the hint
 }
 
 type Step = 'search' | 'verify_phone' | 'verify_otp' | 'generating' | 'success' | 'already_generated';
@@ -40,12 +41,13 @@ export default function EmberCertificatePage() {
   const [generatedCertId, setGeneratedCertId] = useState('');
   const [existingCertDate, setExistingCertDate] = useState('');
 
-  // 1. Secure Search Logic (Server-side)
+  // 1. Secure Fuzzy Search Logic (Server-side)
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchTerm.length >= 3) {
         setLoading(true);
         try {
+          // The API now performs fuzzy substring matching on the server
           const res = await fetch(`/api/ember/search?q=${encodeURIComponent(searchTerm)}`);
           const data = await res.json();
           setSearchResults(data.results || []);
@@ -231,7 +233,7 @@ export default function EmberCertificatePage() {
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Type at least 3 letters of your name..."
+                    placeholder="Type any part of your name..."
                     value={searchTerm}
                     disabled={submitting}
                     onChange={e => setSearchTerm(e.target.value)}
@@ -274,6 +276,13 @@ export default function EmberCertificatePage() {
                 <p className="text-white/60 text-lg">
                   Please enter the phone number registered for <span className="text-white font-bold">{selectedMember.name}</span>.
                 </p>
+                {selectedMember.phoneHint && (
+                   <div className="bg-white/5 py-3 px-6 rounded-xl inline-block border border-white/10">
+                     <p className="text-[var(--c-accent)] font-mono text-xl tracking-widest">
+                       ENDING WITH: <span className="text-white font-bold">{selectedMember.phoneHint}</span>
+                     </p>
+                   </div>
+                )}
               </div>
 
               <div className="max-w-md mx-auto">
@@ -369,7 +378,7 @@ export default function EmberCertificatePage() {
                </div>
                <div className="text-center space-y-4">
                   <h2 className={`${dreamPlanner.className} text-white text-4xl tracking-widest animate-pulse`}>FORGING YOUR CREDENTIAL</h2>
-                  <p className="text-white/60 text-lg max-w-sm mx-auto">Our systems are rendering your high-resolution participation record. Please do not close this window.</p>
+                  <p className="text-white/60 text-lg max-sm mx-auto">Our systems are rendering your high-resolution participation record. Please do not close this window.</p>
                </div>
             </div>
           )}

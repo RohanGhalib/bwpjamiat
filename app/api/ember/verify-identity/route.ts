@@ -29,6 +29,22 @@ export async function POST(request: Request) {
     if (!certSnap.empty) {
       const existingCert = certSnap.docs[0];
       const data = existingCert.data();
+      
+      // TRIGGER RE-GENERATED EMAIL
+      if (memberData.email) {
+        const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+        const host = request.headers.get('host');
+        fetch(`${protocol}://${host}/api/email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: memberData.email,
+            type: 'certificate_regenerated',
+            data: { name: memberData.name }
+          })
+        }).catch(err => console.error("Failed to send re-generation email:", err));
+      }
+
       return NextResponse.json({
         already_generated: true,
         certificateId: existingCert.id,
