@@ -133,11 +133,17 @@ export default function EmberCertificatePage() {
         return;
       }
 
-      setGeneratedCertId(data.certificateId);
-      setSelectedMember(data.member);
-
-      // Trigger PDF Generation
-      await generatePDF(data.certificateId, data.member);
+      if (data.already_generated) {
+        setGeneratedCertId(data.certificateId);
+        setExistingCertDate(data.date);
+        setSelectedMember(data.member);
+        setStep('already_generated');
+      } else {
+        setGeneratedCertId(data.certificateId);
+        setSelectedMember(data.member);
+        // Trigger PDF Generation
+        await generatePDF(data.certificateId, data.member);
+      }
     } catch (error) {
       toast.error("Failed to validate code.");
     } finally {
