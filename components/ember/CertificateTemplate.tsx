@@ -19,7 +19,7 @@ interface CertificateTemplateProps {
 }
 
 const CertificateTemplate = forwardRef<HTMLDivElement, CertificateTemplateProps>(({ name, department, role, gender, id, type }, ref) => {
-  const verifyUrl = `https://bwpjamiat.org/ember/certificate/verify?id=${id}`;
+  const verifyUrl = `https://bwpjamiat.org/ember/verify?id=${id}`;
 
   // Gender-based pronoun
   const pronoun = gender === 'boy' ? 'his' : gender === 'girl' ? 'her' : 'his/her';
@@ -98,7 +98,7 @@ const CertificateTemplate = forwardRef<HTMLDivElement, CertificateTemplateProps>
           <div className="text-left">
             <p className="text-[10px] font-black text-[var(--c-accent)] tracking-widest uppercase mb-1">Authentic Credential</p>
             <p className="text-[8px] font-mono text-white/40 uppercase tracking-tighter">ID: {id.toUpperCase()}</p>
-            <p className="text-[7px] text-white/20 font-bold mt-1">bwpjamiat.org/verify</p>
+            <p className="text-[7px] text-white/20 font-bold mt-1">bwpjamiat.org/ember/verify</p>
           </div>
         </div>
 

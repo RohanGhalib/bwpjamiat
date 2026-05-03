@@ -76,6 +76,27 @@ export async function POST(request: Request) {
           content: base64Content,
         });
       }
+    } else if (type === 'certificate_generated') {
+      subject = "Certificate Generated!";
+      html = `
+        <div style="font-family: sans-serif; color: #123962; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; padding: 20px;">
+          <h2 style="color: #1C7F93;">Hello ${data.name},</h2>
+          <p>Your Ember'26 certificate has been successfully generated!</p>
+          <p>Thank you for your incredible contribution to Ember'26. We truly appreciate your talent, dedication, and the energy you brought to the event.</p>
+          
+          <div style="background-color: #f0f9ff; padding: 20px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #1C7F93;">
+            <p style="margin: 0; font-style: italic; color: #123962;">
+              "It was an absolute pleasure having you with us. Your hard work has made a real impact, and we look forward to seeing you again soon Insha'Allah!"
+            </p>
+            <p style="margin-top: 10px; font-weight: bold;">— Rohan Ghalib, President Ember'26</p>
+          </div>
+          
+          <p>Stay connected: <a href="https://rohanghalib.com" style="color: #1C7F93; font-weight: bold; text-decoration: none;">rohanghalib.com</a></p>
+          
+          <br/>
+          <p style="font-size: 12px; color: #666;">This is an automated message from the Ember'26 Organizing Committee.</p>
+        </div>
+      `;
     } else if (type === 'certificate_otp') {
       subject = `Verification Code: ${data.otp} - Ember'26`;
       html = `
