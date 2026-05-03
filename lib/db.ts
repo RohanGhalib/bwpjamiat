@@ -61,6 +61,10 @@ const getAllEventsCached = unstable_cache(async (): Promise<EventRecord[]> => {
     })) as EventRecord[];
   } catch (error) {
     console.error("Error fetching all events:", error);
+    // Log the full error object to help diagnose gRPC issues
+    if (typeof error === 'object' && error !== null) {
+      console.error("Full error details:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    }
     return [];
   }
 }, ['all-events'], { revalidate: 300, tags: ['events'] });

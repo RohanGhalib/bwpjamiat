@@ -13,6 +13,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { to, type, data } = body;
 
+    console.log(`[Email API] Sending ${type} to ${to}`);
+
     if (!to || !type) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
 
     // The 'from' address must be verified in Resend.
     // Using a generic domain or Resend's testing domain if not specified.
-    const fromAddress = 'Ember Team <onboarding@resend.dev>'; // CHANGE THIS TO YOUR VERIFIED DOMAIN FOR PRODUCTION
+    const fromAddress = 'Ember Team <no-reply@bwpjamiat.org>';
 
     if (type === 'request_received') {
       subject = "Certificate Request Received - Ember'26";
@@ -74,6 +76,21 @@ export async function POST(request: Request) {
           content: base64Content,
         });
       }
+    } else if (type === 'certificate_otp') {
+      subject = `Verification Code: ${data.otp} - Ember'26`;
+      html = `
+        <div style="font-family: sans-serif; color: #123962; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; padding: 20px;">
+          <h2 style="color: #1C7F93;">Certificate Verification</h2>
+          <p>Hello ${data.name},</p>
+          <p>You are requesting your official Ember'26 certificate. Please use the following one-time password (OTP) to verify your identity:</p>
+          <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-radius: 10px; margin: 25px 0; border: 2px dashed #1C7F93;">
+            <span style="font-size: 32px; font-weight: 800; letter-spacing: 10px; color: #123962;">${data.otp}</span>
+          </div>
+          <p>This code will expire shortly. If you did not request this certificate, please ignore this email.</p>
+          <br/>
+          <p style="font-size: 12px; color: #666;">This is an automated message from the Ember'26 Organizing Committee.</p>
+        </div>
+      `;
     } else {
       return NextResponse.json({ error: 'Invalid email type' }, { status: 400 });
     }
@@ -86,9 +103,15 @@ export async function POST(request: Request) {
       attachments,
     });
 
+    console.log('[Email API] Resend response:', emailResponse);
+
+    if (emailResponse.error) {
+      throw new Error(emailResponse.error.message);
+    }
+
     return NextResponse.json({ success: true, data: emailResponse });
   } catch (error: any) {
-    console.error('Email error:', error);
+    console.error('[Email API] Error:', error);
     return NextResponse.json({ error: error.message || 'Failed to send email' }, { status: 500 });
   }
 }

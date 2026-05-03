@@ -1,12 +1,12 @@
 import { Suspense } from 'react';
 import { connection } from 'next/server';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, query } from 'firebase/firestore';
+import { getAllEvents } from '@/lib/db';
 import EventTile from '@/components/events/EventTile';
 import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
 import type { Metadata } from 'next';
 import { buildMetadata } from '@/lib/seo';
 
+// ... (keep metadata and EventsList as they are)
 export const metadata: Metadata = buildMetadata({
   title: 'Upcoming Events | IJT Bahawalpur',
   description: 'Join the upcoming conventions, seminars, and tarbiyati programs of Islami Jamiat-e-Talaba Bahawalpur across the city.',
@@ -43,17 +43,12 @@ export default function EventsList() {
 async function EventsFetcher() {
    await connection();
 
-  const eventsRef = collection(db, 'events');
-  const q = query(eventsRef);
   let events: EventRecord[] = [];
   
   try {
-     const querySnapshot = await getDocs(q);
-     querySnapshot.forEach((doc) => {
-        events.push({ id: doc.id, ...(doc.data() as Omit<EventRecord, 'id'>) });
-     });
+     events = await getAllEvents();
   } catch (error) {
-     console.error("Error fetching events:", error);
+     console.error("Error fetching events in EventsFetcher:", error);
   }
 
    events = sortEventsBySchedule(events);

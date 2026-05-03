@@ -355,10 +355,10 @@ export default async function EmberPage() {
         {/* See All Team Button */}
         <div className="mt-24 animate-fade-up" style={{ animationDelay: '0.6s' }}>
           <Link 
-            href="/ember/team" 
+            href="/ember/certificate" 
             className={`${dreamPlanner.className} bg-[var(--c-orange)] hover:bg-[var(--c-accent)] text-white px-12 py-4 rounded-full text-2xl tracking-widest shadow-2xl transition-all hover:scale-105 flex items-center gap-3 group`}
           >
-            SEE ALL TEAM <span className="group-hover:translate-x-2 transition-transform">→</span>
+            GET CERTIFICATE <span className="group-hover:translate-x-2 transition-transform">→</span>
           </Link>
         </div>
       </section>

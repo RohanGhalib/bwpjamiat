@@ -6,7 +6,17 @@ const nextConfig: NextConfig = {
   experimental: {
     instantNavigationDevToolsToggle: true,
   },
-  serverExternalPackages: ['@aws-sdk/s3-request-presigner', '@aws-sdk/client-s3', 'fluent-ffmpeg', 'ffmpeg-static'],
+  serverExternalPackages: ['@aws-sdk/s3-request-presigner', '@aws-sdk/client-s3', 'fluent-ffmpeg', 'ffmpeg-static', 'firebase', '@firebase/firestore'],
+
+  async redirects() {
+    return [
+      {
+        source: '/ember/verify',
+        destination: '/ember/certificate/verify',
+        permanent: true,
+      },
+    ];
+  },
 
   images: {
     remotePatterns: [
