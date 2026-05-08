@@ -10,7 +10,6 @@ interface CertificateRequest {
   id: string;
   name: string;
   department: string;
-  email?: string;
   certificateType?: 'Appreciation' | 'Participation';
 }
 
@@ -24,7 +23,7 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
   const certificateRef = useRef<HTMLDivElement>(null);
   const [generating, setGenerating] = useState(false);
 
-  const generatePDF = async () => {
+  const generatePDFBlob = async () => {
     if (!certificateRef.current) return null;
     await new Promise(resolve => setTimeout(resolve, 500));
     
@@ -35,7 +34,7 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
 
     const pdf = new jsPDF('landscape', 'mm', 'a4');
     pdf.addImage(dataUrl, 'PNG', 0, 0, 297, 210);
-    return pdf;
+    return pdf.output('blob');
   };
 
   const downloadCertificate = async () => {
@@ -43,55 +42,23 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
     const toastId = toast.loading("Generating PDF...");
 
     try {
-      const pdf = await generatePDF();
-      if (pdf) {
-        pdf.save(`Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`);
-      }
+      const pdfBlob = await generatePDFBlob();
+      if (!pdfBlob) throw new Error('PDF generation failed');
+
+      const downloadUrl = window.URL.createObjectURL(pdfBlob);
+      const anchor = document.createElement('a');
+      anchor.href = downloadUrl;
+      anchor.download = `Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+
       toast.success("Certificate downloaded!", { id: toastId });
       onSuccess();
     } catch (error) {
       console.error("Generation error:", error);
       toast.error("Failed to generate certificate.", { id: toastId });
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const approveAndEmail = async () => {
-    if (!request.email) {
-      toast.error("No email address provided for this request.");
-      return;
-    }
-    
-    setGenerating(true);
-    const toastId = toast.loading("Generating & Emailing PDF...");
-
-    try {
-      const pdf = await generatePDF();
-      if (!pdf) throw new Error("PDF generation failed");
-      
-      const base64PDF = pdf.output('datauristring');
-      
-      const res = await fetch('/api/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: request.email,
-          type: 'certificate_approved',
-          data: {
-             name: request.name,
-             attachmentBase64: base64PDF
-          }
-        })
-      });
-
-      if (!res.ok) throw new Error("Email sending failed");
-
-      toast.success("Certificate generated and emailed!", { id: toastId });
-      onSuccess();
-    } catch (error) {
-      console.error("Email error:", error);
-      toast.error("Failed to send email.", { id: toastId });
     } finally {
       setGenerating(false);
     }
@@ -109,15 +76,6 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
           >
             Cancel
           </button>
-          {request.email && (
-            <button
-              onClick={approveAndEmail}
-              disabled={generating}
-              className="px-6 py-3 bg-green-600/20 text-green-500 font-bold rounded-xl hover:bg-green-600/30 transition-all flex items-center gap-2 shadow-xl border border-green-500/20"
-            >
-              {generating ? "PROCESSING..." : "APPROVE & EMAIL"}
-            </button>
-          )}
           <button
             onClick={downloadCertificate}
             disabled={generating}

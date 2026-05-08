@@ -39,24 +39,10 @@ export async function POST(request: Request) {
       query(certRef, where('memberId', '==', memberId), where('status', 'in', ['sent', 'generated']))
     );
 
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const host = request.headers.get('host');
-
     if (!certSnap.empty) {
       // CASE: ALREADY GENERATED
       const existingCert = certSnap.docs[0];
       const certData = existingCert.data();
-      
-      // Trigger Re-generation Email
-      fetch(`${protocol}://${host}/api/email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: memberData.email,
-          type: 'certificate_regenerated',
-          data: { name: memberData.name }
-        })
-      }).catch(err => console.error("Failed to send re-gen email:", err));
 
       return NextResponse.json({
         already_generated: true,
@@ -83,17 +69,6 @@ export async function POST(request: Request) {
       status: 'generated',
       requestedAt: new Date().toISOString()
     });
-
-    // Trigger Success Email
-    fetch(`${protocol}://${host}/api/email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: memberData.email,
-        type: 'certificate_generated',
-        data: { name: memberData.name }
-      })
-    }).catch(err => console.error("Failed to send success email:", err));
 
     return NextResponse.json({ 
       success: true,

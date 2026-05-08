@@ -52,6 +52,15 @@ export default function AdminDashboard() {
             <h3 className="text-xl font-bold text-[#123962] mb-2">Manage Ember Team</h3>
             <p className="text-slate-500 text-sm font-medium">Add or remove members for the Ember'26 Hackathon team roster.</p>
           </Link>
+          {/* Email Sender Link */}
+          <Link href="/admin/email" className="group bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#1C7F93]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+            <div className="w-12 h-12 bg-[#FAFCFF] rounded-xl flex items-center justify-center mb-6 text-[#1C7F93] border border-slate-100 group-hover:border-[#1C7F93]/30 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+            </div>
+            <h3 className="text-xl font-bold text-[#123962] mb-2">Email Sender</h3>
+            <p className="text-slate-500 text-sm font-medium">Compose and send custom emails to anyone from info@bwpjamiat.org.</p>
+          </Link>
           {/* Future CMS Modules */}
           <div className="group bg-slate-50/50 rounded-3xl p-8 border border-slate-100 flex flex-col justify-center items-center text-center opacity-70">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-6 text-slate-300 border border-slate-100">
