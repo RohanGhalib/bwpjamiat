@@ -1,69 +1,63 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import jsPDF from 'jspdf';
 
 export async function POST(request: Request) {
   try {
-    const { certificateId, name, department, role, gender, type } = await request.json();
+    const { certificateId, name, department, type } = await request.json();
 
     if (!certificateId || !name) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Dynamic import for server-side libraries
-    const { createCanvas } = await import('canvas');
-    const jsPDF = (await import('jspdf')).jsPDF;
-
-    // Render certificate as canvas (server-side alternative to html-to-image)
-    const canvas = createCanvas(1123, 794);
-    const ctx = canvas.getContext('2d');
-
-    // Draw a solid background
-    ctx.fillStyle = '#0a192f';
-    ctx.fillRect(0, 0, 1123, 794);
-
-    // Add a simple text-based certificate
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 60px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('EMBER\'26 CERTIFICATE', 561, 150);
-
-    ctx.font = '40px Arial';
-    ctx.fillStyle = '#EB6E30';
-    ctx.fillText('BAHAWALPUR', 561, 220);
-
-    ctx.font = 'bold 70px Arial';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(name.toUpperCase(), 561, 380);
-
-    ctx.font = '30px Arial';
-    ctx.fillStyle = '#CCCCCC';
-    const pronouns = gender === 'boy' ? 'his' : gender === 'girl' ? 'her' : 'his/her';
-    ctx.fillText(`for ${pronouns} exceptional services as ${role || 'Member'} in`, 561, 470);
-    ctx.fillText(department.toUpperCase(), 561, 520);
-
-    ctx.font = '20px Arial';
-    ctx.fillStyle = '#999999';
-    ctx.fillText('Certificate ID: ' + certificateId, 561, 700);
-
-    // Convert canvas to image and add to PDF
-    const imageData = canvas.toDataURL('image/png');
+    // Create a basic PDF without canvas
     const pdf = new jsPDF('landscape', 'mm', 'a4');
-    pdf.addImage(imageData, 'PNG', 0, 0, 297, 210);
+
+    // Set background color
+    pdf.setFillColor(10, 25, 47);
+    pdf.rect(0, 0, 297, 210, 'F');
+
+    // Title
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(48);
+    pdf.text('EMBER\'26 CERTIFICATE', 148.5, 50, { align: 'center' });
+
+    // Subtitle
+    pdf.setTextColor(235, 110, 48);
+    pdf.setFontSize(32);
+    pdf.text('BAHAWALPUR', 148.5, 75, { align: 'center' });
+
+    // Name
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(44);
+    pdf.text(name.toUpperCase(), 148.5, 110, { align: 'center' });
+
+    // Description
+    pdf.setFontSize(16);
+    pdf.setTextColor(200, 200, 200);
+    pdf.text('For exceptional services in', 148.5, 135, { align: 'center' });
+    pdf.text(department.toUpperCase(), 148.5, 145, { align: 'center' });
+    pdf.text('at Ember\'26, South Punjab\'s largest hackathon for teenagers', 148.5, 155, { align: 'center' });
+
+    // Certificate ID
+    pdf.setFontSize(10);
+    pdf.setTextColor(150, 150, 150);
+    pdf.text(`Certificate ID: ${certificateId}`, 148.5, 185, { align: 'center' });
 
     // Get PDF as buffer
     const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
 
     // Return with download headers
     return new NextResponse(pdfBuffer, {
+      status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="Ember_Certificate_${name.replace(/\s+/g, '_')}.pdf"`,
         'Content-Length': pdfBuffer.length.toString(),
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
   } catch (error: any) {
     console.error('Certificate generation error:', error);
-    return NextResponse.json({ error: 'Failed to generate certificate' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to generate certificate', details: error.message }, { status: 500 });
   }
 }
