@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useRef, useState } from 'react';
-import * as htmlToImage from 'html-to-image';
-import jsPDF from 'jspdf';
 import CertificateTemplate from '@/components/ember/CertificateTemplate';
 import toast from 'react-hot-toast';
 
@@ -19,75 +17,37 @@ interface CertificateGeneratorModalProps {
   onSuccess: () => void;
 }
 
-interface SaveFilePickerWindow extends Window {
-  showSaveFilePicker?: (options: {
-    suggestedName?: string;
-    types?: Array<{
-      description?: string;
-      accept: Record<string, string[]>;
-    }>;
-  }) => Promise<FileSystemFileHandle>;
-}
-
 export default function CertificateGeneratorModal({ request, onClose, onSuccess }: CertificateGeneratorModalProps) {
   const certificateRef = useRef<HTMLDivElement>(null);
   const [generating, setGenerating] = useState(false);
-
-  const generatePDFBlob = async () => {
-    if (!certificateRef.current) return null;
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const dataUrl = await htmlToImage.toPng(certificateRef.current, {
-      quality: 1.0,
-      pixelRatio: 2, 
-    });
-
-    const pdf = new jsPDF('landscape', 'mm', 'a4');
-    pdf.addImage(dataUrl, 'PNG', 0, 0, 297, 210);
-    return new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
-  };
-
-  const savePdfBlob = async (pdfBlob: Blob) => {
-    const filename = `Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`;
-    const savePickerWindow = window as SaveFilePickerWindow;
-
-    if (typeof window !== 'undefined' && savePickerWindow.showSaveFilePicker) {
-      const picker = savePickerWindow.showSaveFilePicker({
-        suggestedName: filename,
-        types: [
-          {
-            description: 'PDF document',
-            accept: { 'application/pdf': ['.pdf'] },
-          },
-        ],
-      });
-
-      const fileHandle = await picker;
-      const writable = await fileHandle.createWritable();
-      await writable.write(pdfBlob);
-      await writable.close();
-      return;
-    }
-
-    const downloadUrl = window.URL.createObjectURL(pdfBlob);
-    const anchor = document.createElement('a');
-    anchor.href = downloadUrl;
-    anchor.download = filename;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
-  };
 
   const downloadCertificate = async () => {
     setGenerating(true);
     const toastId = toast.loading("Generating PDF...");
 
     try {
-      const pdfBlob = await generatePDFBlob();
-      if (!pdfBlob) throw new Error('PDF generation failed');
+      const res = await fetch('/api/certificate/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          certificateId: request.id,
+          name: request.name,
+          department: request.department,
+          type: request.certificateType
+        })
+      });
 
-      await savePdfBlob(pdfBlob);
+      if (!res.ok) throw new Error('PDF generation failed');
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
 
       toast.success("Certificate downloaded!", { id: toastId });
       onSuccess();
