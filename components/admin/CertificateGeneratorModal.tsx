@@ -34,7 +34,38 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
 
     const pdf = new jsPDF('landscape', 'mm', 'a4');
     pdf.addImage(dataUrl, 'PNG', 0, 0, 297, 210);
-    return pdf.output('blob');
+    return new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
+  };
+
+  const savePdfBlob = async (pdfBlob: Blob) => {
+    const filename = `Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`;
+
+    if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
+      const picker = window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [
+          {
+            description: 'PDF document',
+            accept: { 'application/pdf': ['.pdf'] },
+          },
+        ],
+      });
+
+      const fileHandle = await picker;
+      const writable = await fileHandle.createWritable();
+      await writable.write(pdfBlob);
+      await writable.close();
+      return;
+    }
+
+    const downloadUrl = window.URL.createObjectURL(pdfBlob);
+    const anchor = document.createElement('a');
+    anchor.href = downloadUrl;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
   };
 
   const downloadCertificate = async () => {
@@ -45,14 +76,7 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
       const pdfBlob = await generatePDFBlob();
       if (!pdfBlob) throw new Error('PDF generation failed');
 
-      const downloadUrl = window.URL.createObjectURL(pdfBlob);
-      const anchor = document.createElement('a');
-      anchor.href = downloadUrl;
-      anchor.download = `Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+      await savePdfBlob(pdfBlob);
 
       toast.success("Certificate downloaded!", { id: toastId });
       onSuccess();
