@@ -19,6 +19,16 @@ interface CertificateGeneratorModalProps {
   onSuccess: () => void;
 }
 
+interface SaveFilePickerWindow extends Window {
+  showSaveFilePicker?: (options: {
+    suggestedName?: string;
+    types?: Array<{
+      description?: string;
+      accept: Record<string, string[]>;
+    }>;
+  }) => Promise<FileSystemFileHandle>;
+}
+
 export default function CertificateGeneratorModal({ request, onClose, onSuccess }: CertificateGeneratorModalProps) {
   const certificateRef = useRef<HTMLDivElement>(null);
   const [generating, setGenerating] = useState(false);
@@ -39,9 +49,10 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
 
   const savePdfBlob = async (pdfBlob: Blob) => {
     const filename = `Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`;
+    const savePickerWindow = window as SaveFilePickerWindow;
 
-    if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
-      const picker = window.showSaveFilePicker({
+    if (typeof window !== 'undefined' && savePickerWindow.showSaveFilePicker) {
+      const picker = savePickerWindow.showSaveFilePicker({
         suggestedName: filename,
         types: [
           {
