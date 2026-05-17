@@ -7,7 +7,7 @@ import { Article } from "@/lib/types";
 export async function createArticleAction(data: Omit<Article, 'id'>) {
   const id = await createArticle(data);
   if (id) {
-    revalidateTag("articles");
+    revalidateTag("articles", { expire: 0 });
   }
   return id;
 }
@@ -15,7 +15,7 @@ export async function createArticleAction(data: Omit<Article, 'id'>) {
 export async function updateArticleAction(id: string, data: Partial<Article>) {
   const success = await updateArticle(id, data);
   if (success) {
-    revalidateTag("articles");
+    revalidateTag("articles", { expire: 0 });
   }
   return success;
 }
@@ -23,7 +23,7 @@ export async function updateArticleAction(id: string, data: Partial<Article>) {
 export async function deleteArticleAction(id: string) {
   const success = await deleteArticle(id);
   if (success) {
-    revalidateTag("articles");
+    revalidateTag("articles", { expire: 0 });
   }
   return success;
 }
