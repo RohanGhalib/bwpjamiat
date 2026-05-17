@@ -11,6 +11,9 @@ export interface Event {
   posterUrl: string;
   attendanceCount?: number;
   gallery: string[]; // URLs to photos
+  eventCategory?: 'standard' | 'dedicated';
+  dedicatedPath?: string;
+  pageRef?: string;
 }
 
 export interface Article {

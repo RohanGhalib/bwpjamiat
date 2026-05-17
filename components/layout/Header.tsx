@@ -3,8 +3,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { featureFlags } from '@/lib/feature-flags';
 
-const navLinks = [
+const defaultNavLinks = [
   { href: '/', label: 'Home' },
   { href: '/aghaz', label: 'Aghaz' },
   { href: '/taranas', label: 'Taranas' },
@@ -144,6 +147,7 @@ function buildTintFromBase(base: Rgb): NavTint {
 
 function HeaderContent() {
   const [isOpen, setIsOpen] = useState(false);
+  const [navLinks, setNavLinks] = useState(defaultNavLinks);
   const [navTint, setNavTint] = useState<NavTint>(defaultTint);
   const [sampledBase, setSampledBase] = useState<Rgb>([120, 140, 165]);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -151,6 +155,27 @@ function HeaderContent() {
   const rafRef = useRef<number | null>(null);
   const lastSampleRef = useRef<number>(0);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (!featureFlags.cmsAdmin) return;
+
+    const unsubscribe = onSnapshot(collection(db, 'nav_links'), (snapshot) => {
+      const links = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...(doc.data() as { label?: string; href?: string; order?: number; visible?: boolean; location?: string; deletedAt?: string }) }))
+        .filter((item) => !item.deletedAt && item.visible !== false && item.location === 'header')
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+        .map((item) => ({
+          href: item.href || '/',
+          label: item.label || 'Link',
+        }));
+
+      if (links.length > 0) {
+        setNavLinks(links);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (!sampleCanvasRef.current) {

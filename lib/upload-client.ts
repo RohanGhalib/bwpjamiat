@@ -17,7 +17,8 @@ export async function uploadFileDirectToR2({
   folder,
   onProgress,
 }: DirectUploadOptions): Promise<PresignResponse> {
-  const { data } = await axios.post<PresignResponse>("/api/upload/presign", {
+  const { data } = await axios.post<PresignResponse>("/api/media", {
+    action: "presign",
     fileName: file.name,
     contentType: file.type || "application/octet-stream",
     folder,

@@ -6,9 +6,9 @@ import { doc, setDoc, updateDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { uploadFileDirectToR2 } from '@/lib/upload-client';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import { EmberMember } from '@/lib/types';
 import { revalidateTeam } from '@/app/actions/revalidate';
+import { deleteMediaFile } from '@/lib/media-client';
 
 const departments = [
   "Leadership",
@@ -124,7 +124,7 @@ export default function EmberTeamModal({ isOpen, onClose, memberToEdit }: EmberT
         // Cleanup old image if replaced
         if ((memberToEdit as any).imageStoragePath && (memberToEdit as any).imageStoragePath !== imageStoragePath) {
           try {
-            await axios.post('/api/delete-file', { key: (memberToEdit as any).imageStoragePath });
+            await deleteMediaFile((memberToEdit as any).imageStoragePath);
           } catch (storageError) {
             console.warn('Could not remove replaced image.', storageError);
           }

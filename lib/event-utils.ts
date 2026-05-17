@@ -11,6 +11,9 @@ export interface EventRecord {
   registrationLink?: string;
   description?: string;
   eventTheme?: EventThemeConfig;
+  eventCategory?: 'standard' | 'dedicated';
+  dedicatedPath?: string;
+  pageRef?: string;
 }
 
 export interface EventThemeMeshPoint {

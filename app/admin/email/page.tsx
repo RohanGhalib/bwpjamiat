@@ -126,10 +126,11 @@ export default function EmailSenderPage() {
     const toastId = toast.loading('Sending email...');
 
     try {
-      const response = await fetch('/api/admin/email/send', {
+      const response = await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
+          mode: 'custom',
           to, 
           cc, 
           bcc, 

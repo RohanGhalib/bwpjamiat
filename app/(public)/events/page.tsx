@@ -51,7 +51,7 @@ async function EventsFetcher() {
      console.error("Error fetching events in EventsFetcher:", error);
   }
 
-   events = sortEventsBySchedule(events);
+   events = sortEventsBySchedule(events.filter((event) => event.eventCategory !== 'dedicated'));
 
   if (events.length === 0) {
      return (

@@ -4,6 +4,7 @@ import { collection, getDocs, query } from "firebase/firestore";
 import { getTaranas } from "@/lib/db";
 import { db } from "@/lib/firebase";
 import { absoluteUrl } from "@/lib/site";
+import { featureFlags } from "@/lib/feature-flags";
 
 type EventSitemapRecord = {
   id: string;
@@ -71,6 +72,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
   } catch (error) {
     console.error("Failed to load events for sitemap:", error);
+  }
+
+  if (featureFlags.cmsRouting) {
+    try {
+      const pagesSnapshot = await getDocs(query(collection(db, "pages")));
+      const cmsPages = pagesSnapshot.docs
+        .map((document) => ({ id: document.id, ...(document.data() as { slugNormalized?: string; updatedAt?: string; status?: string; isVisible?: boolean; deletedAt?: string }) }))
+        .filter((page) => !page.deletedAt && page.status === 'published' && page.isVisible !== false && page.slugNormalized && page.slugNormalized !== '/');
+
+      routes.push(
+        ...cmsPages.map((page) => ({
+          url: absoluteUrl(page.slugNormalized as string),
+          lastModified: page.updatedAt ? new Date(page.updatedAt) : new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to load CMS pages for sitemap:", error);
+    }
   }
 
   return routes;

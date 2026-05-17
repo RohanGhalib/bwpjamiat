@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getR2Config, r2Client } from "@/lib/r2";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { deleteFromStorage } from "@/lib/media-service";
 
 export async function POST(request: Request) {
   try {
@@ -10,18 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing file key" }, { status: 400 });
     }
 
-    const { bucketName } = getR2Config();
-
-    if (!bucketName) {
-      return NextResponse.json({ error: "Bucket name not configured" }, { status: 500 });
-    }
-
-    const command = new DeleteObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-    });
-
-    await r2Client.send(command);
+    await deleteFromStorage(key);
 
     return NextResponse.json({ success: true });
 

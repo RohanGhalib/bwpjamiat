@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { getEventState, type EventRecord } from '@/lib/event-utils';
 import EventModal from './EventModal';
 import toast from 'react-hot-toast';
-import axios from 'axios';
+import { deleteMediaFile } from '@/lib/media-client';
 
 export default function EventForm({ existingEvents }: { existingEvents: EventRecord[] }) {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function EventForm({ existingEvents }: { existingEvents: EventRec
 
       if (event.imageStoragePath) {
         try {
-          await axios.post('/api/delete-file', { key: event.imageStoragePath });
+          await deleteMediaFile(event.imageStoragePath);
         } catch (storageError) {
           console.warn('Could not remove event poster.', storageError);
         }
@@ -107,6 +107,11 @@ export default function EventForm({ existingEvents }: { existingEvents: EventRec
                         <span className={`inline-block px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${getEventState(event) === 'past' ? 'bg-slate-100 text-slate-500' : 'bg-green-50 text-green-600'}`}>
                           {getEventState(event) === 'past' ? 'Finished' : 'Live'}
                         </span>
+                        {event.eventCategory === 'dedicated' && (
+                          <span className="inline-block ml-2 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg bg-indigo-50 text-indigo-600">
+                            Dedicated
+                          </span>
+                        )}
                       </div>
                       <h4 className="text-lg font-bold text-[#123962] leading-tight line-clamp-2">{event.title}</h4>
                       <p className="text-sm text-slate-500 mt-2 font-medium">{event.dateStr} &bull; {event.location}</p>

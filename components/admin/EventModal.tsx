@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation';
 import { fromDateTimeLocalValue, toDateTimeLocalValue, type EventRecord } from '@/lib/event-utils';
 import { uploadFileDirectToR2 } from '@/lib/upload-client';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import { generateEventThemeFromImage } from '@/lib/event-theme';
+import { deleteMediaFile } from '@/lib/media-client';
+import { upsertDedicatedEventPage } from '@/lib/cms';
 
 const emptyForm = {
   title: '',
@@ -18,6 +19,9 @@ const emptyForm = {
   imageUrl: '',
   imageStoragePath: '',
   isActive: true,
+  eventCategory: 'standard' as 'standard' | 'dedicated',
+  dedicatedPath: '',
+  pageRef: '',
   duration: '',
   registrationLink: '',
   description: ''
@@ -36,6 +40,7 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
   const [formData, setFormData] = useState(emptyForm);
   const [selectedPosterFile, setSelectedPosterFile] = useState<File | null>(null);
   const [posterPreviewUrl, setPosterPreviewUrl] = useState<string | null>(null);
+  const [endpointStatus, setEndpointStatus] = useState<{ available?: boolean; reason?: string; normalizedPath?: string } | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -48,6 +53,9 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
           imageUrl: eventToEdit.imageUrl || '',
           imageStoragePath: eventToEdit.imageStoragePath || '',
           isActive: eventToEdit.isActive !== false,
+          eventCategory: eventToEdit.eventCategory || 'standard',
+          dedicatedPath: eventToEdit.dedicatedPath || '',
+          pageRef: eventToEdit.pageRef || '',
           duration: eventToEdit.duration || '',
           registrationLink: eventToEdit.registrationLink || '',
           description: eventToEdit.description || ''
@@ -115,15 +123,56 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
         updatedAt: new Date().toISOString()
       };
 
+      let dedicatedPathToSave = formData.dedicatedPath.trim();
+      let endpointResult: { available?: boolean; reason?: string; normalizedPath?: string } | null = null;
+      if (formData.eventCategory === 'dedicated') {
+        if (!dedicatedPathToSave) {
+          throw new Error('Dedicated events require an endpoint path, e.g. /ember-2027.');
+        }
+        const endpointResponse = await fetch('/api/admin/url/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: dedicatedPathToSave,
+            excludePageId: formData.pageRef || undefined,
+            excludeEventId: eventToEdit?.id,
+          }),
+        });
+        endpointResult = await endpointResponse.json();
+        setEndpointStatus(endpointResult);
+        if (!endpointResult?.available) {
+          throw new Error(endpointResult?.reason || 'Endpoint unavailable, please choose another.');
+        }
+        dedicatedPathToSave = endpointResult.normalizedPath || dedicatedPathToSave;
+        payload.dedicatedPath = dedicatedPathToSave;
+      } else {
+        payload.dedicatedPath = '';
+        payload.pageRef = '';
+      }
+
       if (eventToEdit) {
         toast.loading('Updating event...', { id: 'save-event' });
         await updateDoc(doc(db, 'events', eventToEdit.id), payload);
+        if (formData.eventCategory === 'dedicated' && dedicatedPathToSave) {
+          const pageRef = await upsertDedicatedEventPage({
+            eventId: eventToEdit.id,
+            title: formData.title,
+            slug: dedicatedPathToSave,
+            description: formData.description,
+          });
+          await updateDoc(doc(db, 'events', eventToEdit.id), {
+            dedicatedPath: dedicatedPathToSave,
+            pageRef,
+            eventCategory: 'dedicated',
+            updatedAt: new Date().toISOString(),
+          });
+        }
         toast.success('Event updated successfully!', { id: 'save-event' });
 
         // Cleanup old image if replaced
         if (eventToEdit.imageStoragePath && eventToEdit.imageStoragePath !== imageStoragePath) {
           try {
-            await axios.post('/api/delete-file', { key: eventToEdit.imageStoragePath });
+            await deleteMediaFile(eventToEdit.imageStoragePath);
           } catch (storageError) {
             console.warn('Could not remove replaced poster.', storageError);
           }
@@ -139,6 +188,20 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
           eventTheme: createdEventTheme,
           createdAt: new Date().toISOString()
         });
+        if (formData.eventCategory === 'dedicated' && dedicatedPathToSave) {
+          const pageRef = await upsertDedicatedEventPage({
+            eventId: newEventRef.id,
+            title: formData.title,
+            slug: dedicatedPathToSave,
+            description: formData.description,
+          });
+          await updateDoc(doc(db, 'events', newEventRef.id), {
+            dedicatedPath: dedicatedPathToSave,
+            pageRef,
+            eventCategory: 'dedicated',
+            updatedAt: new Date().toISOString(),
+          });
+        }
         toast.success('Event created successfully!', { id: 'save-event' });
       }
 
@@ -253,6 +316,33 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
 
           <div className="grid sm:grid-cols-2 gap-5 pt-4 border-t border-slate-100">
             <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Event Category</label>
+              <select
+                value={formData.eventCategory}
+                onChange={e => setFormData({ ...formData, eventCategory: e.target.value as 'standard' | 'dedicated' })}
+                className="w-full bg-[#FAFCFF] border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1C7F93] focus:ring-1 focus:ring-[#1C7F93] transition-all"
+              >
+                <option value="standard">Standard (inside /events)</option>
+                <option value="dedicated">Dedicated (own endpoint)</option>
+              </select>
+            </div>
+            {formData.eventCategory === 'dedicated' && (
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Dedicated Endpoint</label>
+                <input
+                  type="text"
+                  required={formData.eventCategory === 'dedicated'}
+                  value={formData.dedicatedPath}
+                  onChange={e => {
+                    setEndpointStatus(null);
+                    setFormData({ ...formData, dedicatedPath: e.target.value });
+                  }}
+                  className="w-full bg-[#FAFCFF] border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#1C7F93] focus:ring-1 focus:ring-[#1C7F93] transition-all"
+                  placeholder="/ember-2027"
+                />
+              </div>
+            )}
+            <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Duration (Optional)</label>
               <input
                 type="text"
@@ -273,6 +363,13 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
               />
             </div>
           </div>
+          {formData.eventCategory === 'dedicated' && (
+            <div className={`rounded-xl px-4 py-3 text-xs font-semibold ${endpointStatus?.available ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+              {endpointStatus?.available
+                ? `Endpoint available: ${endpointStatus.normalizedPath}`
+                : endpointStatus?.reason || 'Dedicated endpoints are checked for conflicts before save. If this URL is printed somewhere, changing it may break old links.'}
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Description</label>
