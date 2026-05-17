@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, collection, query, where, getDocs, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export async function POST(request: Request) {
   try {
@@ -49,7 +49,10 @@ export async function POST(request: Request) {
     
     await fetch(`${protocol}://${host}/api/email`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-email-token': process.env.INTERNAL_EMAIL_TOKEN || '',
+      },
       body: JSON.stringify({
         to: memberData.email,
         type: 'certificate_otp',
@@ -67,7 +70,7 @@ export async function POST(request: Request) {
       maskedEmail 
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Verify Identity API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

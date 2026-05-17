@@ -11,7 +11,9 @@ type DynamicPathPageProps = {
 };
 
 function slugSegmentsToPath(slug: string[]) {
-  return `/${slug.join('/')}`;
+  const safeSegments = slug.map((segment) => segment.trim()).filter(Boolean);
+  if (safeSegments.length === 0) return '/';
+  return `/${safeSegments.join('/')}`;
 }
 
 export async function generateMetadata({ params }: DynamicPathPageProps): Promise<Metadata> {
@@ -35,6 +37,7 @@ export default async function DynamicPathPage({ params }: DynamicPathPageProps) 
 
   const { slug } = await params;
   const path = normalizeCmsPath(slugSegmentsToPath(slug));
+  if (path === '/') notFound();
 
   if (featureFlags.cmsRedirects) {
     const redirectRule = await getActiveRedirectByFromPath(path);

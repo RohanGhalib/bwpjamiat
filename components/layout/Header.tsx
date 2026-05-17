@@ -163,7 +163,7 @@ function HeaderContent() {
     const unsubscribe = onSnapshot(collection(db, 'nav_links'), (snapshot) => {
       const links = snapshot.docs
         .map((doc) => ({ id: doc.id, ...(doc.data() as Omit<NavLinkRecord, 'id'>) }))
-        .filter((item) => !item.deletedAt && item.visible !== false && item.location === 'header')
+        .filter((item) => !item.deletedAt && item.visible === true && item.location === 'header')
         .sort((a, b) => (a.order || 0) - (b.order || 0))
         .map((item) => ({
           href: item.href || '/',

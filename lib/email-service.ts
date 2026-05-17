@@ -39,6 +39,7 @@ function templatePayload(type: TemplateType, data: Record<string, string | numbe
     return {
       subject: "Certificate Request Received - Ember'26",
       html: `<div style="font-family:sans-serif;color:#123962;max-width:600px;margin:0 auto;border:1px solid #eee;border-radius:10px;padding:20px;"><h2 style="color:#1C7F93;">Hello ${name},</h2><p>We have successfully received your request for the Ember'26 certificate.</p><p>Our team will verify your details and generate your official credential shortly.</p></div>`,
+      attachments: undefined,
     };
   }
 
@@ -46,6 +47,7 @@ function templatePayload(type: TemplateType, data: Record<string, string | numbe
     return {
       subject: "Certificate Request Update - Ember'26",
       html: `<div style="font-family:sans-serif;color:#123962;max-width:600px;margin:0 auto;border:1px solid #eee;border-radius:10px;padding:20px;"><h2 style="color:#dc2626;">Certificate Request Denied</h2><p>Hello ${name},</p><p>Your request for an Ember'26 certificate could not be fulfilled.</p><p><strong>Reason:</strong> ${note}</p></div>`,
+      attachments: undefined,
     };
   }
 
@@ -70,12 +72,14 @@ function templatePayload(type: TemplateType, data: Record<string, string | numbe
     return {
       subject: isRegenerated ? 'Certificate RE-GENERATED!' : 'Certificate Generated!',
       html: `<div style="font-family:sans-serif;color:#123962;max-width:600px;margin:0 auto;border:1px solid #eee;border-radius:10px;padding:20px;"><h2 style="color:#1C7F93;">Hello ${name},</h2><p>Your Ember'26 certificate has been successfully ${isRegenerated ? 're-generated' : 'generated'}.</p></div>`,
+      attachments: undefined,
     };
   }
 
   return {
     subject: `Verification Code: ${otp} - Ember'26`,
     html: `<div style="font-family:sans-serif;color:#123962;max-width:600px;margin:0 auto;border:1px solid #eee;border-radius:10px;padding:20px;"><h2 style="color:#1C7F93;">Certificate Verification</h2><p>Hello ${name},</p><p>Your OTP is: <strong>${otp}</strong></p></div>`,
+    attachments: undefined,
   };
 }
 
@@ -101,7 +105,7 @@ export async function sendEmail(input: SendEmailInput) {
     bcc: asRecipients(input.bcc),
     subject,
     html,
-    attachments: template && 'attachments' in template ? template.attachments : undefined,
+    attachments: template?.attachments,
   });
 
   if (response.error) {
@@ -110,4 +114,3 @@ export async function sendEmail(input: SendEmailInput) {
 
   return { success: true, templateMode: isTemplate, data: response.data };
 }
-

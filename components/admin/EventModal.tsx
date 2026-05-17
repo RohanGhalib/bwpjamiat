@@ -141,7 +141,7 @@ export default function EventModal({ isOpen, onClose, eventToEdit }: EventModalP
         endpointResult = await endpointResponse.json();
         setEndpointStatus(endpointResult);
         if (!endpointResult?.available) {
-          throw new Error(endpointResult?.reason || 'Endpoint unavailable, please choose another.');
+          throw new Error(endpointResult?.reason || 'The dedicated endpoint is not available. Please verify the path and try again.');
         }
         dedicatedPathToSave = endpointResult.normalizedPath || dedicatedPathToSave;
         payload.dedicatedPath = dedicatedPathToSave;

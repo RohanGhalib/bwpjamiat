@@ -26,16 +26,22 @@ export async function POST(request: Request) {
     const body = (await request.json()) as EmailApiRequest;
     // Backward-compatible inference: existing callers that send `type` are treated as template emails.
     const mode = body.mode || (body.type ? 'template' : 'custom');
+    const cookieStore = await cookies();
+    const isAuthenticated = cookieStore.get('admin_auth')?.value === 'authenticated';
 
     if (!body.to) {
       return NextResponse.json({ error: 'Missing required field: to' }, { status: 400 });
     }
 
     if (mode === 'custom') {
-      const cookieStore = await cookies();
-      const isAuthenticated = cookieStore.get('admin_auth')?.value === 'authenticated';
       if (!isAuthenticated) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    } else if (!isAuthenticated) {
+      // Template email mode is allowed from admin sessions and trusted internal server routes only.
+      const internalToken = request.headers.get('x-internal-email-token');
+      if (!internalToken || internalToken !== process.env.INTERNAL_EMAIL_TOKEN) {
+        return NextResponse.json({ error: 'Unauthorized template email request' }, { status: 401 });
       }
     }
 

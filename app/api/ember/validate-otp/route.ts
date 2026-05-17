@@ -50,7 +50,10 @@ export async function POST(request: Request) {
       // Send re-generation email
       fetch(`${protocol}://${host}/api/email`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-email-token': process.env.INTERNAL_EMAIL_TOKEN || '',
+        },
         body: JSON.stringify({
           to: memberData.email,
           type: 'certificate_regenerated',
@@ -87,7 +90,10 @@ export async function POST(request: Request) {
     // Send success email
     fetch(`${protocol}://${host}/api/email`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-email-token': process.env.INTERNAL_EMAIL_TOKEN || '',
+      },
       body: JSON.stringify({
         to: memberData.email,
         type: 'certificate_generated',
@@ -107,7 +113,7 @@ export async function POST(request: Request) {
       }
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Validate OTP API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
