@@ -5,11 +5,11 @@ import { db } from '@/lib/firebase';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import { EmberMember } from '@/lib/types';
 import EmberTeamModal from './EmberTeamModal';
 import Image from 'next/image';
 import { revalidateTeam } from '@/app/actions/revalidate';
+import { deleteMediaFile } from '@/lib/media-client';
 
 interface EmberTeamManagerProps {
   initialMembers: EmberMember[];
@@ -42,7 +42,7 @@ export default function EmberTeamManager({ initialMembers }: EmberTeamManagerPro
       // Delete image from R2 if it exists
       if ((member as any).imageStoragePath) {
         try {
-          await axios.post('/api/delete-file', { key: (member as any).imageStoragePath });
+          await deleteMediaFile((member as any).imageStoragePath);
         } catch (e) {
           console.warn('Failed to delete image from storage', e);
         }

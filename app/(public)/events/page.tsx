@@ -51,7 +51,8 @@ async function EventsFetcher() {
      console.error("Error fetching events in EventsFetcher:", error);
   }
 
-   events = sortEventsBySchedule(events);
+   // Dedicated events are rendered on their own custom endpoints and are excluded from the standard listing.
+   events = sortEventsBySchedule(events.filter((event) => event.eventCategory !== 'dedicated'));
 
   if (events.length === 0) {
      return (
