@@ -7,11 +7,10 @@ import { normalizeCmsPath } from '@/lib/url-management';
 import { siteConfig } from '@/lib/site';
 
 type DynamicPathPageProps = {
-  params: Promise<{ slug?: string[] }>;
+  params: Promise<{ slug: string[] }>;
 };
 
-function slugSegmentsToPath(slug?: string[]) {
-  if (!slug || slug.length === 0) return '/';
+function slugSegmentsToPath(slug: string[]) {
   return `/${slug.join('/')}`;
 }
 
@@ -54,4 +53,3 @@ export default async function DynamicPathPage({ params }: DynamicPathPageProps) 
 
   return <DynamicPageRenderer page={page} />;
 }
-
