@@ -21,15 +21,37 @@ export default function Home() {
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: 'Islami Jamiat-e-Talaba Bahawalpur',
+      alternateName: 'IJT Bahawalpur',
       url: siteConfig.url,
       logo: absoluteUrl('/logo.png'),
+      description: siteConfig.defaultDescription,
+      sameAs: [
+        'https://www.facebook.com/bwpjamiat',
+        'https://twitter.com/bwpjamiat',
+        'https://www.instagram.com/bwpjamiat',
+        'https://www.youtube.com/@bwpjamiat'
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        availableLanguage: ['English', 'Urdu']
+      }
    };
 
    const websiteJsonLd = {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'IJT Bahawalpur',
+      alternateName: 'Islami Jamiat-e-Talaba Bahawalpur',
       url: siteConfig.url,
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${siteConfig.url}/articles?q={search_term_string}`
+        },
+        'query-input': 'required name=search_term_string'
+      }
    };
 
    return (

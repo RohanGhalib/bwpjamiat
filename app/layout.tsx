@@ -32,10 +32,19 @@ export const metadata: Metadata = {
   },
   description: siteConfig.defaultDescription,
   metadataBase: new URL(siteConfig.url),
+  alternates: {
+    canonical: "/",
+  },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    shortcut: ['/logo.png'],
+    apple: [
+      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
   openGraph: {
     title: "Islami Jamiat-e-Talaba Bahawalpur",
