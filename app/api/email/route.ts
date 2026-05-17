@@ -24,6 +24,7 @@ type EmailApiRequest = {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as EmailApiRequest;
+    // Backward-compatible inference: existing callers that send `type` are treated as template emails.
     const mode = body.mode || (body.type ? 'template' : 'custom');
 
     if (!body.to) {
@@ -58,4 +59,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

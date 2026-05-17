@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { featureFlags } from '@/lib/feature-flags';
+import type { NavLinkRecord } from '@/lib/cms-types';
 
 const defaultNavLinks = [
   { href: '/', label: 'Home' },
@@ -161,7 +162,7 @@ function HeaderContent() {
 
     const unsubscribe = onSnapshot(collection(db, 'nav_links'), (snapshot) => {
       const links = snapshot.docs
-        .map((doc) => ({ id: doc.id, ...(doc.data() as { label?: string; href?: string; order?: number; visible?: boolean; location?: string; deletedAt?: string }) }))
+        .map((doc) => ({ id: doc.id, ...(doc.data() as Omit<NavLinkRecord, 'id'>) }))
         .filter((item) => !item.deletedAt && item.visible !== false && item.location === 'header')
         .sort((a, b) => (a.order || 0) - (b.order || 0))
         .map((item) => ({

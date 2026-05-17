@@ -124,8 +124,5 @@ export async function checkEndpointAvailability(
     };
   }
 
-  warnings.push('If this URL was previously printed/shared, changing it can break old links.');
-
   return { available: true, normalizedPath, warnings };
 }
-

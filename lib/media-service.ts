@@ -6,7 +6,10 @@ import { getR2Config, getR2PublicUrl, r2Client } from './r2';
 const SAFE_FOLDERS = ['events', 'ember', 'taranas', 'articles', 'misc'];
 
 export function normalizeMediaFolder(folder?: string) {
-  const cleaned = (folder || 'events').trim().toLowerCase().replace(/[^a-z0-9/-]/g, '').replace(/\/+/g, '/').replace(/^\/|\/$/g, '');
+  const trimmed = (folder || 'events').trim().toLowerCase();
+  const sanitized = trimmed.replace(/[^a-z0-9/-]/g, '');
+  const normalized = sanitized.replace(/\/+/g, '/').replace(/^\/|\/$/g, '');
+  const cleaned = normalized;
   if (!cleaned) return 'events';
   const root = cleaned.split('/')[0];
   return SAFE_FOLDERS.includes(root) ? cleaned : 'misc';

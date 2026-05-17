@@ -137,12 +137,12 @@ export default function SiteStructureManager() {
         const existing = pages.find((item) => item.id === pageForm.id);
         await updateDoc(doc(db, 'pages', pageForm.id), payload);
 
-        if (
+        const shouldCreateAutoRedirect =
           createRedirectOnSlugChange
-          && existing
-          && existing.slugNormalized
-          && existing.slugNormalized !== endpoint.normalizedPath
-        ) {
+          && Boolean(existing?.slugNormalized)
+          && existing?.slugNormalized !== endpoint.normalizedPath;
+
+        if (shouldCreateAutoRedirect && existing) {
           await addDoc(collection(db, 'redirects'), {
             fromPath: existing.slug,
             fromPathNormalized: existing.slugNormalized,
@@ -441,4 +441,3 @@ export default function SiteStructureManager() {
     </div>
   );
 }
-
