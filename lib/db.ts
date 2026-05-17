@@ -76,18 +76,100 @@ export async function getRecentArticles(): Promise<Article[]> {
 const getRecentArticlesCached = unstable_cache(async (): Promise<Article[]> => {
   try {
     const articlesRef = collection(db, 'articles');
+    // Only fetch published articles
     const q = query(articlesRef, orderBy('publishDate', 'desc'), limit(3));
     const snapshot = await getDocs(q);
     
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Article[];
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }) as Article)
+      .filter(a => a.isPublished !== false); // Ensure only published ones are shown on recent
   } catch (error) {
     console.error("Error fetching articles:", error);
     return [];
   }
 }, ['recent-articles'], { revalidate: 300, tags: ['articles'] });
+
+export async function getAllArticles(includeDrafts = false): Promise<Article[]> {
+  return getAllArticlesCached(includeDrafts);
+}
+
+const getAllArticlesCached = unstable_cache(async (includeDrafts: boolean): Promise<Article[]> => {
+  try {
+    const articlesRef = collection(db, 'articles');
+    const q = query(articlesRef, orderBy('publishDate', 'desc'));
+    const snapshot = await getDocs(q);
+    const articles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Article);
+    return includeDrafts ? articles : articles.filter(a => a.isPublished);
+  } catch (error) {
+    console.error("Error fetching all articles:", error);
+    return [];
+  }
+}, ['all-articles'], { revalidate: 300, tags: ['articles'] });
+
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  return getArticleBySlugCached(slug);
+}
+
+const getArticleBySlugCached = unstable_cache(async (slug: string): Promise<Article | null> => {
+  try {
+    const articles = await getAllArticles(true); // get all to find slug
+    return articles.find(a => a.slug === slug) || null;
+  } catch (error) {
+    console.error("Error fetching article by slug:", error);
+    return null;
+  }
+}, ['article-by-slug'], { revalidate: 300, tags: ['articles'] });
+
+export async function getArticleById(id: string): Promise<Article | null> {
+  try {
+    const docRef = doc(db, 'articles', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() } as Article;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching article by id:", error);
+    return null;
+  }
+}
+
+export async function createArticle(data: Omit<Article, 'id'>): Promise<string | null> {
+  try {
+    const docRef = await addDoc(collection(db, 'articles'), {
+      ...data,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating article:", error);
+    return null;
+  }
+}
+
+export async function updateArticle(id: string, data: Partial<Article>): Promise<boolean> {
+  try {
+    await updateDoc(doc(db, 'articles', id), {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    });
+    return true;
+  } catch (error) {
+    console.error("Error updating article:", error);
+    return false;
+  }
+}
+
+export async function deleteArticle(id: string): Promise<boolean> {
+  try {
+    await deleteDoc(doc(db, 'articles', id));
+    return true;
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    return false;
+  }
+}
 
 export async function getTaranas(): Promise<Tarana[]> {
   return getTaranasCached();

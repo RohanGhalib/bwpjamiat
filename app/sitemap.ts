@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { collection, getDocs, query } from "firebase/firestore";
 
-import { getTaranas } from "@/lib/db";
+import { getTaranas, getAllArticles } from "@/lib/db";
 import { db } from "@/lib/firebase";
 import { absoluteUrl } from "@/lib/site";
 import { featureFlags } from "@/lib/feature-flags";
@@ -54,6 +54,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
   } catch (error) {
     console.error("Failed to load taranas for sitemap:", error);
+  }
+
+  try {
+    const articles = await getAllArticles(false);
+
+    routes.push(
+      ...articles.map((article) => ({
+        url: absoluteUrl(`/articles/${article.slug}`),
+        lastModified: article.updatedAt ? new Date(article.updatedAt) : new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+        images: article.thumbnailUrl ? [article.thumbnailUrl] : undefined,
+      }))
+    );
+  } catch (error) {
+    console.error("Failed to load articles for sitemap:", error);
   }
 
   try {

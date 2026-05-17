@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     const { bucketName } = getR2Config();
 
     if (!bucketName) {
+      console.warn("Upload failed: Bucket name not configured in environment variables (R2_BUCKET_NAME). Please verify your .env.local file.");
       return NextResponse.json({ error: "Bucket name not configured" }, { status: 500 });
     }
 

@@ -27,6 +27,10 @@ export interface Article {
   publishDate: string;
   category: 'Tarbiyah' | 'Current Affairs' | 'Seerat' | 'General';
   thumbnailUrl: string;
+  isPublished: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  readTime?: string;
 }
 
 export interface Tarana {
