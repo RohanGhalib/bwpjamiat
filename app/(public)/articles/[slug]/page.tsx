@@ -7,6 +7,10 @@ import { siteConfig } from '@/lib/site';
 
 export async function generateStaticParams() {
   const articles = await getAllArticles(false);
+  if (articles.length === 0) {
+    // Return a fallback slug to satisfy Next.js 16's strict build-time validation
+    return [{ slug: 'build-placeholder' }];
+  }
   return articles.map((article) => ({
     slug: article.slug,
   }));
