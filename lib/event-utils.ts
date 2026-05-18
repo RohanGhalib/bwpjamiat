@@ -55,14 +55,17 @@ export function getEventStartTime(event: Pick<EventRecord, 'startsAt' | 'dateStr
   return parseDateCandidate(event.startsAt) ?? parseDateCandidate(event.dateStr);
 }
 
-export function getEventState(event: Pick<EventRecord, 'startsAt' | 'dateStr'>) {
+export function getEventState(event: Pick<EventRecord, 'startsAt' | 'dateStr'>, now?: Date) {
   const startTime = getEventStartTime(event);
 
   if (startTime == null) {
     return 'unknown';
   }
 
-  const now = new Date();
+  if (!now) {
+    now = new Date();
+  }
+
   const startDate = new Date(startTime);
 
   if (
@@ -73,13 +76,21 @@ export function getEventState(event: Pick<EventRecord, 'startsAt' | 'dateStr'>) 
     return 'ongoing';
   }
 
-  return startTime > Date.now() ? 'upcoming' : 'past';
+  return startTime > now.getTime() ? 'upcoming' : 'past';
 }
 
 export function sortEventsBySchedule(events: EventRecord[]) {
   const upcoming: EventRecord[] = [];
   const past: EventRecord[] = [];
   const unknown: EventRecord[] = [];
+
+  const now = new Date();
+  const nowTime = now.getTime();
+  const nowYear = now.getFullYear();
+  const nowMonth = now.getMonth();
+  const nowDate = now.getDate();
+
+  const startTimes = new Map<EventRecord, number>();
 
   for (const event of events) {
     const startTime = getEventStartTime(event);
@@ -89,24 +100,25 @@ export function sortEventsBySchedule(events: EventRecord[]) {
       continue;
     }
 
+    startTimes.set(event, startTime);
+
     const startDate = new Date(startTime);
-    const now = new Date();
     const isSameDay =
-      startDate.getFullYear() === now.getFullYear()
-      && startDate.getMonth() === now.getMonth()
-      && startDate.getDate() === now.getDate();
+      startDate.getFullYear() === nowYear
+      && startDate.getMonth() === nowMonth
+      && startDate.getDate() === nowDate;
 
     if (isSameDay) {
       upcoming.push(event);
-    } else if (startTime > Date.now()) {
+    } else if (startTime > nowTime) {
       upcoming.push(event);
     } else {
       past.push(event);
     }
   }
 
-  upcoming.sort((left, right) => (getEventStartTime(left) ?? 0) - (getEventStartTime(right) ?? 0));
-  past.sort((left, right) => (getEventStartTime(right) ?? 0) - (getEventStartTime(left) ?? 0));
+  upcoming.sort((left, right) => (startTimes.get(left) ?? 0) - (startTimes.get(right) ?? 0));
+  past.sort((left, right) => (startTimes.get(right) ?? 0) - (startTimes.get(left) ?? 0));
   unknown.sort((left, right) => (left.title || '').localeCompare(right.title || ''));
 
   return [...upcoming, ...past, ...unknown];
