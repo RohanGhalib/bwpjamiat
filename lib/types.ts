@@ -11,6 +11,9 @@ export interface Event {
   posterUrl: string;
   attendanceCount?: number;
   gallery: string[]; // URLs to photos
+  eventCategory?: 'standard' | 'dedicated';
+  dedicatedPath?: string;
+  pageRef?: string;
 }
 
 export interface Article {
@@ -24,6 +27,10 @@ export interface Article {
   publishDate: string;
   category: 'Tarbiyah' | 'Current Affairs' | 'Seerat' | 'General';
   thumbnailUrl: string;
+  isPublished: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  readTime?: string;
 }
 
 export interface Tarana {
@@ -32,6 +39,7 @@ export interface Tarana {
   artist: string;
   duration: string;
   audioUrl: string;
+  coverUrl?: string;
   tags: string[];
 }
 
@@ -59,4 +67,16 @@ export interface AlumniProfile {
   city: string;
   profession: string;
   avatarUrl?: string;
+}
+
+export interface EmberMember {
+  id: string;
+  name: string;
+  role: string;
+  department: string;
+  img: string;
+  gender: 'boy' | 'girl';
+  order: number;
+  email?: string;
+  phone?: string;
 }

@@ -61,6 +61,14 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## 🧩 CMS Feature Flags (Phased Rollout)
+
+Set these optional variables in `.env.local` to enable the new scalable CMS routing system safely:
+
+- `NEXT_PUBLIC_FEATURE_CMS_ADMIN=true` (default: `true`) — enables admin site-structure management UI.
+- `NEXT_PUBLIC_FEATURE_CMS_ROUTING=false` (default: `false`) — enables dynamic CMS-driven routes.
+- `NEXT_PUBLIC_FEATURE_CMS_REDIRECTS=false` (default: `false`) — enables CMS redirect resolution in dynamic routing.
+
 ## 📜 License
 
 All rights reserved to Islami Jamiat-e-Talaba Bahawalpur.

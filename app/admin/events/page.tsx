@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import EventForm from '@/components/admin/EventForm';
+import { sortEventsBySchedule, type EventRecord } from '@/lib/event-utils';
 
 export default function AdminEventsPage() {
    return (
@@ -27,17 +28,17 @@ export default function AdminEventsPage() {
 
 async function EventsManagerLoader() {
    const eventsRef = collection(db, 'events');
-   const q = query(eventsRef); // Can add orderBy later if dates are standardized
-   let events: any[] = [];
+   const q = query(eventsRef);
+   const events: EventRecord[] = [];
    
    try {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-         events.push({ id: doc.id, ...doc.data() });
+         events.push({ id: doc.id, ...doc.data() } as EventRecord);
       });
    } catch (error) {
       console.error("Error fetching existing admin events:", error);
    }
 
-   return <EventForm existingEvents={events} />;
+   return <EventForm existingEvents={sortEventsBySchedule(events)} />;
 }

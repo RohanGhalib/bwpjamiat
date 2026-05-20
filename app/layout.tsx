@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Nastaliq_Urdu, Amiri } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import Image from "next/image";
-import { Analytics } from '@vercel/analytics/next';
+import { absoluteUrl, siteConfig } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,11 +27,44 @@ const amiri = Amiri({
   subsets: ["arabic"],
 });
 export const metadata: Metadata = {
-  title: "Islami Jamiat-e-Talaba Bahawalpur",
-  description: "Official website for Islami Jamiat-e-Talaba Bahawalpur. Largest student organization in Pakistan.",
+  title: {
+    default: "Islami Jamiat-e-Talaba Bahawalpur",
+    template: "%s",
+  },
+  description: siteConfig.defaultDescription,
+  metadataBase: new URL(siteConfig.url),
+  alternates: {
+    canonical: "/",
+  },
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    shortcut: ['/logo.png'],
+    apple: [
+      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  openGraph: {
+    title: "Islami Jamiat-e-Talaba Bahawalpur",
+    description: siteConfig.defaultDescription,
+    siteName: siteConfig.name,
+    locale: "en_PK",
+    type: "website",
+    url: siteConfig.url,
+    images: [
+      {
+        url: absoluteUrl(siteConfig.defaultOgImage),
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Islami Jamiat-e-Talaba Bahawalpur",
+    description: siteConfig.defaultDescription,
+    images: [absoluteUrl(siteConfig.defaultOgImage)],
   },
 };
 
@@ -55,11 +87,7 @@ export default function RootLayout({
            </div>
         </div>
 
-        <Header />
-        <main className="flex-1 flex flex-col">
-          {children}
-        </main>
-        <Footer />
+        {children}
         <Analytics />
       </body>
     </html>
