@@ -34,6 +34,7 @@ export default function TeamCard({ name, role, img, delay = 0, size = "md", prom
             src={img}
             alt={name}
             fill
+            sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 400px"
             className="object-cover sepia-[0.1] brightness-90 group-hover:brightness-105 group-hover:sepia-0 transition-all duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />

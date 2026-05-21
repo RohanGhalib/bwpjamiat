@@ -19,6 +19,7 @@ export default function AghazPage() {
           src="/bg.png"
           alt=""
           fill
+          sizes="100vw"
           priority
           className="object-cover object-center scale-105"
         />

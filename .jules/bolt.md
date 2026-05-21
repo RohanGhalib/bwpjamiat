@@ -1,0 +1,3 @@
+## 2026-05-21 - [Next.js Image Fill Default Sizes]
+**Learning:** When using the `<Image fill />` component without specifying a `sizes` attribute, Next.js defaults to `sizes="100vw"`. For small elements like avatars or list items, this causes the browser to download unnecessarily large, viewport-sized versions of the image, wasting significant bandwidth and hurting LCP. Adding `sizes` manually across the codebase resolves this and is a high ROI optimization.
+**Action:** Always explicitly specify a `sizes` attribute on `<Image>` components that use the `fill` prop, especially when rendering small images like avatars or grid thumbnails. Never attempt to arbitrarily update dependencies.
