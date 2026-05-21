@@ -14,7 +14,15 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
   
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
@@ -86,12 +94,12 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
 
   const filteredTaranas = useMemo(() => {
     return initialTaranas.filter(t => {
-      const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            (t.artist && t.artist.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesSearch = t.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+                            (t.artist && t.artist.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
       const matchesTag = selectedTag ? (t.tags && t.tags.includes(selectedTag)) : true;
       return matchesSearch && matchesTag;
     });
-  }, [initialTaranas, searchQuery, selectedTag]);
+  }, [initialTaranas, debouncedSearchQuery, selectedTag]);
 
   const upNextTaranas = useMemo(() => {
     if (!activeTarana) return [];
