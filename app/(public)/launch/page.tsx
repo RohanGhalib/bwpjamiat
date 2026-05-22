@@ -83,7 +83,7 @@ export default function LaunchPage() {
       }`}>
          <div className="relative w-36 h-36 md:w-44 md:h-44 mb-8 pb-2">
             <div className="absolute inset-0 bg-[#1C7F93] opacity-30 blur-[60px] rounded-full"></div>
-            <Image src="/logo.png" alt="Jamiat Logo" fill className="object-contain drop-shadow-[0_0_30px_rgba(28,127,147,0.4)] animate-[float_6s_ease-in-out_infinite]" priority />
+            <Image src="/logo.png" alt="Jamiat Logo" fill sizes="(max-width: 768px) 144px, 176px" className="object-contain drop-shadow-[0_0_30px_rgba(28,127,147,0.4)] animate-[float_6s_ease-in-out_infinite]" priority />
          </div>
          
          <div className="inline-flex items-center space-x-3 mb-6 bg-white/5 border border-white/10 backdrop-blur-md px-5 py-2.5 rounded-full shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
@@ -136,7 +136,7 @@ export default function LaunchPage() {
                   Proud Initiative Of
                </span>
                <div className="relative w-[640px] h-[256px] md:w-[900px] md:h-[360px] max-w-full z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center">
-                  <Image src="/logotechzone.webp" alt="IJT Tech Zone" fill className="object-contain" priority />
+                  <Image src="/logotechzone.webp" alt="IJT Tech Zone" fill sizes="(max-width: 768px) 640px, 900px" className="object-contain" priority />
                </div>
             </div>
 
