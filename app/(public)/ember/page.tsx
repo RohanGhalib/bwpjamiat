@@ -292,6 +292,7 @@ export default async function EmberPage() {
             src="/noor.png"
             alt=""
             fill
+            sizes="100vw"
             className="object-cover object-bottom opacity-[0.25] mix-blend-luminosity grayscale"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--c-navy-dark)] via-[var(--c-navy-dark)]/80 to-[var(--c-navy-dark)]" />
@@ -410,6 +411,7 @@ export default async function EmberPage() {
                   src={mentor.img}
                   alt={mentor.name}
                   fill
+                  sizes="(max-width: 768px) 100vw, 320px"
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--c-navy-dark)]/90 via-transparent to-transparent opacity-80 group-hover:opacity-50 transition-opacity" />

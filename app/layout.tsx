@@ -83,7 +83,7 @@ export default function RootLayout({
         <div className="fixed inset-0 -z-50 pointer-events-none bg-[#FAFCFF]">
            <div className="absolute inset-0 bg-gradient-to-br from-[#1C7F93]/5 via-[#FAFCFF] to-[#123962]/5 mix-blend-multiply"></div>
            <div className="absolute inset-0 opacity-[0.03] grayscale">
-              <Image src="/noor.png" alt="Theme Background" fill className="object-cover object-bottom" priority />
+              <Image src="/noor.png" alt="Theme Background" fill sizes="100vw" className="object-cover object-bottom" priority />
            </div>
         </div>
 
