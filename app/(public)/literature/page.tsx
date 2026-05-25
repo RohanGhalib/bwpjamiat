@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -244,7 +245,7 @@ export default function Literature() {
              <div key={book.id} className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-slate-50 hover:border-[#1C7F93]/20 hover:shadow-[0_20px_40px_rgba(28,127,147,0.08)] transition-all duration-500 group relative transform hover:-translate-y-2">
                 <div className="h-72 bg-gradient-to-br from-[#123962] to-[#1C7F93] rounded-[1.5rem] mb-8 relative overflow-hidden shadow-inner flex items-center justify-center p-0">
                    {book.imageUrl ? (
-                     <img src={book.imageUrl} alt={book.title} className="w-full h-full object-cover relative z-10 group-hover:scale-105 transition-transform duration-500" />
+                     <Image src={book.imageUrl} alt={book.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover relative z-10 group-hover:scale-105 transition-transform duration-500" />
                    ) : (
                      <>
                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>

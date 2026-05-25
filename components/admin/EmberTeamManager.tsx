@@ -115,6 +115,7 @@ export default function EmberTeamManager({ initialMembers }: EmberTeamManagerPro
                   src={member.img}
                   alt={member.name}
                   fill
+                  sizes="96px"
                   className="object-cover"
                 />
               </div>
