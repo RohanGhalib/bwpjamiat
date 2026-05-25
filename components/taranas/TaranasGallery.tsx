@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { Tarana } from '@/lib/types';
+import Image from 'next/image';
 
 export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tarana[] }) {
   const [activeTarana, setActiveTarana] = useState<Tarana | null>(null);
@@ -333,7 +334,7 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                     <div className="lg:flex lg:items-start lg:gap-5 lg:mb-5">
                   <div className="w-full max-w-[220px] sm:max-w-md lg:max-w-none lg:w-28 lg:h-28 mx-auto lg:mx-0 aspect-square lg:aspect-auto rounded-[1.5rem] sm:rounded-[3rem] lg:rounded-2xl shadow-2xl relative overflow-hidden mb-4 sm:mb-10 lg:mb-0 border border-white/20 flex items-center justify-center bg-gradient-to-br from-[#123962] to-[#1C7F93]">
                       {activeTarana.coverUrl ? (
-                        <img src={activeTarana.coverUrl} className="w-full h-full object-cover relative z-10" alt="" />
+                        <Image src={activeTarana.coverUrl} className="object-cover z-10" alt="" fill sizes="(max-width: 640px) 220px, (max-width: 1024px) 448px, 112px" />
                       ) : (
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-32 h-32 text-white/20 relative z-10"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06zM18.584 5.106a.75.75 0 011.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 11-1.06-1.06 8.25 8.25 0 000-11.668.75.75 0 010-1.06z" /><path d="M15.932 7.757a.75.75 0 011.061 0 6 6 0 010 8.486.75.75 0 01-1.06-1.061 4.5 4.5 0 000-6.364.75.75 0 010-1.06z" /></svg>
                       )}
@@ -406,9 +407,9 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                             }}
                             className="flex items-center p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/20 transition-colors cursor-pointer group"
                           >
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white/10 shrink-0 overflow-hidden mr-3 sm:mr-4 shadow-sm border border-white/20">
+                            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white/10 shrink-0 overflow-hidden mr-3 sm:mr-4 shadow-sm border border-white/20">
                               {t.coverUrl ? (
-                                <img src={t.coverUrl} className="w-full h-full object-cover" alt="" />
+                                <Image src={t.coverUrl} className="object-cover" alt="" fill sizes="(max-width: 640px) 40px, 48px" />
                               ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-[#123962] to-[#1C7F93] opacity-50"></div>
                               )}
@@ -489,7 +490,7 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                 <div className="flex items-center space-x-4 w-full">
                   <div className="relative w-14 h-14 sm:w-16 sm:h-16 shadow-sm rounded-2xl shrink-0 border border-slate-200 overflow-hidden">
                      {t.coverUrl ? (
-                       <img src={t.coverUrl} alt={t.title} className="w-full h-full object-cover" />
+                       <Image src={t.coverUrl} alt={t.title} className="object-cover" fill sizes="(max-width: 640px) 56px, 64px" />
                      ) : (
                        <div className="w-full h-full bg-gradient-to-br from-[#123962] to-[#1C7F93]" />
                      )}
@@ -543,9 +544,9 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
              className="flex items-center gap-3 sm:gap-4 w-full sm:w-1/3 min-w-0 cursor-pointer group"
              onClick={() => activeTarana && playTarana(activeTarana, false)}
           >
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl shrink-0 shadow-md overflow-hidden border border-slate-200 group-hover:shadow-lg transition-all group-hover:scale-105">
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl shrink-0 shadow-md overflow-hidden border border-slate-200 group-hover:shadow-lg transition-all group-hover:scale-105">
               {activeTarana?.coverUrl ? (
-                <img src={activeTarana.coverUrl} alt={activeTarana.title} className="w-full h-full object-cover" />
+                <Image src={activeTarana.coverUrl} alt={activeTarana.title || ''} className="object-cover" fill sizes="(max-width: 640px) 44px, 48px" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-[#123962] to-[#1C7F93]"></div>
               )}

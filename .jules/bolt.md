@@ -13,3 +13,6 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-05-25 - [Next.js Image Optimization]
+**Learning:** Replacing native `<img>` tags with Next.js `<Image>` components with the `fill` property requires ensuring parent containers have `relative` positioning and explicitly defining a `sizes` attribute based on CSS breakpoints to prevent the browser from defaulting to `100vw`.
+**Action:** When migrating `<img>` to `<Image fill>`, always double-check the parent container's positioning classes and calculate the `sizes` attribute matching the responsive layout to avoid unnecessarily downloading large images.
