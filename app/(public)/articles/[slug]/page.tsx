@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { buildMetadata } from '@/lib/seo';
 import { getArticleBySlug, getAllArticles } from '@/lib/db';
 import { siteConfig } from '@/lib/site';
+import Image from 'next/image';
 
 export async function generateStaticParams() {
   const articles = await getAllArticles(false);
@@ -74,7 +75,11 @@ async function ArticleContent({ params }: { params: Promise<{ slug: string }> })
 
         <div className="prose prose-lg max-w-none text-gray-700 prose-img:rounded-2xl prose-headings:text-[#123962] prose-a:text-[#1C7F93] prose-blockquote:border-[#1C7F93]">
            {article.thumbnailUrl && (
-             <img src={article.thumbnailUrl} alt={article.title} className="w-full h-auto rounded-2xl mb-10" />
+             // ⚡ Bolt Performance Optimization:
+             // Replaced native <img> with Next.js <Image> to utilize automatic WebP conversion,
+             // lazy loading, and responsive sizing. Using explicit width/height to prevent layout shift.
+             // Expected to reduce LCP and save bandwidth for users.
+             <Image src={article.thumbnailUrl} alt={article.title} className="w-full h-auto rounded-2xl mb-10" width={1200} height={630} sizes="(max-width: 896px) 100vw, 896px" />
            )}
            <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
