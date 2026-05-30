@@ -13,3 +13,7 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+
+## 2024-05-30 - Cached CMS Queries
+**Learning:** Frequent Firebase Firestore queries (e.g., `getDocs` for CMS pages, nav links, redirects) in `lib/cms.ts` were uncached, causing redundant database reads and slowing down page rendering/dynamic routing.
+**Action:** Always wrap frequent, globally-used server-side queries in Next.js's `unstable_cache` to reduce DB reads and improve performance.
