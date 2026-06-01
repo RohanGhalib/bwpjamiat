@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { getEmberTeam } from '@/lib/db';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,16 +10,16 @@ export async function GET(request: Request) {
   }
 
   try {
-    const membersRef = collection(db, 'ember_team');
-    // Fetching all (only name/id/dept/phone) to perform substring search server-side
+    // Fetching all members using the cached db method (caches for 1hr)
     // This protects the full data from the client while allowing flexible search
-    const qSnap = await getDocs(query(membersRef, orderBy('name', 'asc')));
+    // and preventing thousands of DB reads during search.
+    const team = await getEmberTeam();
     
-    const allMembers = qSnap.docs.map(doc => ({
-      id: doc.id,
-      name: doc.data().name,
-      department: doc.data().department,
-      phone: doc.data().phone || ''
+    const allMembers = team.map(member => ({
+      id: member.id,
+      name: member.name,
+      department: member.department,
+      phone: member.phone || ''
     }));
 
     // Filter by substring (fuzzy search)

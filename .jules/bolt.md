@@ -9,3 +9,6 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-06-01 - Avoid Cache Poisoning and Client Breeds with `next/cache`
+**Learning:** Wrapping `getDocs` in `unstable_cache` within shared/core files (like `lib/cms.ts`) can be extremely dangerous. If the cache catches an error and returns `[]`, it caches the empty state (poisoning). Furthermore, importing server-side cache utilities in files that get imported into Client Components will crash the build.
+**Action:** Opt to optimize specific endpoints/operations that are guaranteed to run on the server (like the Search API endpoint) using existing cached data access layers, rather than risking broad architectural modifications.
