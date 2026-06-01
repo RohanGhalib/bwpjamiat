@@ -163,7 +163,14 @@ export async function POST(request: Request) {
       </tr>
     `;
 
-    // 6. Send event-themed HTML ticket email
+    // 6. Generate Google Calendar event URL for Gmail button action
+    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+      `&text=${encodeURIComponent(`Restart Camp '26 (Pass: ${finalPassId})`)}` +
+      `&dates=20260618T040000Z/20260621T080000Z` +
+      `&details=${encodeURIComponent(`Attendee Name: ${name}\nMatric Roll No: ${rollNo}\nStudy Group: ${displayGroup}\nPass ID: ${finalPassId}\n\nJoin us for the 4-day intensive crash course in Bahawalpur.`)}` +
+      `&location=${encodeURIComponent('Grand Auditorium Main Hall, Bahawalpur, Punjab, Pakistan')}`;
+
+    // 7. Send event-themed HTML ticket email with Gmail Schemas markup
     await sendEmail({
       to: cleanEmail,
       fromName: "Restart Camp '26",
@@ -172,6 +179,36 @@ export async function POST(request: Request) {
         ? `Updated Pass: Restart Camp '26 (${finalPassId})` 
         : `Your Pass: Restart Camp '26 (${finalPassId})`,
       html: `
+        <!-- Google Schema.org Event reservation markup for Gmail Inbox Action -->
+        <script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "EventReservation",
+          "reservationNumber": "${finalPassId}",
+          "reservationStatus": "http://schema.org/Confirmed",
+          "underName": {
+            "@type": "Person",
+            "name": "${name}"
+          },
+          "reservationFor": {
+            "@type": "Event",
+            "name": "Restart Camp '26",
+            "startDate": "2026-06-18T09:00:00+05:00",
+            "endDate": "2026-06-21T13:00:00+05:00",
+            "location": {
+              "@type": "Place",
+              "name": "Grand Auditorium Main Hall, Bahawalpur",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Bahawalpur",
+                "addressRegion": "Punjab",
+                "addressCountry": "PK"
+              }
+            }
+          }
+        }
+        </script>
+
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #8b5a2e; border-radius: 16px; overflow: hidden; background-color: #fcf8f2; color: #2a1405; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
           <!-- Header (Chalkboard style) -->
           <div style="background-color: #1b3526; padding: 30px 20px; text-align: center; border-bottom: 4px solid #8b5a2e;">
@@ -239,6 +276,13 @@ export async function POST(request: Request) {
                   </td>
                 </tr>
               </table>
+            </div>
+
+            <!-- Manual Add to Calendar Button -->
+            <div style="margin-top: 20px; text-align: center;">
+              <a href="${calendarUrl}" style="display: inline-block; padding: 12px 24px; background-color: #1b3526; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; border: 2px solid #8b5a2e; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                📅 Add to Google Calendar
+              </a>
             </div>
 
             <!-- Event Details Checklist -->
