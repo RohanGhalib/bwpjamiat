@@ -22,27 +22,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'picsum.photos',
+        hostname: '**',
       },
       {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.r2.dev',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.r2.cloudflarestorage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'read-maududi-stage.s3.us-east-1.amazonaws.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'read-maududi-stage.s3.amazonaws.com',
+        protocol: 'http',
+        hostname: '**',
       },
     ],
   },
