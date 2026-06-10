@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import Image from 'next/image';
 
 const dreamPlanner = localFont({
   src: "../../../../../public/dreamplanner.otf",
@@ -104,7 +105,7 @@ function VerifyContent() {
       {/* Details Card */}
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden mb-12">
         <div className="absolute top-0 right-0 p-8 opacity-10">
-          <img src="/logoinnovista.png" alt="" className="w-32" />
+          <Image src="/logoinnovista.png" alt="" width={128} height={128} className="w-32 h-auto" />
         </div>
         
         <div className="space-y-10">

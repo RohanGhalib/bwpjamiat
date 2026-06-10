@@ -3,6 +3,7 @@
 import React, { forwardRef } from 'react';
 import localFont from 'next/font/local';
 import { QRCodeSVG } from 'qrcode.react';
+import Image from 'next/image';
 
 const dreamPlanner = localFont({
   src: "../../public/dreamplanner.otf",
@@ -33,18 +34,14 @@ const CertificateTemplate = forwardRef<HTMLDivElement, CertificateTemplateProps>
     >
       {/* Background Image: Matching Hero Section exactly */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <img
-          src="/emberbackground.jpg"
-          alt=""
-          className="w-full h-full object-cover blur-[8px] scale-105 opacity-60"
-        />
+        <Image src="/emberbackground.jpg" alt="" fill className="object-cover blur-[8px] scale-105 opacity-60" priority sizes="1123px" />
         {/* Subtle gradient matching hero */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a192f]/20 to-[#0a192f]" />
       </div>
 
       {/* Background Ornament: Noor Mahal Vector (Very Subtle) */}
       <div className="absolute inset-0 z-10 pointer-events-none opacity-[0.15] flex items-end justify-center overflow-hidden">
-        <img src="/noor.png" alt="" className="w-full h-auto object-contain translate-y-40 scale-125 mix-blend-screen" />
+        <Image src="/noor.png" alt="" width={1123} height={300} className="w-full h-auto object-contain translate-y-40 scale-125 mix-blend-screen" sizes="1123px" />
       </div>
 
       {/* Decorative Border */}
@@ -53,9 +50,9 @@ const CertificateTemplate = forwardRef<HTMLDivElement, CertificateTemplateProps>
       {/* Header: Logo Arrangement like Hero Section */}
       <div className="relative z-0 flex flex-col items-center pt-0">
         <div className="flex items-center gap-2 mb-1">
-          <img src="/logoinnovista.png" alt="Innovista" className="h-30 w-auto object-contain" />
+          <Image src="/logoinnovista.png" alt="Innovista" width={120} height={120} className="h-30 w-auto object-contain" />
           <div className="w-[1px] h-12 bg-white/20" />
-          <img src="/logotechzone.webp" alt="Jamiat" className="h-30 w-auto object-contain" />
+          <Image src="/logotechzone.webp" alt="Jamiat" width={120} height={120} className="h-30 w-auto object-contain" />
         </div>
 
         <h1 className={`${dreamPlanner.className} text-white text-6xl leading-none tracking-tighter [text-shadow:10px_10px_0_#000]`}>
