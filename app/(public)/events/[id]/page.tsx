@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { db } from '@/lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { getEventState, type EventRecord } from '@/lib/event-utils';
@@ -92,7 +93,14 @@ export default function SingleEventPage({ params }: { params: Promise<{ id: stri
         <div className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.03)] flex flex-col md:flex-row">
           <div className="md:w-1/2 bg-gray-100 relative min-h-[300px] md:min-h-[500px]">
              {eventData.imageUrl ? (
-               <img src={eventData.imageUrl} alt={eventData.title} className="absolute inset-0 w-full h-full object-cover" />
+               <Image
+                 src={eventData.imageUrl}
+                 alt={eventData.title || ""}
+                 fill
+                 className="object-cover"
+                 sizes="(max-width: 768px) 100vw, 50vw"
+                 unoptimized={!eventData.imageUrl.startsWith('/') && !eventData.imageUrl.includes('firebasestorage')}
+               />
              ) : (
                <div className="absolute inset-0 w-full h-full flex items-center justify-center text-white/55" style={{ backgroundImage: theme.gradient }}>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
