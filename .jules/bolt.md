@@ -1,11 +1,3 @@
-## 2024-05-18 - Optimized sortEventsBySchedule and getEventState
-**Learning:** `sortEventsBySchedule` recalculates `getEventStartTime` (which calls `Date.parse`) inside the `.sort` comparison function. Array sorts take O(N log N) time, so doing an expensive parse on every comparison is very inefficient. `getEventState` and the loop inside `sortEventsBySchedule` instantiate `new Date()` and `Date.now()` repeatedly.
-**Action:** Map events to their parsed times before sorting them to avoid repeated string parsing. Pass down `now` or evaluate `Date.now()` and `new Date()` outside of loops.
-
-## 2024-05-22 - Missing sizes attribute on Image components with fill
-**Learning:** In Next.js, when using the `<Image>` component with the `fill` layout, if the `sizes` attribute is omitted, the browser assumes the image will occupy the full width of the viewport (`100vw`). This leads to the browser downloading unnecessarily large images for components that only occupy a fraction of the screen, significantly impacting load times and increasing bandwidth consumption.
-**Action:** Always explicitly define a `sizes` attribute for `<Image>` components using `fill` to provide the browser with accurate information about the image's intended display size at different breakpoints, allowing it to select the most optimal image size.
-
-## 2026-05-23 - Replace native img tag with Next.js Image component
-**Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
-**Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-06-13 - Next.js Image Optimization Risk
+**Learning:** Hardcoding assumed `next.config.js` remote patterns into frontend logic (like `.includes()`) to determine the `unoptimized` prop for `<Image>` components is brittle. It creates a risk where false positives lead to server crashes (400 Bad Request) on unconfigured domains.
+**Action:** Centralize the domain checking logic into a dedicated utility (like `isWhitelistedImageDomain`) that safely parses the URL hostname to prevent partial matches. Do not use inline `includes` checks for domains on user-submitted or unpredictable URLs.
