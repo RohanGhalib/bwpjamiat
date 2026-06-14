@@ -9,3 +9,9 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-06-14 - Use centralized utility for unoptimized Image prop
+**Learning:** When using Next.js `<Image>` with unpredictable external URLs, inline string checks (like `.includes()`) for the `unoptimized` prop can cause server crashes on unconfigured domains. Partial matches can also falsely identify domains.
+**Action:** Use a centralized utility (like `isWhitelistedImageDomain` in `lib/image-utils.ts`) to safely parse the URL hostname and determine if it belongs to a configured remote pattern.
+## 2026-06-14 - Next.js Image with fill requires parent with relative position
+**Learning:** When using Next.js `<Image>` with the `fill` prop, the image automatically applies `position: absolute`. For it to correctly size itself to its container rather than the page or nearest positioned ancestor, the immediate parent element MUST have a positioning class applied (e.g., `relative`).
+**Action:** Always verify that the parent element of an `<Image fill />` has `relative`, `absolute`, or `fixed` positioning.
