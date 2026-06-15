@@ -18,7 +18,11 @@ const nextConfig: NextConfig = {
     ];
   },
 
+
+  // IMPORTANT: If you add new domains here, you MUST also add them to
+  // ALLOWED_IMAGE_DOMAINS in lib/image-utils.ts
   images: {
+
     remotePatterns: [
       {
         protocol: 'https',
