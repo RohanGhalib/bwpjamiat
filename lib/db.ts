@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, query, orderBy, limit, addDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, orderBy, limit, addDoc, deleteDoc, updateDoc, where } from 'firebase/firestore';
 import { unstable_cache } from 'next/cache';
 import { db } from './firebase';
 import { Event, Article, Course, Tarana, EmberMember } from './types';
@@ -107,17 +107,25 @@ const getAllArticlesCached = unstable_cache(async (includeDrafts: boolean): Prom
 }, ['all-articles'], { revalidate: 300, tags: ['articles'] });
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  return getArticleBySlugCached(slug);
-}
-
-const getArticleBySlugCached = unstable_cache(async (slug: string): Promise<Article | null> => {
   try {
-    const articles = await getAllArticles(true); // get all to find slug
-    return articles.find(a => a.slug === slug) || null;
+    return await getArticleBySlugCached(slug);
   } catch (error) {
     console.error("Error fetching article by slug:", error);
     return null;
   }
+}
+
+const getArticleBySlugCached = unstable_cache(async (slug: string): Promise<Article | null> => {
+  const articlesRef = collection(db, 'articles');
+  const q = query(articlesRef, where('slug', '==', slug), limit(1));
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const docSnap = snapshot.docs[0];
+  return { id: docSnap.id, ...docSnap.data() } as Article;
 }, ['article-by-slug'], { revalidate: 300, tags: ['articles'] });
 
 export async function getArticleById(id: string): Promise<Article | null> {
