@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getR2Config, getR2PublicUrl, r2Client } from "@/lib/r2";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
+import { promises as fs } from "fs";
+import path from "path";
 
 export async function POST(request: Request) {
   try {
@@ -19,8 +21,20 @@ export async function POST(request: Request) {
     const { bucketName } = getR2Config();
 
     if (!bucketName) {
-      console.warn("Upload failed: Bucket name not configured in environment variables (R2_BUCKET_NAME). Please verify your .env.local file.");
-      return NextResponse.json({ error: "Bucket name not configured" }, { status: 500 });
+      console.warn("Upload: R2_BUCKET_NAME not configured. Falling back to local public directory.");
+      
+      const publicDir = path.join(process.cwd(), "public", "uploads", targetFolder);
+      await fs.mkdir(publicDir, { recursive: true });
+      
+      const filePath = path.join(publicDir, path.basename(uniqueFilename));
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      await fs.writeFile(filePath, buffer);
+      
+      return NextResponse.json({
+        fileUrl: `/uploads/${targetFolder}/${path.basename(uniqueFilename)}`,
+        imageStoragePath: `uploads/${targetFolder}/${path.basename(uniqueFilename)}`
+      });
     }
 
     const arrayBuffer = await file.arrayBuffer();
