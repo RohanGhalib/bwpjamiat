@@ -602,19 +602,11 @@ export default function ComplaintFormClient() {
               <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full pointer-events-none"></div>
               <h3 className="text-2xl font-extrabold mb-2 relative z-10">Jamiat Helpline</h3>
               <p className="text-white/70 text-xs mb-8 relative z-10">
-                Have urgent issues requiring immediate human assistance? Reach out to our district coordinators.
+                Have urgent issues requiring immediate human assistance? Reach out to our zone coordinators.
               </p>
 
               <div className="space-y-4 relative z-10">
-                <div className="flex items-center space-x-4 p-4 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="w-10 h-10 bg-[#1C7F93]/20 rounded-xl flex items-center justify-center shrink-0">
-                    <User className="w-5 h-5 text-[#1C7F93]" />
-                  </div>
-                  <div>
-                    <h4 className="font-extrabold text-xs text-white">District In-charge</h4>
-                    <p className="text-[10px] text-white/55">IJT Bahawalpur Office</p>
-                  </div>
-                </div>
+                
 
                 <a 
                   href="https://instagram.com/jamiatstories" 

@@ -69,14 +69,15 @@ export default function AdminDashboard() {
             <h3 className="text-xl font-bold text-[#123962] mb-2">Site Structure</h3>
             <p className="text-slate-500 text-sm font-medium">Control nav visibility, dynamic endpoints, and redirects with printed-link safety warnings.</p>
           </Link>
-          {/* Future CMS Modules */}
-          <div className="group bg-slate-50/50 rounded-3xl p-8 border border-slate-100 flex flex-col justify-center items-center text-center opacity-70">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-6 text-slate-300 border border-slate-100">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+          {/* Complaints Manager Link */}
+          <Link href="/admin/complaints" className="group bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+            <div className="w-12 h-12 bg-[#FFF9F9] rounded-xl flex items-center justify-center mb-6 text-red-500 border border-slate-100 group-hover:border-red-500/30 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.3c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-400 mb-2">Articles CMS</h3>
-            <p className="text-slate-400 text-sm">Coming Soon</p>
-          </div>
+            <h3 className="text-xl font-bold text-[#123962] mb-2">Student Complaints</h3>
+            <p className="text-slate-500 text-sm font-medium">View and manage student queries, complaints, details, gender, and proof images.</p>
+          </Link>
         </div>
       </div>
     </div>
