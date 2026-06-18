@@ -1,7 +1,9 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { buildMetadata } from '@/lib/seo';
+import { isWhitelistedImageDomain } from '@/lib/image-utils';
 import { getArticleBySlug, getAllArticles } from '@/lib/db';
 import { siteConfig } from '@/lib/site';
 
@@ -74,7 +76,20 @@ async function ArticleContent({ params }: { params: Promise<{ slug: string }> })
 
         <div className="prose prose-lg max-w-none text-gray-700 prose-img:rounded-2xl prose-headings:text-[#123962] prose-a:text-[#1C7F93] prose-blockquote:border-[#1C7F93]">
            {article.thumbnailUrl && (
-             <img src={article.thumbnailUrl} alt={article.title} className="w-full h-auto rounded-2xl mb-10" />
+             <>
+               {/* ⚡ Bolt Optimization: Replacing native <img> with Next.js <Image>
+                   Impact: Automatic lazy loading, WebP formatting, and correct sizing.
+                   Reduces LCP and prevents layout shifts. Fallback for unconfigured domains included. */}
+               <Image
+                 src={article.thumbnailUrl}
+                 alt={article.title || ""}
+                 width={896}
+                 height={470}
+                 className="w-full h-auto object-cover rounded-2xl mb-10"
+                 sizes="(max-width: 896px) 100vw, 896px"
+                 unoptimized={!isWhitelistedImageDomain(article.thumbnailUrl)}
+               />
+             </>
            )}
            <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
