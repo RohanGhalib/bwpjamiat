@@ -9,3 +9,6 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-06-29 - Replaced useStates with useRefs in high-frequency audio event handler
+**Learning:** High-frequency event listeners, such as the `timeupdate` event for audio elements, can trigger excessive component re-renders if they use `useState` for updating continuously changing UI elements like progress bars or current timestamps. This significantly degrades rendering performance, leading to UI stuttering and unresponsiveness.
+**Action:** Use `useRef` to maintain references to the DOM elements that need to be updated frequently and directly manipulate their properties (e.g., `style.width` or `textContent`) inside the event handler. This bypasses the React rendering cycle entirely, allowing for smooth, high-performance updates.
