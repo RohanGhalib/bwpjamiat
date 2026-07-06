@@ -9,3 +9,7 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+
+## 2026-07-06 - Optimized TaranasGallery Time Updates
+**Learning:** `timeupdate` events from the HTML5 audio element fire several times a second. Using `useState` to track progress and current time causes the entire `TaranasGallery` component to re-render repeatedly during playback, wasting CPU cycles and potentially causing UI stutter.
+**Action:** Replace high-frequency React state variables with array-based `useRef` hooks that point to DOM elements. Manually mutate `element.style.width` or `element.textContent` on `timeupdate` to bypass React's render cycle. Ensure a parameter-less `useEffect` is included to re-sync these manual DOM mutations whenever React *does* re-render the component due to other state changes.
