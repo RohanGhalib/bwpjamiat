@@ -92,7 +92,7 @@ export default function ParwaazClient() {
   };
 
   // Pre-configured Google Calendar template url
-  const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Parwaaz+Career+Counselling+Seminar&dates=20260709T120000Z/20260709T150000Z&details=Confused+about+your+career+after+Intermediate?+This+seminar+is+for+you!+Join+us+for+expert+guidance+and+counselling.&location=E-Library,+Dring+Stadium,+Bahawalpur`;
+  const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Parwaaz+Career+Counselling+Seminar&dates=20260709T043000Z/20260709T063000Z&details=Confused+about+your+career+after+Intermediate?+This+seminar+is+for+you!+Join+us+for+expert+guidance+and+counselling.&location=E-Library,+Dring+Stadium,+Bahawalpur`;
 
   return (
     <div className={`min-h-screen bg-[#fafbfc] pt-32 pb-16 font-sans selection:bg-[#052c24] selection:text-white relative overflow-hidden ${coolveticaFont.variable}`}>
@@ -170,8 +170,9 @@ export default function ParwaazClient() {
                     <Calendar className="w-5 h-5" />
                   </div>
                   <div className="text-center sm:text-left">
-                    <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Date</p>
+                    <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Date & Time</p>
                     <p className="text-sm font-bold text-white">Thursday, 9th July 2026</p>
+                    <p className="text-xs text-slate-300">09:30 AM - 11:30 AM</p>
                   </div>
                 </div>
 
@@ -259,8 +260,8 @@ export default function ParwaazClient() {
                     <span className="text-slate-700 font-semibold">{formData.phone}</span>
                   </div>
                   <div className="flex justify-between text-xs border-b border-slate-50 pb-2">
-                    <span className="text-slate-400 font-bold uppercase tracking-wider">Date</span>
-                    <span className="text-[#052c24] font-bold">Thu, 9th July 2026</span>
+                    <span className="text-slate-400 font-bold uppercase tracking-wider">Date & Time</span>
+                    <span className="text-[#052c24] font-bold">Thu, 9th July (09:30 AM - 11:30 AM)</span>
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-slate-400 font-bold uppercase tracking-wider">Venue</span>

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const docRef = await addDoc(collection(db, 'parwaaz_registrations'), regData);
 
     // 3. Build Google Calendar link for the email
-    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Parwaaz+Career+Counselling+Seminar&dates=20260709T120000Z/20260709T150000Z&details=Confused+about+your+career+after+Intermediate?+This+seminar+is+for+you!+Join+us+for+expert+guidance+and+counselling.&location=E-Library,+Dring+Stadium,+Bahawalpur`;
+    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Parwaaz+Career+Counselling+Seminar&dates=20260709T043000Z/20260709T063000Z&details=Confused+about+your+career+after+Intermediate?+This+seminar+is+for+you!+Join+us+for+expert+guidance+and+counselling.&location=E-Library,+Dring+Stadium,+Bahawalpur`;
 
     // 4. Construct a beautiful themed HTML email template
     const emailHtml = `
@@ -75,6 +75,11 @@ export async function POST(request: Request) {
                       <tr>
                         <td style="padding-bottom: 12px; font-size: 14px; color: #718096;">
                           <strong style="color: #052c24;">Date:</strong> Thursday, 9th July 2026
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom: 12px; font-size: 14px; color: #718096;">
+                          <strong style="color: #052c24;">Time:</strong> 09:30 AM - 11:30 AM (PKT)
                         </td>
                       </tr>
                       <tr>
