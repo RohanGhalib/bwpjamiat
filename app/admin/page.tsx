@@ -78,16 +78,6 @@ export default function AdminDashboard() {
             <h3 className="text-xl font-bold text-[#123962] mb-2">Student Complaints</h3>
             <p className="text-slate-500 text-sm font-medium">View and manage student queries, complaints, details, gender, and proof images.</p>
           </Link>
-
-          {/* Parwaaz Seminar Signups Link */}
-          <Link href="/admin/events/parwaaz" className="group bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#052c24]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-            <div className="w-12 h-12 bg-[#FAFCFF] rounded-xl flex items-center justify-center mb-6 text-[#052c24] border border-slate-100 group-hover:border-[#052c24]/30 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.947 11.947 0 0112 21c-2.67 0-5.118-.87-7.091-2.339m10.091-9.539a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.111c0-1.89 1.428-3.475 3.295-3.693A11.954 11.954 0 0012 17c2.17 0 4.207-.576 5.963-1.584A3.75 3.75 0 0017.5 15h-11A3.75 3.75 0 002.75 18.75v.505A11.954 11.954 0 0012 21a11.954 11.954 0 009.25-1.765z" /></svg>
-            </div>
-            <h3 className="text-xl font-bold text-[#123962] mb-2">Parwaaz Signups</h3>
-            <p className="text-slate-500 text-sm font-medium">View, search, filter, and export registrations for the Parwaaz Career Counselling Seminar.</p>
-          </Link>
         </div>
       </div>
     </div>
