@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore, initializeFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore, getApps as getFirestoreApps } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
@@ -15,11 +15,12 @@ const firebaseConfig = {
 // Initialize Firebase (Ensures it isn't initialized twice on Next.js HMR)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Firestore with settings that are more stable in Node.js environments
-// experimentalForceLongPolling: true helps avoid "GRPC error has no .code"
-const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-});
+// Initialize Firestore (Ensures it isn't initialized twice to prevent memory leaks in worker threads)
+const db = getApps().length 
+  ? getFirestore(app) 
+  : initializeFirestore(app, {
+      experimentalForceLongPolling: true,
+    });
 
 // Debug log to verify config (redacting sensitive parts)
 if (typeof window === 'undefined') {

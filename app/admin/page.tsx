@@ -78,6 +78,15 @@ export default function AdminDashboard() {
             <h3 className="text-xl font-bold text-[#123962] mb-2">Student Complaints</h3>
             <p className="text-slate-500 text-sm font-medium">View and manage student queries, complaints, details, gender, and proof images.</p>
           </Link>
+          {/* Quran Club Link */}
+          <Link href="/admin/quran-club" className="group bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#A81829]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+            <div className="w-12 h-12 bg-[#FFF9F9] rounded-xl flex items-center justify-center mb-6 text-[#A81829] border border-slate-100 group-hover:border-[#A81829]/30 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+            </div>
+            <h3 className="text-xl font-bold text-[#A81829] mb-2">Manage Quran Club</h3>
+            <p className="text-slate-500 text-sm font-medium">Review and approve member applications, and send weekly session notifications via WhatsApp.</p>
+          </Link>
         </div>
       </div>
     </div>

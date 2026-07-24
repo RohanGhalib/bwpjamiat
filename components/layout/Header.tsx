@@ -10,6 +10,7 @@ import type { NavLinkRecord } from '@/lib/cms-types';
 
 const defaultNavLinks = [
   { href: '/', label: 'Home' },
+  { href: '/quran-club', label: 'Quran Club' },
   { href: '/aghaz', label: 'Aghaz' },
   { href: '/taranas', label: 'Taranas' },
   { href: '/literature', label: 'Literature' },

@@ -1,6 +1,9 @@
 import { Suspense } from 'react';
-import { getTaranas } from '@/lib/db';
+import { db } from '@/lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import TaranaManager from '@/components/admin/TaranaManager';
+import { Tarana } from '@/lib/types';
+import { connection } from 'next/server';
 
 export default function AdminTaranasPage() {
    return (
@@ -25,6 +28,16 @@ export default function AdminTaranasPage() {
 }
 
 async function TaranasLoader() {
-   const taranas = await getTaranas();
+   await connection();
+   const taranasRef = collection(db, 'taranas');
+   const taranas: Tarana[] = [];
+   try {
+      const snapshot = await getDocs(taranasRef);
+      snapshot.forEach((doc) => {
+         taranas.push({ id: doc.id, ...doc.data() } as Tarana);
+      });
+   } catch (error) {
+      console.error("Error fetching admin taranas:", error);
+   }
    return <TaranaManager existingTaranas={taranas} />;
 }

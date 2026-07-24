@@ -100,6 +100,53 @@ export default function Home() {
 
          </section>
 
+         {/* Featured Quran Club Banner Section - Right below Hero */}
+         <section className="py-12 px-4 relative z-20 bg-gradient-to-b from-[#eef4f9] via-white to-white">
+            <div className="container mx-auto max-w-5xl">
+               <div className="relative rounded-[2.5rem] overflow-hidden p-8 sm:p-12 border-2 border-[#A81829]/30 shadow-[0_20px_50px_rgba(0,0,0,0.25)] group">
+                  {/* Background Graphic Texture */}
+                  <div className="absolute inset-0 -z-10 w-full h-full">
+                     <Image
+                        src="/quranclub/bgquranclub.png"
+                        alt="Quran Club Background"
+                        fill
+                        className="object-cover object-center"
+                     />
+                     <div className="absolute inset-0 bg-black/25 pointer-events-none" />
+                  </div>
+
+                  <div className="flex flex-col lg:flex-row items-center justify-between gap-8 text-center lg:text-left relative z-10">
+                     {/* Left: Quran Club Logo */}
+                     <div className="relative w-[280px] sm:w-[360px] md:w-[420px] aspect-[16/7] shrink-0">
+                        <Image
+                           src="/quranclub/logoquranclub.png"
+                           alt="Quran Club Logo"
+                           fill
+                           className="object-contain drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)]"
+                        />
+                     </div>
+
+                     {/* Right: Poster Headline & Crimson CTA Button */}
+                     <div className="flex flex-col items-center lg:items-end w-full">
+                        <h3 className="text-white text-2xl sm:text-4xl font-black italic tracking-wide uppercase drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] mb-2">
+                           Feeling Lost?
+                        </h3>
+                        <p className="text-white/95 text-sm sm:text-base font-extrabold uppercase tracking-widest mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                           We Have The Solution!
+                        </p>
+
+                        <Link
+                           href="/quran-club"
+                           className="px-8 py-3.5 rounded-full bg-[#A81829] hover:bg-[#8B1425] border border-red-400/30 text-white font-bold text-sm tracking-wider transition-all duration-300 shadow-lg hover:scale-105 active:scale-95"
+                        >
+                           Join Quran Club Now
+                        </Link>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </section>
+
          {/* Maulana Maududi Ideology Section (Blended Sktech & Islamic Background Placeholder) */}
          <section className="py-28 bg-white relative border-b border-slate-100 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.05)] z-10 overflow-hidden">
             {/* Background Texture Placeholder: Islamic Pattern/Calligraphy */}
