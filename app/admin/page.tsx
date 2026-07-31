@@ -87,6 +87,15 @@ export default function AdminDashboard() {
             <h3 className="text-xl font-bold text-[#A81829] mb-2">Manage Quran Club</h3>
             <p className="text-slate-500 text-sm font-medium">Review and approve member applications, and send weekly session notifications via WhatsApp.</p>
           </Link>
+          {/* Summer School Link */}
+          <Link href="/admin/summerschool" className="group bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#10b981]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+            <div className="w-12 h-12 bg-[#F0FDF4] rounded-xl flex items-center justify-center mb-6 text-[#10b981] border border-slate-100 group-hover:border-[#10b981]/30 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A.75.75 0 0 1 1 7.858a.75.75 0 0 1 .316-.621l10-6.25a.75.75 0 0 1 .834 0l10 6.25a.75.75 0 0 1 .316.621.75.75 0 0 1-.58.762c-.868.21-1.756.48-2.658.813m-15.482 0A50.697 50.697 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675" /></svg>
+            </div>
+            <h3 className="text-xl font-bold text-[#123962] mb-2">Summer School Signups</h3>
+            <p className="text-slate-500 text-sm font-medium">View, search, filter, and export student registrations for the AI Summer Camp (3-19 Aug).</p>
+          </Link>
         </div>
       </div>
     </div>
