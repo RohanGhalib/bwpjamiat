@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { buildMetadata } from '@/lib/seo';
 import { getArticleBySlug, getAllArticles } from '@/lib/db';
 import { siteConfig } from '@/lib/site';
@@ -74,7 +75,18 @@ async function ArticleContent({ params }: { params: Promise<{ slug: string }> })
 
         <div className="prose prose-lg max-w-none text-gray-700 prose-img:rounded-2xl prose-headings:text-[#123962] prose-a:text-[#1C7F93] prose-blockquote:border-[#1C7F93]">
            {article.thumbnailUrl && (
-             <img src={article.thumbnailUrl} alt={article.title} className="w-full h-auto rounded-2xl mb-10" />
+             <>
+               {/* Optimization: Replaced native <img> with Next.js <Image> to enable WebP conversion, automatic sizing, and preloading via priority for faster LCP */}
+               <Image
+                 src={article.thumbnailUrl}
+                 alt={article.title || ""}
+                 className="w-full h-auto object-cover rounded-2xl mb-10"
+                 width={1200}
+                 height={630}
+                 priority
+                 sizes="(max-width: 896px) 100vw, 896px"
+               />
+             </>
            )}
            <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>

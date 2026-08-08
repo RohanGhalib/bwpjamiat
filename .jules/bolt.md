@@ -9,3 +9,6 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-06-09 - [Image Optimization aspect ratio distortion]
+ **Learning:** [When replacing native images having `w-full h-auto` in Next.js without `fill`, simply providing intrinsic dimensions via width/height is not sufficient and will cause aspect ratio distortion. The CSS properties conflict with intrinsic values.]
+ **Action:** [Always include the `object-cover` Tailwind utility class (e.g. `className="w-full h-auto object-cover"`) to avoid image stretching when defining static width/height bounds in Next.js Image component.]
