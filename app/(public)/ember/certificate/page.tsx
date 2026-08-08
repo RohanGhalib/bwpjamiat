@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -417,7 +418,7 @@ export default function EmberCertificatePage() {
                 </div>
                 <div className="flex flex-col items-center gap-3">
                   <div className="bg-white p-3 rounded-2xl">
-                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://bwpjamiat.org/ember/verify?id=${generatedCertId}`} alt="Verification QR" className="w-32 h-32" />
+                    <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://bwpjamiat.org/ember/verify?id=${generatedCertId}`} alt="Verification QR" width={128} height={128} className="w-32 h-32" unoptimized />
                   </div>
                   <p className="text-[10px] text-white/40 font-bold tracking-widest uppercase">Scan to Verify Authenticity</p>
                 </div>

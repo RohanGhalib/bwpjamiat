@@ -9,3 +9,7 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+
+## 2026-06-10 - Using unoptimized prop for dynamic external image domains
+**Learning:** When replacing `<img>` tags with `<Image>` components for images pointing to dynamic external URLs that are not and should not be added to `images.remotePatterns` in `next.config.ts`, the Next.js optimization server will throw an Unconfigured Host error and crash the app. Adding the `unoptimized` prop allows using the `<Image>` component for layout stability (preventing CLS) without causing security/configuration issues.
+**Action:** Use `unoptimized` on `next/image` when dealing with unwhitelisted remote origins (like dynamic qr codes or user uploaded avatars on unpredictable domains) if adding them to `next.config.ts` isn't feasible or safe.

@@ -44,6 +44,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'read-maududi-stage.s3.amazonaws.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.qrserver.com',
+      },
     ],
   },
 };
