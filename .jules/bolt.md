@@ -9,3 +9,7 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+
+## 2024-05-23 - Optimize getArticleBySlug and Fix Cache Poisoning
+**Learning:** In `lib/db.ts`, `getArticleBySlug` was fetching all articles into memory to find a single one by slug, creating an O(N) performance bottleneck. Additionally, wrapping the `try/catch` block directly inside `unstable_cache` caused errors to cache a `null` (poisoned) state for the entire cache duration (e.g., 5 minutes).
+**Action:** When performing point-reads based on a field like slug, use a direct Firestore query (`where('slug', '==', slug)`) with `limit(1)`. Move the `try/catch` block to the outer wrapper function (e.g., `getArticleBySlug`) so that temporary failures are not cached by `unstable_cache`.
