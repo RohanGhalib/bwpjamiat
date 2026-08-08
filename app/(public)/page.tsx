@@ -16,6 +16,18 @@ export const metadata: Metadata = buildMetadata({
   keywords: ['IJT Bahawalpur', 'Islami Jamiat-e-Talaba', 'student organization Bahawalpur', 'IJT Pakistan'],
 });
 
+async function HeroBubbleWrapper() {
+  await connection();
+  let featuredEvent: EventRecord | null = null;
+  try {
+     const events = await getAllEvents();
+     featuredEvent = sortEventsBySchedule(events)[0] ?? null;
+  } catch (error) {
+     console.error("Error fetching event for HeroBubble:", error);
+  }
+  return <HeroBubble event={featuredEvent} />;
+}
+
 export default function Home() {
    const organizationJsonLd = {
       '@context': 'https://schema.org',
@@ -79,7 +91,14 @@ export default function Home() {
 
             <div className="container mx-auto px-4 relative z-10 text-center flex flex-col items-center flex-1 pb-32">
 
-               <HeroBubble />
+               <Suspense fallback={
+                 <div className="inline-flex items-center space-x-3 bg-white/70 backdrop-blur-md px-5 py-2.5 rounded-full mb-8 shadow-sm border border-slate-200/50 animate-pulse">
+                     <span className="h-3 w-3 rounded-full bg-slate-300"></span>
+                     <span className="text-[10px] font-black tracking-[0.2em] text-slate-300 uppercase w-32">&nbsp;</span>
+                 </div>
+               }>
+                  <HeroBubbleWrapper />
+               </Suspense>
 
                <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-6 tracking-tight leading-[1.05] max-w-5xl mx-auto text-[#123962]">
                   Awakening A Generation <br className="hidden md:block" />
