@@ -9,3 +9,7 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+
+## 2024-06-06 - Next.js Image Component hostname crashes
+**Learning:** The Next.js `<Image>` component restricts remote images by default to prevent malicious hostname usage. When replacing `<img>` with `<Image>` for dynamically generated image URLs (e.g., from CMS or Firebase), failing to configure `images.remotePatterns` in `next.config.ts` causes runtime crashes in production/build when the image loads.
+**Action:** When migrating from `<img>` to `<Image>` for dynamic remote content, verify and update `next.config.ts` with the required `remotePatterns` (or use a secure wildcard configuration) to allow external hostnames.
