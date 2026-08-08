@@ -9,3 +9,6 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-06-15 - Synchronize image domains across configuration
+**Learning:** Hardcoding image domains in utilities like `lib/image-utils.ts` creates duplication with `next.config.ts`. This requires manual synchronization whenever a new domain is added, increasing the risk of broken images if forgotten.
+**Action:** Whenever adding new domains to `next.config.ts`, always ensure `ALLOWED_IMAGE_DOMAINS` in `lib/image-utils.ts` is updated as well. Add clear comments in both files indicating the requirement to keep them in sync.
