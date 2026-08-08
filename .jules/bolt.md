@@ -9,3 +9,7 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+
+## 2026-06-21 - Force dynamic export causes build failures with cacheComponents
+**Learning:** Adding `export const dynamic = 'force-dynamic'` to a Server Component causes the build to fail when `cacheComponents` is enabled in `next.config.js`. This is a Next.js App Router constraint.
+**Action:** Avoid using `export const dynamic = 'force-dynamic'` when `cacheComponents` is enabled. Use alternative methods to handle dynamic data or disable `cacheComponents` if absolutely necessary, but prefer removing the export to fix the build error.
