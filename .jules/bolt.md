@@ -9,3 +9,6 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+## 2026-06-18 - Replacing Native `<img>` tags with Next.js `<Image>` correctly
+**Learning:** To safely replace `<img>` with Next.js `<Image>` when handling potentially unconfigured external domains, it's critical to use a safe URL parsing function instead of simple substring matching. This avoids server crashes caused by passing invalid URLs to the Next.js image optimization pipeline.
+**Action:** When working with dynamic external images, implement a URL validation utility (e.g., `isWhitelistedImageDomain`) to conditionally set `unoptimized={true}` when encountering non-whitelisted domains. This acts as a robust fallback.
