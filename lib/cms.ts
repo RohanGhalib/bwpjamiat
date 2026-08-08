@@ -1,14 +1,20 @@
 import { collection, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
+import { unstable_cache } from 'next/cache';
 import { db } from './firebase';
 import type { CmsPageRecord, NavLinkRecord, RedirectRecord, SystemSettingsRecord } from './cms-types';
 import { normalizeCmsPath } from './url-management';
 
 export async function getAllCmsPages() {
+  return getAllCmsPagesCached();
+}
+
+// ⚡ Bolt: Cache CMS pages query to prevent redundant Firestore reads
+const getAllCmsPagesCached = unstable_cache(async () => {
   const snapshot = await getDocs(collection(db, 'pages'));
   return snapshot.docs
     .map((document) => ({ id: document.id, ...(document.data() as Omit<CmsPageRecord, 'id'>) }))
     .filter((page) => !page.deletedAt) as CmsPageRecord[];
-}
+}, ['cms-pages'], { revalidate: 300, tags: ['cms-pages'] });
 
 export async function getPublishedCmsPageByPath(path: string) {
   const normalized = normalizeCmsPath(path);
@@ -17,12 +23,17 @@ export async function getPublishedCmsPageByPath(path: string) {
 }
 
 export async function getAllNavLinks() {
+  return getAllNavLinksCached();
+}
+
+// ⚡ Bolt: Cache navigation links query to speed up header rendering
+const getAllNavLinksCached = unstable_cache(async () => {
   const snapshot = await getDocs(collection(db, 'nav_links'));
   return snapshot.docs
     .map((document) => ({ id: document.id, ...(document.data() as Omit<NavLinkRecord, 'id'>) }))
     .filter((link) => !link.deletedAt)
     .sort((a, b) => a.order - b.order) as NavLinkRecord[];
-}
+}, ['cms-nav-links'], { revalidate: 300, tags: ['cms-nav-links'] });
 
 export async function getVisibleHeaderNavLinks() {
   const links = await getAllNavLinks();
@@ -30,18 +41,28 @@ export async function getVisibleHeaderNavLinks() {
 }
 
 export async function getAllRedirects() {
+  return getAllRedirectsCached();
+}
+
+// ⚡ Bolt: Cache redirects query to optimize routing middleware/pages
+const getAllRedirectsCached = unstable_cache(async () => {
   const snapshot = await getDocs(collection(db, 'redirects'));
   return snapshot.docs
     .map((document) => ({ id: document.id, ...(document.data() as Omit<RedirectRecord, 'id'>) }))
     .filter((redirect) => !redirect.deletedAt) as RedirectRecord[];
-}
+}, ['cms-redirects'], { revalidate: 300, tags: ['cms-redirects'] });
 
 export async function getSystemSettings() {
+  return getSystemSettingsCached();
+}
+
+// ⚡ Bolt: Cache system settings to prevent redundant DB reads across the app
+const getSystemSettingsCached = unstable_cache(async () => {
   const snapshot = await getDocs(collection(db, 'system_settings'));
   const first = snapshot.docs[0];
   if (!first) return null;
   return { id: first.id, ...(first.data() as Omit<SystemSettingsRecord, 'id'>) } as SystemSettingsRecord;
-}
+}, ['cms-system-settings'], { revalidate: 300, tags: ['cms-system-settings'] });
 
 export async function getActiveRedirectByFromPath(path: string) {
   const normalized = normalizeCmsPath(path);
