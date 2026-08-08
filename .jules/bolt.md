@@ -9,3 +9,7 @@
 ## 2026-05-23 - Replace native img tag with Next.js Image component
 **Learning:** Replacing native `<img>` tags with Next.js `<Image>` components allows Next.js to apply automatic optimizations like WebP conversion, responsive resizing, and lazy loading, which can significantly improve page load performance. Native `<img>` tags might cause slower LCP (Largest Contentful Paint) and higher bandwidth usage.
 **Action:** Always prefer the Next.js `<Image>` component over the native `<img>` tag unless there is a specific reason not to.
+
+## 2026-06-28 - Optimize Media Player state to reduce re-renders
+**Learning:** For high-frequency events like audio `timeupdate` (which fires multiple times a second), storing `progress` or formatted time strings in React `useState` causes the entire parent component to re-render continuously. This is highly inefficient and can cause UI stuttering, especially on lower-end devices.
+**Action:** Use `useRef` to hold direct references to the DOM elements that display the time and progress bar. Inside the `timeupdate` event handler, update their `.textContent` and `.style.width` properties directly to bypass React's render cycle completely.
