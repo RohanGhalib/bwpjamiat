@@ -6,9 +6,14 @@ import { Tarana } from '@/lib/types';
 export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tarana[] }) {
   const [activeTarana, setActiveTarana] = useState<Tarana | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentTimeRaw, setCurrentTimeRaw] = useState("00:00");
-  const [durationRaw, setDurationRaw] = useState("00:00");
+  const fsProgressRef = useRef<HTMLDivElement>(null);
+  const bottomProgressRef = useRef<HTMLDivElement>(null);
+  const fsCurrentTimeRef = useRef<HTMLSpanElement>(null);
+  const bottomCurrentTimeDesktopRef = useRef<HTMLSpanElement>(null);
+  const bottomCurrentTimeMobileRef = useRef<HTMLSpanElement>(null);
+  const fsDurationRef = useRef<HTMLSpanElement>(null);
+  const bottomDurationDesktopRef = useRef<HTMLSpanElement>(null);
+  const bottomDurationMobileRef = useRef<HTMLSpanElement>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   
@@ -146,17 +151,34 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
     if (audioRef.current) {
       const current = audioRef.current.currentTime;
       const duration = audioRef.current.duration;
+
+      let progressPercent = 0;
+      let durStr = "00:00";
+
       if (duration > 0) {
-        setProgress((current / duration) * 100);
-        
+        progressPercent = (current / duration) * 100;
         const durMins = Math.floor(duration / 60);
         const durSecs = Math.floor(duration % 60);
-        setDurationRaw(`${durMins.toString().padStart(2, '0')}:${durSecs.toString().padStart(2, '0')}`);
+        durStr = `${durMins.toString().padStart(2, '0')}:${durSecs.toString().padStart(2, '0')}`;
       }
       
       const mins = Math.floor(current / 60);
       const secs = Math.floor(current % 60);
-      setCurrentTimeRaw(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
+      const currStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+      const fallbackDur = activeTarana?.duration || "00:00";
+      const finalDur = durStr !== "00:00" ? durStr : fallbackDur;
+
+      if (fsProgressRef.current) fsProgressRef.current.style.width = `${progressPercent}%`;
+      if (bottomProgressRef.current) bottomProgressRef.current.style.width = `${progressPercent}%`;
+
+      if (fsCurrentTimeRef.current) fsCurrentTimeRef.current.textContent = currStr;
+      if (bottomCurrentTimeDesktopRef.current) bottomCurrentTimeDesktopRef.current.textContent = currStr;
+      if (bottomCurrentTimeMobileRef.current) bottomCurrentTimeMobileRef.current.textContent = currStr;
+
+      if (fsDurationRef.current) fsDurationRef.current.textContent = finalDur;
+      if (bottomDurationDesktopRef.current) bottomDurationDesktopRef.current.textContent = finalDur;
+      if (bottomDurationMobileRef.current) bottomDurationMobileRef.current.textContent = finalDur;
     }
   };
 
@@ -354,13 +376,13 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                         className="h-2 sm:h-3 lg:h-1.5 bg-white/20 rounded-full cursor-pointer relative group flex items-center overflow-hidden"
                         onClick={handleSeek}
                       >
-                        <div className="h-full bg-[#1C7F93] rounded-full relative transition-all duration-75 ease-linear" style={{ width: `${progress}%` }}>
+                        <div ref={fsProgressRef} className="h-full bg-[#1C7F93] rounded-full relative transition-all duration-75 ease-linear" style={{ width: `0%` }}>
                           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-5 sm:h-5 bg-white border-[3px] sm:border-4 border-[#1C7F93] rounded-full opacity-100 sm:opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
                         </div>
                       </div>
                       <div className="flex justify-between text-xs font-bold text-cyan-100/80 mt-2 px-1">
-                        <span>{currentTimeRaw}</span>
-                        <span>{durationRaw !== "00:00" ? durationRaw : (activeTarana?.duration || "00:00")}</span>
+                        <span ref={fsCurrentTimeRef}>00:00</span>
+                        <span ref={fsDurationRef}>{activeTarana?.duration || "00:00"}</span>
                       </div>
                     </div>
 
@@ -528,10 +550,7 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
             className="absolute top-0 left-0 right-0 h-1.5 bg-slate-200 cursor-pointer group"
             onClick={handleSeek}
          >
-            <div 
-               className="h-full bg-[#1C7F93] relative"
-               style={{ width: `${progress}%` }}
-            >
+            <div ref={bottomProgressRef} className="h-full bg-[#1C7F93] relative" style={{ width: `0%` }}>
                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-[#1C7F93] rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-1/2 shadow-sm"></div>
             </div>
          </div>
@@ -596,12 +615,12 @@ export default function TaranasGallery({ initialTaranas }: { initialTaranas: Tar
                </div>
                
                <div className="hidden sm:flex items-center justify-between w-full mt-2 text-[10px] font-bold text-slate-400">
-                  <span>{currentTimeRaw}</span>
-                  <span>{durationRaw !== "00:00" ? durationRaw : (activeTarana?.duration || "00:00")}</span>
+                  <span ref={bottomCurrentTimeDesktopRef}>00:00</span>
+                  <span ref={bottomDurationDesktopRef}>{activeTarana?.duration || "00:00"}</span>
                </div>
               <div className="sm:hidden flex items-center justify-between w-full mt-1 text-[10px] font-bold text-slate-400 px-1">
-                <span>{currentTimeRaw}</span>
-                <span>{durationRaw !== "00:00" ? durationRaw : (activeTarana?.duration || "00:00")}</span>
+                <span ref={bottomCurrentTimeMobileRef}>00:00</span>
+                <span ref={bottomDurationMobileRef}>{activeTarana?.duration || "00:00"}</span>
               </div>
             </div>
 
