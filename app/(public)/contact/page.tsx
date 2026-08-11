@@ -5,14 +5,22 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function JoinUs() {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: '',
     phone: '',
+    email: '',
+    className: '',
+    subject: '',
     institution: '',
     area: '',
-    role: 'volunteer',
-    message: ''
-  });
+    address: '',
+    instagram: '',
+    facebook: '',
+    whyJoin: '',
+    howDidYouKnow: ''
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -21,8 +29,8 @@ export default function JoinUs() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.area) {
-       alert("Please fill in the required fields (Name, Phone, Area).");
+    if (!formData.name || !formData.phone || !formData.email || !formData.area) {
+       alert("Please fill in the required fields (Name, Phone, Email, City/Area).");
        return;
     }
     
@@ -33,14 +41,7 @@ export default function JoinUs() {
         submittedAt: serverTimestamp()
       });
       setStatus('success');
-      setFormData({
-        name: '',
-        phone: '',
-        institution: '',
-        area: '',
-        role: 'volunteer',
-        message: ''
-      });
+      setFormData(initialFormData);
     } catch (error) {
       console.error("Error submitting form: ", error);
       setStatus('error');
@@ -111,11 +112,11 @@ export default function JoinUs() {
 
                    <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                         <label className="text-xs font-bold text-[#123962] ml-4">Institution/University</label>
+                         <label className="text-xs font-bold text-[#123962] ml-4">Email Address *</label>
                          <input 
-                           type="text" name="institution" value={formData.institution} onChange={handleChange}
+                           type="email" name="email" required value={formData.email} onChange={handleChange}
                            className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all"
-                           placeholder="IUB, GSC, etc."
+                           placeholder="ali@example.com"
                          />
                       </div>
                       <div className="space-y-2">
@@ -128,26 +129,77 @@ export default function JoinUs() {
                       </div>
                    </div>
 
-                   <div className="space-y-2">
-                      <label className="text-xs font-bold text-[#123962] ml-4">I want to help with:</label>
-                      <select 
-                        name="role" value={formData.role} onChange={handleChange}
-                        className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all appearance-none"
-                      >
-                         <option value="volunteer">General Volunteer</option>
-                         <option value="dawah">Dawah & Outreach</option>
-                         <option value="media">Media & Content</option>
-                         <option value="events">Event Management</option>
-                         <option value="technical">Technical Team</option>
-                      </select>
+                   <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                         <label className="text-xs font-bold text-[#123962] ml-4">Class</label>
+                         <input 
+                           type="text" name="className" value={formData.className} onChange={handleChange}
+                           className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all"
+                           placeholder="e.g. 1st Year / BS CS 3rd Sem"
+                         />
+                      </div>
+                      <div className="space-y-2">
+                         <label className="text-xs font-bold text-[#123962] ml-4">Subject / Department</label>
+                         <input 
+                           type="text" name="subject" value={formData.subject} onChange={handleChange}
+                           className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all"
+                           placeholder="e.g. Computer Science, Medical"
+                         />
+                      </div>
                    </div>
 
                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-[#123962] ml-4">Additional Message (Optional)</label>
+                      <label className="text-xs font-bold text-[#123962] ml-4">Institute / University</label>
+                      <input 
+                        type="text" name="institution" value={formData.institution} onChange={handleChange}
+                        className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all"
+                        placeholder="IUB, GSC, SE College, etc."
+                      />
+                   </div>
+
+                   <div className="space-y-2">
+                      <label className="text-xs font-bold text-[#123962] ml-4">Complete Address</label>
+                      <input 
+                        type="text" name="address" value={formData.address} onChange={handleChange}
+                        className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all"
+                        placeholder="House #, Street, Colony / Area name..."
+                      />
+                   </div>
+
+                   <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                         <label className="text-xs font-bold text-[#123962] ml-4">Instagram Handle</label>
+                         <input 
+                           type="text" name="instagram" value={formData.instagram} onChange={handleChange}
+                           className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all"
+                           placeholder="@your_username"
+                         />
+                      </div>
+                      <div className="space-y-2">
+                         <label className="text-xs font-bold text-[#123962] ml-4">Facebook Handle / Link</label>
+                         <input 
+                           type="text" name="facebook" value={formData.facebook} onChange={handleChange}
+                           className="w-full bg-[#FAFCFF] border border-slate-100 rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all"
+                           placeholder="facebook.com/yourprofile"
+                         />
+                      </div>
+                   </div>
+
+                   <div className="space-y-2">
+                      <label className="text-xs font-bold text-[#123962] ml-4">Why do you want to join IJT?</label>
                       <textarea 
-                        name="message" rows={4} value={formData.message} onChange={handleChange}
+                        name="whyJoin" rows={3} value={formData.whyJoin} onChange={handleChange}
                         className="w-full bg-[#FAFCFF] border border-slate-100 rounded-[2rem] px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all resize-none"
-                        placeholder="Tell us a bit about your skills or how you'd like to contribute..."
+                        placeholder="Tell us why you want to join Islami Jamiat-e-Talaba..."
+                      ></textarea>
+                   </div>
+
+                   <div className="space-y-2">
+                      <label className="text-xs font-bold text-[#123962] ml-4">How did you come to know about us?</label>
+                      <textarea 
+                        name="howDidYouKnow" rows={3} value={formData.howDidYouKnow} onChange={handleChange}
+                        className="w-full bg-[#FAFCFF] border border-slate-100 rounded-[2rem] px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1C7F93]/20 focus:border-[#1C7F93] transition-all resize-none"
+                        placeholder="Social media, friends, campus event, poster..."
                       ></textarea>
                    </div>
 
