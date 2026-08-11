@@ -49,19 +49,49 @@ export default function JoinUs() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent pt-36 pb-20 font-sans selection:bg-[#1C7F93] selection:text-white relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 right-0 w-[800px] h-[500px] bg-gradient-to-bl from-[#1C7F93]/10 to-transparent blur-[120px] rounded-bl-full -z-10 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[400px] bg-gradient-to-tr from-[#123962]/5 to-transparent blur-[100px] rounded-tr-full -z-10 pointer-events-none"></div>
+    <div className="min-h-screen bg-transparent pt-36 pb-20 font-sans selection:bg-[#DC2626] selection:text-white relative overflow-hidden">
+      {/* Background Elements - Split Red (Left) & Blue (Right) Theme */}
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-red-600/15 via-red-900/5 to-transparent blur-[140px] rounded-full -z-10 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-600/15 via-blue-900/5 to-transparent blur-[140px] rounded-full -z-10 pointer-events-none"></div>
 
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
         
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <h2 className="text-[10px] font-black text-[#1C7F93] tracking-[0.2em] uppercase mb-4">Be the Change</h2>
-          <h1 className="text-4xl md:text-5xl lg:text-5xl font-black text-[#123962] mb-6 tracking-tight">Join The Revolution</h1>
-          <p className="text-slate-500 font-medium leading-relaxed text-lg">
-            Become a part of the largest student movement. Whether you want to volunteer, join our study circles, or simply stay updated through our community links, your journey starts here.
+        {/* Poster Styled Hero Heading Section */}
+        <div className="text-center mb-14 max-w-4xl mx-auto flex flex-col items-center">
+          
+          {/* Urdu Tagline from Poster */}
+          <div className="mb-3 text-2xl md:text-3xl font-serif text-[#123962] font-black tracking-wide dir-rtl" dir="rtl">
+            آؤ ساتھ چلیں، <span className="text-[#DC2626]">قوت</span> کے ساتھ چلیں
+          </div>
+
+          {/* Main 3D MEMBERSHIP DRIVE Heading */}
+          <div className="mb-4 select-none">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none uppercase drop-shadow-sm">
+              <span className="text-[#DC2626] block">
+                MEMBERSHIP
+              </span>
+              <span className="text-[#123962] block -mt-1 md:-mt-3">
+                DRIVE
+              </span>
+            </h1>
+          </div>
+
+          {/* Pill Badge: JOIN US IN EVERY TOWN */}
+          <div className="inline-flex items-center rounded-full border-2 border-[#123962] overflow-hidden shadow-sm my-3 text-xs md:text-sm font-black uppercase tracking-wider">
+            <span className="bg-[#123962] text-white px-4 py-1.5">JOIN US</span>
+            <span className="bg-[#DC2626] text-white px-4 py-1.5">IN EVERY TOWN</span>
+          </div>
+
+          {/* Subtitle */}
+          <p className="text-slate-600 font-extrabold tracking-wider text-sm md:text-base uppercase mt-2">
+            BECOME A PART OF <span className="text-[#DC2626] font-black">LARGEST STUDENT</span> ORGANIZATION.
           </p>
+
+          {/* Urdu Motto & Handle */}
+          <div className="mt-4 text-xl md:text-2xl font-black text-[#123962]" dir="rtl">
+            اسلامی جمعیت طلبہ بہاولپور
+          </div>
+          <span className="text-xs text-slate-400 font-bold tracking-widest mt-1">@jamiat.bahawalpur</span>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
