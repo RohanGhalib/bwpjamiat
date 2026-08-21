@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { upsertContact } from '@/lib/contacts';
 
 export async function POST(request: Request) {
   try {
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
     const randomSuffix = Math.floor(10000 + Math.random() * 90000).toString();
     const passId = `QC-26-${randomSuffix}`;
 
+    // 1. Maintain backwards-compatible legacy collection entry
     await addDoc(collection(db, 'quran_club_registrations'), {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
@@ -65,6 +67,34 @@ export async function POST(request: Request) {
       passId,
       registeredAt: new Date().toISOString()
     });
+
+    // 2. Ingest into Central Contacts CRM
+    try {
+      await upsertContact({
+        name: fullName,
+        phone: whatsapp.trim(),
+        email: cleanEmail,
+        city: address ? address.trim() : '',
+        institution: college ? college.trim() : '',
+        source: 'quran_club',
+        sourceEventTitle: 'Quran Club 2026',
+        tags: ['quran_club', 'quran-club-2026'],
+        status: 'lead',
+        customFields: {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          degree: degree ? degree.trim() : '',
+          college: college ? college.trim() : '',
+          passId,
+          dob: dob || '',
+          occupation: occupation || '',
+          motivation: motivation ? motivation.trim() : '',
+          interest: interest || '',
+        },
+      });
+    } catch (contactErr) {
+      console.error('[QuranClub Ingest Contact Error]:', contactErr);
+    }
 
     return NextResponse.json({
       success: true,

@@ -80,3 +80,34 @@ export interface EmberMember {
   email?: string;
   phone?: string;
 }
+
+export type ContactSource = 
+  | 'quran_club'
+  | 'volunteer'
+  | 'summer_school'
+  | 'event'
+  | 'contact_form'
+  | 'complaint'
+  | 'ember'
+  | 'manual';
+
+export type ContactStatus = 'lead' | 'active' | 'approved' | 'archived';
+
+export interface CentralContact {
+  id: string;
+  name: string;
+  email?: string;
+  phone: string; // WhatsApp or Phone number (Normalized)
+  city?: string;
+  institution?: string; // University, College, or School
+  source: ContactSource;
+  sourceEventId?: string;
+  sourceEventTitle?: string;
+  tags: string[];
+  status: ContactStatus;
+  customFields?: Record<string, unknown>;
+  isSubscribedToEmail?: boolean;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+}
+

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { sendEmail } from '@/lib/email-service';
+import { upsertContact } from '@/lib/contacts';
 
 export async function POST(request: Request) {
   try {
@@ -71,6 +72,29 @@ export async function POST(request: Request) {
         passId,
         registeredAt: new Date().toISOString()
       });
+    }
+
+    // 3. Central Contacts CRM Ingestion
+    try {
+      await upsertContact({
+        name: name.trim(),
+        phone: cleanWhatsapp,
+        email: cleanEmail,
+        city: address.trim(),
+        institution: institute.trim(),
+        source: 'summer_school',
+        sourceEventTitle: 'AI Summer Camp',
+        tags: ['summer_school', 'summer-camp-2026'],
+        status: 'lead',
+        customFields: {
+          classLevel: classLevel.trim(),
+          passId,
+          whyJoining: whyJoining.trim(),
+          gender: 'Male',
+        },
+      });
+    } catch (contactErr) {
+      console.error('[SummerSchool Ingest Contact Error]:', contactErr);
     }
 
     // 3. Send HTML Confirmation Email

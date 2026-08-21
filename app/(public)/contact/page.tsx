@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { upsertContact } from '@/lib/contacts';
 
 export default function JoinUs() {
   const initialFormData = {
@@ -36,10 +37,37 @@ export default function JoinUs() {
     
     setStatus('loading');
     try {
+      // 1. Maintain backwards-compatible legacy collection entry
       await addDoc(collection(db, 'volunteers'), {
         ...formData,
         submittedAt: serverTimestamp()
       });
+
+      // 2. Ingest into Central Contacts CRM
+      try {
+        await upsertContact({
+          name: formData.name.trim(),
+          phone: formData.phone.trim(),
+          email: formData.email.trim(),
+          city: formData.area.trim(),
+          institution: formData.institution.trim(),
+          source: 'volunteer',
+          tags: ['volunteer', ...(formData.className ? [formData.className.trim()] : [])],
+          status: 'active',
+          customFields: {
+            className: formData.className.trim(),
+            subject: formData.subject.trim(),
+            address: formData.address.trim(),
+            instagram: formData.instagram.trim(),
+            facebook: formData.facebook.trim(),
+            whyJoin: formData.whyJoin.trim(),
+            howDidYouKnow: formData.howDidYouKnow.trim(),
+          },
+        });
+      } catch (crmErr) {
+        console.error('Error syncing contact to CRM:', crmErr);
+      }
+
       setStatus('success');
       setFormData(initialFormData);
     } catch (error) {
