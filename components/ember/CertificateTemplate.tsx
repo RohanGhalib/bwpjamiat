@@ -25,6 +25,16 @@ const CertificateTemplate = forwardRef<HTMLDivElement, CertificateTemplateProps>
   const pronoun = gender === 'boy' ? 'his' : gender === 'girl' ? 'her' : 'his/her';
   const position = role || 'Member';
 
+  const isWinner = 
+    department?.toLowerCase().includes('winner') || 
+    role?.toLowerCase().includes('winner') || 
+    (type as string)?.toLowerCase().includes('winner');
+
+  const isParticipant = 
+    department?.toLowerCase() === 'participant' || 
+    role?.toLowerCase() === 'participant' || 
+    type === 'Participation';
+
   return (
     <div
       ref={ref}
@@ -81,11 +91,24 @@ const CertificateTemplate = forwardRef<HTMLDivElement, CertificateTemplateProps>
           {name.toUpperCase()}
         </h2>
 
-        <p className="text-white/80 text-2xl leading-relaxed max-w-3xl font-medium">
-          for {pronoun} exceptional services as <span className="text-[var(--c-accent)] font-bold">{position}</span> in <br />
-          <span className="text-white font-bold uppercase">{department} Department</span> at <span className="font-bold">Ember'26</span>, <br />
-          South Punjab's largest hackathon for teenagers.
-        </p>
+        {isWinner ? (
+          <p className="text-white/80 text-2xl leading-relaxed max-w-3xl font-medium">
+            for {pronoun} exceptional performance and emerging as the <br />
+            <span className="text-[var(--c-accent)] font-bold uppercase tracking-wider">WINNER</span> at <span className="font-bold">Ember'26</span>, <br />
+            South Punjab's largest hackathon for teenagers.
+          </p>
+        ) : isParticipant ? (
+          <p className="text-white/80 text-2xl leading-relaxed max-w-3xl font-medium">
+            for {pronoun} active participation at <span className="font-bold">Ember'26</span>, <br />
+            South Punjab's largest hackathon for teenagers.
+          </p>
+        ) : (
+          <p className="text-white/80 text-2xl leading-relaxed max-w-3xl font-medium">
+            for {pronoun} exceptional services as <span className="text-[var(--c-accent)] font-bold">{position}</span> in <br />
+            <span className="text-white font-bold uppercase">{department} Department</span> at <span className="font-bold">Ember'26</span>, <br />
+            South Punjab's largest hackathon for teenagers.
+          </p>
+        )}
       </div>
 
       {/* Footer Section */}

@@ -32,11 +32,22 @@ export async function POST(request: Request) {
     pdf.text(name.toUpperCase(), 148.5, 110, { align: 'center' });
 
     // Description
+    const isWinner = department?.toLowerCase().includes('winner') || type?.toLowerCase().includes('winner');
+    const isParticipant = department?.toLowerCase() === 'participant' || type?.toLowerCase() === 'participation';
+
     pdf.setFontSize(16);
     pdf.setTextColor(200, 200, 200);
-    pdf.text('For exceptional services in', 148.5, 135, { align: 'center' });
-    pdf.text(department.toUpperCase(), 148.5, 145, { align: 'center' });
-    pdf.text('at Ember\'26, South Punjab\'s largest hackathon for teenagers', 148.5, 155, { align: 'center' });
+    if (isWinner) {
+      pdf.text('For exceptional performance and emerging as the WINNER', 148.5, 135, { align: 'center' });
+      pdf.text('at Ember\'26, South Punjab\'s largest hackathon for teenagers', 148.5, 147, { align: 'center' });
+    } else if (isParticipant) {
+      pdf.text('For active participation at', 148.5, 135, { align: 'center' });
+      pdf.text('Ember\'26, South Punjab\'s largest hackathon for teenagers', 148.5, 147, { align: 'center' });
+    } else {
+      pdf.text('For exceptional services in', 148.5, 135, { align: 'center' });
+      pdf.text(department.toUpperCase(), 148.5, 145, { align: 'center' });
+      pdf.text('at Ember\'26, South Punjab\'s largest hackathon for teenagers', 148.5, 155, { align: 'center' });
+    }
 
     // Certificate ID
     pdf.setFontSize(10);

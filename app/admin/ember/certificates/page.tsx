@@ -18,10 +18,12 @@ interface CertificateRequest {
   memberId: string;
   name: string;
   department: string;
+  role?: string;
+  gender?: 'boy' | 'girl';
   email: string;
   phone: string;
-  status: 'pending' | 'sent' | 'rejected' | 'blocked';
-  certificateType?: 'Appreciation' | 'Participation';
+  status: 'pending' | 'sent' | 'rejected' | 'blocked' | 'generated';
+  certificateType?: 'Appreciation' | 'Participation' | 'Winner' | string;
   requestedAt: string;
 }
 
@@ -168,11 +170,14 @@ export default function AdminCertificatesPage() {
   const handleGenerateDirectly = async (participant: EmberMember) => {
     // 1. Create a verified record in certificate_requests
     try {
-      const type = participant.department === 'Participant' ? 'Participation' : 'Appreciation';
+      const isWinner = participant.department?.toLowerCase().includes('winner') || participant.role?.toLowerCase().includes('winner');
+      const type = isWinner ? 'Winner' : participant.department === 'Participant' ? 'Participation' : 'Appreciation';
       const docRef = await addDoc(collection(db, 'certificate_requests'), {
         memberId: participant.id,
         name: participant.name,
         department: participant.department,
+        role: participant.role || participant.department,
+        gender: participant.gender || 'boy',
         certificateType: type,
         email: participant.email || '',
         phone: participant.phone || '',
@@ -186,6 +191,8 @@ export default function AdminCertificatesPage() {
         memberId: participant.id,
         name: participant.name,
         department: participant.department,
+        role: participant.role || participant.department,
+        gender: participant.gender || 'boy',
         certificateType: type,
         email: participant.email || '',
         phone: participant.phone || '',
@@ -351,7 +358,9 @@ export default function AdminCertificatesPage() {
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-xs font-bold text-[#1C7F93] uppercase tracking-wider">{req.department}</span>
                             <span className={`text-[8px] font-black px-1.5 py-0.5 rounded border ${
-                              req.certificateType === 'Participation' 
+                              req.certificateType === 'Winner'
+                              ? 'border-orange-200 text-orange-600 bg-orange-50'
+                              : req.certificateType === 'Participation' 
                               ? 'border-blue-200 text-blue-500 bg-blue-50' 
                               : 'border-amber-200 text-amber-500 bg-amber-50'
                             }`}>
@@ -365,7 +374,7 @@ export default function AdminCertificatesPage() {
                         </td>
                         <td className="px-8 py-4">
                           <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                            req.status === 'sent' ? 'bg-green-100 text-green-600' :
+                            req.status === 'sent' || req.status === 'generated' ? 'bg-green-100 text-green-600' :
                             (req.status === 'rejected' || req.status === 'blocked') ? 'bg-red-100 text-red-600' :
                             'bg-amber-100 text-amber-600'
                           }`}>
@@ -379,7 +388,14 @@ export default function AdminCertificatesPage() {
                           {req.status !== 'rejected' && req.status !== 'blocked' && (
                             <>
                               <button
-                                onClick={() => setSelectedRequest(req)}
+                                onClick={() => {
+                                  const fullMember = participants.find(p => p.id === req.memberId);
+                                  setSelectedRequest({
+                                    ...req,
+                                    role: req.role || fullMember?.role || req.department,
+                                    gender: req.gender || fullMember?.gender || 'boy'
+                                  });
+                                }}
                                 className="p-2 text-[#1C7F93] hover:bg-[#1C7F93]/10 rounded-lg transition-all"
                                 title="Download/Regenerate Certificate"
                               >

@@ -85,6 +85,7 @@ export type ContactSource =
   | 'quran_club'
   | 'volunteer'
   | 'summer_school'
+  | 'uswa'
   | 'event'
   | 'contact_form'
   | 'complaint'

@@ -97,7 +97,9 @@ function VerifyContent() {
           CERTIFICATE VERIFIED
         </h1>
         <p className={`${dreamPlanner.className} text-[var(--c-accent)] text-2xl tracking-[0.2em] uppercase`}>
-          Authentic Ember'26 Credential
+          {certData.department?.toLowerCase().includes('winner') || certData.certificateType?.toLowerCase().includes('winner')
+            ? "Official Ember'26 Winner Credential"
+            : "Authentic Ember'26 Credential"}
         </p>
       </div>
 
@@ -115,8 +117,12 @@ function VerifyContent() {
           
           <div className="grid grid-cols-2 gap-8">
             <div>
-              <label className="text-[var(--c-accent)] text-[10px] font-black uppercase tracking-[0.3em] block mb-2">DEPARTMENT</label>
-              <p className={`${dreamPlanner.className} text-white text-2xl`}>{certData.department}</p>
+              <label className="text-[var(--c-accent)] text-[10px] font-black uppercase tracking-[0.3em] block mb-2">
+                {certData.department?.toLowerCase().includes('winner') || certData.certificateType?.toLowerCase().includes('winner') ? 'CATEGORY / ROLE' : 'DEPARTMENT'}
+              </label>
+              <p className={`${dreamPlanner.className} text-white text-2xl`}>
+                {certData.department?.toLowerCase().includes('winner') || certData.certificateType?.toLowerCase().includes('winner') ? 'WINNER' : certData.department}
+              </p>
             </div>
             <div>
               <label className="text-[var(--c-accent)] text-[10px] font-black uppercase tracking-[0.3em] block mb-2">EVENT</label>

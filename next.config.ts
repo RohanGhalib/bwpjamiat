@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
         destination: '/ember/certificate/verify',
         permanent: true,
       },
+      {
+        source: '/uswa/signup',
+        destination: '/uswa#register',
+        permanent: false,
+      },
+      {
+        source: '/uswa/join',
+        destination: '/uswa#register',
+        permanent: false,
+      },
     ];
   },
 

@@ -287,6 +287,10 @@ function HeaderContent() {
     return pathname?.startsWith(href);
   };
 
+  if (pathname?.startsWith('/uswa')) {
+    return null;
+  }
+
   return (
     <div className="fixed top-0 inset-x-0 z-50 p-4 font-sans max-w-6xl mx-auto">
       <header

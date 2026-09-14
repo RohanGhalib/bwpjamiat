@@ -3,12 +3,16 @@
 import React, { useRef, useState } from 'react';
 import CertificateTemplate from '@/components/ember/CertificateTemplate';
 import toast from 'react-hot-toast';
+import * as htmlToImage from 'html-to-image';
+import jsPDF from 'jspdf';
 
 interface CertificateRequest {
   id: string;
   name: string;
   department: string;
-  certificateType?: 'Appreciation' | 'Participation';
+  role?: string;
+  gender?: 'boy' | 'girl';
+  certificateType?: 'Appreciation' | 'Participation' | string;
 }
 
 interface CertificateGeneratorModalProps {
@@ -23,9 +27,28 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
 
   const downloadCertificate = async () => {
     setGenerating(true);
-    const toastId = toast.loading("Generating PDF...");
+    const toastId = toast.loading("Generating high-resolution PDF...");
 
     try {
+      if (certificateRef.current) {
+        // Wait a tick for rendering stability
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const dataUrl = await htmlToImage.toPng(certificateRef.current, {
+          quality: 1.0,
+          pixelRatio: 3,
+        });
+
+        const pdf = new jsPDF('landscape', 'mm', 'a4');
+        pdf.addImage(dataUrl, 'PNG', 0, 0, 297, 210);
+        pdf.save(`Ember_Certificate_${request.name.replace(/\s+/g, '_')}.pdf`);
+
+        toast.success("Certificate downloaded successfully!", { id: toastId });
+        onSuccess();
+        return;
+      }
+
+      // Fallback
       const res = await fetch('/api/certificate/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,18 +110,19 @@ export default function CertificateGeneratorModal({ request, onClose, onSuccess 
           </button>
         </div>
 
-        {/* Certificate Preview (Scale down for UI) */}
+        {/* Certificate Preview */}
         <div className="scale-[0.4] sm:scale-[0.6] md:scale-[0.8] lg:scale-100 origin-top shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
            <CertificateTemplate 
              ref={certificateRef}
              name={request.name}
              department={request.department}
+             role={request.role}
+             gender={request.gender}
              id={request.id}
-             type={request.certificateType}
+             type={request.certificateType as any}
            />
         </div>
 
-        {/* Hidden high-res version is the same ref, we just let it render full size in this container */}
       </div>
     </div>
   );
